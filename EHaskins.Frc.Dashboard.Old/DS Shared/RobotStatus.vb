@@ -1,8 +1,8 @@
 ﻿Imports System.IO
 
-Public Class RobotStatus
+Public Class StatusData
 
-    Private _controlData As StatusData
+    Private _controlData As Mode
     Private _isValid As Boolean
     Private _replyId As UShort
     Private _robotMac As Byte() = {&H0, &H80, &H2F, &H11, &H4D, &HAC}
@@ -99,11 +99,11 @@ Public Class RobotStatus
             _codeRunning = value
         End Set
     End Property
-    Public Property ControlData() As StatusData
+    Public Property ControlData() As Mode
         Get
             Return _controlData
         End Get
-        Set(ByVal value As StatusData)
+        Set(ByVal value As Mode)
             _controlData = value
         End Set
     End Property

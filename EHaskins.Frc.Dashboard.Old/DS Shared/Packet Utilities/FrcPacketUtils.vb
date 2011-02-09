@@ -53,7 +53,7 @@ Public Module FrcPacketUtils
         Return dataCrc = calculatedCrc
     End Function
 
-    Function GetIP(ByVal teamNumber As Integer, ByVal device As Devices) As IPAddress
+    Public Function GetIP(ByVal teamNumber As Integer, ByVal device As Devices) As IPAddress
         Dim num2 = teamNumber Mod 100
         Dim num1 = (teamNumber - num2) / 100
         Dim ipStr = String.Format("10.{0}.{1}.{2}", num1, num2, CInt(device))

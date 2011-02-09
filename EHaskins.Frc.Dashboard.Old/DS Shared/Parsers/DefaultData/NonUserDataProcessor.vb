@@ -32,7 +32,7 @@ Public Class NonUserDataProcessor
             dataGraph.Battery = reader.EReadBattery()
 
             dataGraph.Status = Nothing 'TODO: BAD!
-            dataGraph.Errors = New RobotError(reader.ReadByte())
+            dataGraph.Errors = New Errors(reader.ReadByte())
 
             dataGraph.TeamNumber = reader.ReadTeamNumber()
 

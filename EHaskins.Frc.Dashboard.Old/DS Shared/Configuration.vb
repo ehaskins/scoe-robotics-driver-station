@@ -1,7 +1,6 @@
 ﻿Public Module Configuration
     Const DEFAULT_USER_CONTROL_DATA_SIZE As Integer = 936
-    Const DEFAULT_INVALID_PACKET_SAFETY_LEVEL As Integer = 5
-    Const DEFAULT_MISSED_PACKET_SAFETY_LEVEL As Integer = 5
+    Const DEFAULT_INVALID_PACKET_SAFETY_LEVEL As Integer = 25
     Const DS_TO_ROBOT_LOCAL_PORT As Integer = 1115
     Const DS_TO_ROBOT_REMOTE_PORT As Integer = 1110
     Const ROBOT_TO_DS_LOCAL_PORT As Integer = 1150
@@ -9,7 +8,6 @@
 
     Dim _userControlDataSize As Integer = DEFAULT_USER_CONTROL_DATA_SIZE
     Private _invalidPacketCountSafety As Integer = DEFAULT_INVALID_PACKET_SAFETY_LEVEL
-    Private _missedPacketCountSafety As Integer = DEFAULT_MISSED_PACKET_SAFETY_LEVEL
 
     Private _dsToRobotRemotePortNumber As Integer = DS_TO_ROBOT_REMOTE_PORT
     Private _dsToRobotLocalPortNumber As Integer = DS_TO_ROBOT_REMOTE_PORT
@@ -55,14 +53,6 @@
         End Get
     End Property
 
-    Public Property MissedPacketCountSafety() As Integer
-        Get
-            Return _missedPacketCountSafety
-        End Get
-        Set(ByVal value As Integer)
-            _missedPacketCountSafety = value
-        End Set
-    End Property
     Public Property UserControlDataSize() As Integer
         Get
             Return _userControlDataSize

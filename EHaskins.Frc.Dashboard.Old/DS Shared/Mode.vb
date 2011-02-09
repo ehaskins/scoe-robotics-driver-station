@@ -1,6 +1,6 @@
 ﻿Imports System.ComponentModel
 
-Public Class StatusData
+Public Class Mode
     Implements INotifyPropertyChanged, ICloneable
 
     'TODO: See if any of this works. :)
@@ -132,7 +132,7 @@ Public Class StatusData
         Return Clone()
     End Function
 
-    Public Function Clone() As StatusData
-        Return New StatusData(RawData)
+    Public Function Clone() As Mode
+        Return New Mode(RawData)
     End Function
 End Class

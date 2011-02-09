@@ -15,8 +15,8 @@ Public Class NonUserData
     Dim _digitalIns As DsInputs
     Dim _digitalOuts As DsOutputs
     Dim _battery As Double
-    Dim _status As RobotStatus
-    Dim _errors As RobotError
+    Dim _status As StatusData
+    Dim _errors As Errors
     Dim _DSVersion As String
 
     Dim _unusedBuffer1 As UInt32
@@ -84,11 +84,11 @@ Public Class NonUserData
             RaisePropertyChanged("Battery")
         End Set
     End Property
-    Public Property Status() As RobotStatus
+    Public Property Status() As StatusData
         Get
             Return _status
         End Get
-        Set(ByVal value As RobotStatus)
+        Set(ByVal value As StatusData)
             If _status Is value Then
                 Return
             End If
@@ -96,11 +96,11 @@ Public Class NonUserData
             RaisePropertyChanged("Status")
         End Set
     End Property
-    Public Property Errors() As RobotError
+    Public Property Errors() As Errors
         Get
             Return _errors
         End Get
-        Set(ByVal value As RobotError)
+        Set(ByVal value As Errors)
             If _errors Is value Then
                 Return
             End If

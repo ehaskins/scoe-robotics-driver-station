@@ -1,6 +1,6 @@
 ﻿Imports System.IO
 
-Public Class ControlData
+Public Class CommandData
     Implements ICloneable
 
     Public Sub New(ByVal data As Byte())
@@ -12,7 +12,7 @@ Public Class ControlData
 
     Public Sub New(ByVal packetIndex As Integer)
         Me.PacketId = packetIndex
-        ControlData = New StatusData()
+        Mode = New Mode()
         DsInputs = New DsInputs(0)
         Dim sticks(3) As Joystick
         For i = 0 To 3
@@ -25,7 +25,7 @@ Public Class ControlData
     End Sub
 
     Private _packetId As UInt16
-    Private _controlData As StatusData
+    Private _controlData As Mode
     Private _dsInputs As DsInputs
     Private _teamNumber As Integer
     Private _alliance As Alliance = Dashboard.Alliance.Red
@@ -45,10 +45,10 @@ Public Class ControlData
     Private _isValid As Boolean
 
     Public Function Clone() As Object Implements System.ICloneable.Clone
-        Dim out As New ControlData(Me.PacketId)
+        Dim out As New CommandData(Me.PacketId)
         out.Alliance = Alliance
         out.AnalogInputs = AnalogInputs
-        out.ControlData = ControlData
+        out.Mode = Mode
         out.CRioChecksum = CRioChecksum
         out.DsInputs = DsInputs
         out.FpgaChecksum0 = FpgaChecksum0
@@ -64,7 +64,7 @@ Public Class ControlData
     End Function
 
     Public Function GetNextPacket()
-        Dim r As ControlData = Me.Clone()
+        Dim r As CommandData = Me.Clone()
         r.PacketId += 1
         Return r
     End Function
@@ -74,7 +74,7 @@ Public Class ControlData
         Dim reader = New MiscUtil.IO.EndianBinaryReader(New MiscUtil.Conversion.BigEndianBitConverter(), New MemoryStream(data))
         PacketId = reader.ReadUInt16()
 
-        ControlData = New StatusData(reader.ReadByte())
+        Mode = New Mode(reader.ReadByte())
         DsInputs = New DsInputs(reader.ReadByte())
         TeamNumber = reader.ReadUInt16()
         Alliance = reader.ReadByte()
@@ -101,7 +101,7 @@ Public Class ControlData
             Using stream As MemoryStream = New MemoryStream(1024)
                 Dim writer As New MiscUtil.IO.EndianBinaryWriter(New MiscUtil.Conversion.BigEndianBitConverter(), stream, Text.Encoding.ASCII)
                 writer.Write(CUShort(PacketId))
-                writer.Write(ControlData.GetBytes())
+                writer.Write(Mode.GetBytes())
                 writer.Write(DsInputs.GetByte())
                 writer.Write(CType(TeamNumber, UInt16))
                 writer.Write(CByte(Alliance))
@@ -162,11 +162,11 @@ Public Class ControlData
             _analogInputs = value
         End Set
     End Property
-    Public Property ControlData() As StatusData
+    Public Property Mode() As Mode
         Get
             Return _controlData
         End Get
-        Set(ByVal value As StatusData)
+        Set(ByVal value As Mode)
             _controlData = value
         End Set
     End Property

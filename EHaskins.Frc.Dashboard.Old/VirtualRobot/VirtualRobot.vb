@@ -3,9 +3,7 @@ Imports System.Net
 
 Public Class VirtualRobot
     Dim _isOpen As Boolean
-
-    Dim _controlData As ControlData
-    Dim _status As RobotStatus
+    Dim _status As StatusData
 
     Dim _transmitClient As UdpClient
     Dim _receviceClient As UdpClient
@@ -23,7 +21,7 @@ Public Class VirtualRobot
     Public Event NewDataReceived As EventHandler
 
     Private Sub Start(ByVal teamNumber As Integer)
-        _status = New RobotStatus()
+        _status = New StatusData()
 
         Me.TeamNumber = teamNumber
 
@@ -36,12 +34,13 @@ Public Class VirtualRobot
         _receviceClient.BeginReceive(AddressOf Me.ReceiveData, Nothing)
     End Sub
 
-    Private Sub SendReply(ByVal packet As ControlData, ByVal endpoint As EndPoint)
-        If _status.ReplyId > packet.PacketId And Not packet.ControlData.Resync Then
+    Private Sub SendReply(ByVal packet As CommandData, ByVal endpoint As EndPoint)
+        If _status.ReplyId > packet.PacketId And Not packet.Mode.Resync Then
+            IsConnected = False
             Return
         End If
         _status.ReplyId = packet.PacketId
-        _status.ControlData = packet.ControlData.Clone()
+        _status.ControlData = packet.Mode.Clone()
 
         Dim sendData = _status.CreateStatusPacket()
         Dim ipep As IPEndPoint = DirectCast(endpoint, IPEndPoint)
@@ -58,6 +57,11 @@ Public Class VirtualRobot
             Dim packet = ParseBytes(bytes)
             If packet IsNot Nothing AndAlso packet.IsValid AndAlso packet.TeamNumber = Me.TeamNumber Then
                 SendReply(packet, endpoint)
+                Debug.WriteLine(packet.PacketId)
+                If CommandData IsNot Nothing AndAlso CommandData.Mode.EStop Then
+                    packet.Mode.EStop = True
+                End If
+                CommandData = packet
                 RaiseEvent NewDataReceived(Me, Nothing)
             Else
                 InvalidPacketCount += 1
@@ -72,19 +76,10 @@ Public Class VirtualRobot
     End Sub
 
 
-    Private Function ParseBytes(ByVal data As Byte()) As ControlData
+    Private Function ParseBytes(ByVal data As Byte()) As CommandData
         Try
             _packetCount += 1
-            Dim packet = New ControlData(data)
-            ControlData = packet
-
-            Debug.WriteLine(ControlData.PacketId)
-
-            If Not ControlData.IsValid Then
-                InvalidPacketCount += 1
-            End If
-
-            Return packet
+            Return New CommandData(data)
         Catch ex As Exception
             Debug.WriteLine(ex.Message)
             Throw
@@ -99,15 +94,8 @@ Public Class VirtualRobot
             _isConnected = value
         End Set
     End Property
-    Public Property ControlData() As ControlData
-        Get
-            Return _controlData
-        End Get
-        Private Set(ByVal value As ControlData)
-            _controlData = value
-        End Set
-    End Property
-    Public ReadOnly Property Status() As RobotStatus
+    Public Property CommandData() As CommandData
+    Public ReadOnly Property StatusData() As StatusData
         Get
             Return _status
         End Get

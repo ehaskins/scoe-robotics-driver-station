@@ -3,8 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using EHaskins.Frc.Dashboard;
+using EHaskins.Frc.Communication;
 
-namespace EHaskins.FRC.RobotEmulatorCLI
+namespace EHaskins.Frc.RobotEmulatorCLI
 {
     class Program
     {
@@ -23,12 +24,12 @@ namespace EHaskins.FRC.RobotEmulatorCLI
         public void Run()
         {
             vRobot = new VirtualRobot(1103);
-            vRobot.Status.BatteryVoltage = 11.03;
+            vRobot.StatusData.BatteryVoltage = 11.03;
             vRobot.NewDataReceived += NewDataReceived;
 
             Console.WriteLine("vRobot Started");
             Console.ReadLine();
-            vRobot.Status.CodeRunning = true;
+            vRobot.StatusData.CodeRunning = true;
 
             Console.ReadLine();
         }
@@ -36,14 +37,14 @@ namespace EHaskins.FRC.RobotEmulatorCLI
         private void NewDataReceived(object sender, EventArgs e)
         {
             string mode = "";
-            if (vRobot.Status.ControlData.EStop){
+            if (vRobot.CommandData.Mode.EStop){
                 mode = "E-Stop";
             }
             else
             {
-                mode = vRobot.Status.ControlData.Enabled ? "Enabled" : "Disabled";
+                mode = vRobot.CommandData.Mode.Enabled ? "Enabled" : "Disabled";
             }
-            Console.WriteLine(String.Format("Packet# {0}, {1}", vRobot.Status.ReplyId, mode));
+            Console.WriteLine(String.Format("Packet# {0}, {1}", vRobot.StatusData.ReplyId, mode));
         }
 
     }

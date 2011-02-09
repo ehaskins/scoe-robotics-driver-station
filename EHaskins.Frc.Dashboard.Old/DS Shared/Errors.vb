@@ -1,4 +1,4 @@
-﻿Public Class RobotError
+﻿Public Class Errors
     ''' <summary>
     ''' Initializes a new instance of the RobotError structure.
     ''' </summary>
