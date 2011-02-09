@@ -47,6 +47,10 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\EHaskins.Frc.Communication.Shared\EHaskins.Frc.Communication.Shared.csproj">
+      <Project>{2EC93CB5-6694-4B03-8DCF-BEB31720F2AF}</Project>
+      <Name>EHaskins.Frc.Communication.Shared</Name>
+    </ProjectReference>
     <ProjectReference Include="..\EHaskins.Frc.Communication\EHaskins.Frc.Communication.csproj">
       <Project>{2FE2D3CB-42B0-40F7-87C7-E0C53D38BF34}</Project>
       <Name>EHaskins.Frc.Communication</Name>

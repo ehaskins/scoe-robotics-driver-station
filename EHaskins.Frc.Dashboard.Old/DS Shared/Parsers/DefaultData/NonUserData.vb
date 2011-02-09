@@ -1,4 +1,5 @@
 ﻿Imports System.ComponentModel
+Imports EHaskins.Frc.Communication
 
 Public Class NonUserData
     Implements INotifyPropertyChanged
@@ -12,8 +13,8 @@ Public Class NonUserData
 
     Dim _packetNumber As UInt16
     Dim _teamNumber As UInt16
-    Dim _digitalIns As DsInputs
-    Dim _digitalOuts As DsOutputs
+    Dim _digitalIns As BindableBitField8
+    Dim _digitalOuts As BindableBitField8
     Dim _battery As Double
     Dim _status As StatusData
     Dim _errors As Errors
@@ -48,11 +49,11 @@ Public Class NonUserData
             RaisePropertyChanged("TeamNumber")
         End Set
     End Property
-    Public Property DigitalIns() As DsInputs
+    Public Property DigitalIns() As BindableBitField8
         Get
             Return _digitalIns
         End Get
-        Set(ByVal value As DsInputs)
+        Set(ByVal value As BindableBitField8)
             If _digitalIns Is value Then
                 Return
             End If
@@ -60,11 +61,11 @@ Public Class NonUserData
             RaisePropertyChanged("DigitalIns")
         End Set
     End Property
-    Public Property DigitalOuts() As DsOutputs
+    Public Property DigitalOuts() As BindableBitField8
         Get
             Return _digitalOuts
         End Get
-        Set(ByVal value As DsOutputs)
+        Set(ByVal value As BindableBitField8)
             If _digitalOuts Is value Then
                 Return
             End If

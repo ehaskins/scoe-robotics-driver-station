@@ -5,11 +5,11 @@
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProductVersion>8.0.30703</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
-    <ProjectGuid>{2FE2D3CB-42B0-40F7-87C7-E0C53D38BF34}</ProjectGuid>
+    <ProjectGuid>{2EC93CB5-6694-4B03-8DCF-BEB31720F2AF}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>EHaskins.Frc.Communication</RootNamespace>
-    <AssemblyName>EHaskins.Frc.Communication</AssemblyName>
+    <RootNamespace>EHaskins.Frc.Communication.Shared</RootNamespace>
+    <AssemblyName>EHaskins.Frc.Communication.Shared</AssemblyName>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
   </PropertyGroup>
@@ -31,6 +31,9 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="MiscUtil">
+      <HintPath>..\libs\MiscUtil.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />
@@ -40,19 +43,17 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Alliance.cs" />
+    <Compile Include="BindableBitField8.cs" />
+    <Compile Include="BitField8.cs" />
+    <Compile Include="Configuration.cs" />
+    <Compile Include="DSVersion.cs" />
+    <Compile Include="Error.cs" />
+    <Compile Include="Joystick.cs" />
+    <Compile Include="Mode.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="VirtualDS.cs" />
-    <Compile Include="VirtualRobot.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\EHaskins.Frc.Communication.Shared\EHaskins.Frc.Communication.Shared.csproj">
-      <Project>{2EC93CB5-6694-4B03-8DCF-BEB31720F2AF}</Project>
-      <Name>EHaskins.Frc.Communication.Shared</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\EHaskins.Frc.Dashboard.Old\EHaskins.Frc.Dashboard.Old.vbproj">
-      <Project>{F2CABBC3-B84A-4A43-A0D6-D489C4CA2A08}</Project>
-      <Name>EHaskins.Frc.Dashboard.Old</Name>
-    </ProjectReference>
     <ProjectReference Include="..\EHaskins.Utilities\EHaskins.Utilities.csproj">
       <Project>{A0F0A322-5372-4040-9394-EC661859A4F1}</Project>
       <Name>EHaskins.Utilities</Name>

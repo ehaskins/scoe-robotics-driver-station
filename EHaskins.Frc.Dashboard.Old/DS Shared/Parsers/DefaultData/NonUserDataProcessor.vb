@@ -4,6 +4,7 @@ Imports System.Net
 Imports System.IO
 Imports System.ComponentModel
 Imports MiscUtil.IO
+Imports EHaskins.Frc.Communication
 
 Public Interface IDashboardProcessor(Of T)
     Function Parse(ByVal data As Byte()) As T
@@ -27,8 +28,8 @@ Public Class NonUserDataProcessor
             reader = New MiscUtil.IO.EndianBinaryReader(New MiscUtil.Conversion.BigEndianBitConverter(), New MemoryStream(data))
 
             dataGraph.PacketNumber = reader.ReadUInt16()
-            dataGraph.DigitalIns = New DsInputs(reader.ReadByte())
-            dataGraph.DigitalOuts = New DsOutputs(reader.ReadByte())
+            dataGraph.DigitalIns = New BindableBitField8(reader.ReadByte())
+            dataGraph.DigitalOuts = New BindableBitField8(reader.ReadByte())
             dataGraph.Battery = reader.EReadBattery()
 
             dataGraph.Status = Nothing 'TODO: BAD!

@@ -1,4 +1,5 @@
 ﻿Imports System.IO
+Imports EHaskins.Frc.Communication
 
 Public Class StatusData
 
@@ -28,7 +29,7 @@ Public Class StatusData
 
         reader.ReadBytes(5)
 
-        TeamNumber = reader.ReadTeamNumber()
+        TeamNumber = reader.ReadUInt16()
         RobotMac = reader.ReadBytes(6)
 
         reader.ReadBytes(14)
@@ -44,7 +45,7 @@ Public Class StatusData
         Dim data As Byte()
         Using stream As New MemoryStream()
             Dim writer As New MiscUtil.IO.EndianBinaryWriter(New MiscUtil.Conversion.BigEndianBitConverter(), stream, Text.Encoding.ASCII)
-            writer.Write(ControlData.GetBytes())
+            writer.Write(ControlData.RawValue)
 
             writer.Write(GetBatteryBytes())
             writer.Write(DsOutputs)

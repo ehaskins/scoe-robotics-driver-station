@@ -1,0 +1,5 @@
+Misc Utils Library
+http://www.yoda.arachsys.com/csharp/miscutil/
+
+MicroTimer
+http://www.codeproject.com/KB/dotnet/MicroTimer.aspx

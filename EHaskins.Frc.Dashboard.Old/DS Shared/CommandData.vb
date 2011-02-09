@@ -1,4 +1,5 @@
 ﻿Imports System.IO
+Imports EHaskins.Frc.Communication
 
 Public Class CommandData
     Implements ICloneable
@@ -13,7 +14,7 @@ Public Class CommandData
     Public Sub New(ByVal packetIndex As Integer)
         Me.PacketId = packetIndex
         Mode = New Mode()
-        DsInputs = New DsInputs(0)
+        DsInputs = New BindableBitField8(0)
         Dim sticks(3) As Joystick
         For i = 0 To 3
             sticks(i) = New Joystick(i)
@@ -26,9 +27,9 @@ Public Class CommandData
 
     Private _packetId As UInt16
     Private _controlData As Mode
-    Private _dsInputs As DsInputs
+    Private _dsInputs As BindableBitField8
     Private _teamNumber As Integer
-    Private _alliance As Alliance = Dashboard.Alliance.Red
+    Private _alliance As Alliance = Alliance.Red
     Private _position As Byte = 2
 
     Private _joysticks As Joystick()
@@ -75,7 +76,7 @@ Public Class CommandData
         PacketId = reader.ReadUInt16()
 
         Mode = New Mode(reader.ReadByte())
-        DsInputs = New DsInputs(reader.ReadByte())
+        DsInputs = New BindableBitField8(reader.ReadByte())
         TeamNumber = reader.ReadUInt16()
         Alliance = reader.ReadByte()
         Position = reader.ReadByte() - 48
@@ -101,8 +102,8 @@ Public Class CommandData
             Using stream As MemoryStream = New MemoryStream(1024)
                 Dim writer As New MiscUtil.IO.EndianBinaryWriter(New MiscUtil.Conversion.BigEndianBitConverter(), stream, Text.Encoding.ASCII)
                 writer.Write(CUShort(PacketId))
-                writer.Write(Mode.GetBytes())
-                writer.Write(DsInputs.GetByte())
+                writer.Write(Mode.RawValue)
+                writer.Write(DsInputs.RawValue)
                 writer.Write(CType(TeamNumber, UInt16))
                 writer.Write(CByte(Alliance))
                 writer.Write(CByte(48 + Position))
@@ -178,11 +179,11 @@ Public Class CommandData
             _cRioChecksum = value
         End Set
     End Property
-    Public Property DsInputs() As DsInputs
+    Public Property DsInputs() As BindableBitField8
         Get
             Return _dsInputs
         End Get
-        Set(ByVal value As DsInputs)
+        Set(ByVal value As BindableBitField8)
             _dsInputs = value
         End Set
     End Property

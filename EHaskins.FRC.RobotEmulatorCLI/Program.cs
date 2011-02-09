@@ -37,14 +37,15 @@ namespace EHaskins.Frc.RobotEmulatorCLI
         private void NewDataReceived(object sender, EventArgs e)
         {
             string mode = "";
-            if (vRobot.CommandData.Mode.EStop){
+            if (vRobot.CommandData.Mode.EStop)
+            {
                 mode = "E-Stop";
             }
             else
             {
                 mode = vRobot.CommandData.Mode.Enabled ? "Enabled" : "Disabled";
             }
-            Console.WriteLine(String.Format("Packet# {0}, {1}", vRobot.StatusData.ReplyId, mode));
+            Console.WriteLine(String.Format("Packet# {0}, {1}, Resync: {2}", vRobot.StatusData.ReplyId, mode, vRobot.CommandData.Mode.Resync));
         }
 
     }

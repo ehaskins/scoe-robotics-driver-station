@@ -26,10 +26,10 @@ namespace EHaskins.Frc.Communication
 
         public VirtualDS(int teamNumber)
         {
-            _controlData = new CommandData(1);
-            _controlData.Mode.RawData = 84;
+            CommandData = new CommandData(1);
+            CommandData.Mode.RawValue = 84;
 
-            _controlData.TeamNumber = teamNumber;
+            CommandData.TeamNumber = teamNumber;
         }
 
         public void Open(int teamNumber, IPEndPoint transmitEP = null, int receivePort = 1150)
@@ -59,7 +59,7 @@ namespace EHaskins.Frc.Communication
 
         private void CheckSafties()
         {
-            if (_robotStatus == null || (_robotStatus.ReplyId < CommandData.PacketId))
+            if (RobotStatus == null || (RobotStatus.ReplyId < CommandData.PacketId))
             {
                 CurrentInvalidPacketCount += 1;
             }
@@ -85,13 +85,13 @@ namespace EHaskins.Frc.Communication
                 IsSyncronized = false;
             }
 
-            if (!IsSyncronized | CommandData.PacketId == int.MaxValue)
+            if (!IsSyncronized || CommandData.PacketId == int.MaxValue)
             {
-                _controlData.Mode.Resync = true;
+                CommandData.Mode.Resync = true;
             }
             else
             {
-                _controlData.Mode.Resync = false;
+                CommandData.Mode.Resync = false;
             }
 
 
@@ -102,7 +102,7 @@ namespace EHaskins.Frc.Communication
             CheckSafties();
             UpdateMode();
 
-            var sendData = _controlData.GetBytes();
+            var sendData = CommandData.GetBytes();
             _transmitClient.Send(sendData, sendData.Length, _transmitEP);
         }
 
@@ -113,15 +113,21 @@ namespace EHaskins.Frc.Communication
             ParseBytes(bytes);
         }
 
+        private bool ReceiveCheck(StatusData status)
+        {
+            return status.IsValid && status.TeamNumber == CommandData.TeamNumber && status.ReplyId == CommandData.PacketId;
+        }
         private void ParseBytes(byte[] data)
         {
             try
             {
-                _robotStatus = new StatusData(data);
+                var status = new StatusData(data);
 
-                if (_robotStatus.IsValid)
+                if (ReceiveCheck(status))
                 {
                     CurrentInvalidPacketCount = 0;
+                    IsSyncronized = true;
+                    RobotStatus = status;
                 }
                 else
                 {
@@ -146,14 +152,21 @@ namespace EHaskins.Frc.Communication
         public bool IsSyncronized
         {
             get { return _isSyncronized; }
-            set { _isSyncronized = value; }
+            protected set { _isSyncronized = value; }
         }
+
+
 
         public CommandData CommandData
         {
             get { return _controlData; }
+            protected set { _controlData = value; }
         }
-
+        public StatusData RobotStatus
+        {
+            get { return _robotStatus; }
+            protected set { _robotStatus = value; }
+        }
         public int TotalInvalidPacketCount
         {
             get { return _totalInvalidPacketCount; }

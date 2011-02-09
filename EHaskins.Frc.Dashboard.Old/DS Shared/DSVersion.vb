@@ -15,80 +15,35 @@ Public Class DSVersion
 
     Public Sub New(ByVal data As Byte())
         If data.Length = 8 Then
-            _bytes = data
+            VersionString = Encoding.ASCII.GetString(data)
             RaisePropertyChanged("VersionString")
-            'TODO: Correct version parsing
-            'versionMonth1 = data(0)
-            'versionMonth2 = data(1)
-            'versionDay1 = data(2)
-            'versionDay2 = data(3)
-            'versionYear1 = data(4)
-            'versionYear2 = data(5)
-            'versionRev1 = data(6)
-            'versionRev2 = data(7)
         Else
             Throw New ArgumentOutOfRangeException("Data must be exactly 8 bytes in length.")
         End If
     End Sub
 
-    Public Property VersionString() As String
+    Private _versionString As String
+    Public Property VersionString As String
         Get
-            Return Encoding.ASCII.GetString(_bytes)
+            Return _versionString
         End Get
-        Set(ByVal value As String)
-            _bytes = Encoding.ASCII.GetBytes(value)
-            RaisePropertyChanged("VersionString")
+        Set(ByVal Value As String)
+            If (_versionString = Value) Then Return
+            Dim bytes = Encoding.ASCII.GetBytes(Value)
+            If Value Is Nothing OrElse Not Value.Length = 8 OrElse bytes.Length = 8 Then
+                Throw New ArgumentException("VersionString must be exactly 8 characters.")
+            End If
+
+            _bytes = bytes
+            _versionString = Value
+            RaiseEvent PropertyChanged(Me, New PropertyChangedEventArgs("VersionString"))
+            
         End Set
     End Property
 
-
     Public Function GetBytes() As Byte()
-        If _bytes IsNot Nothing Then
-            Return _bytes
-        Else
-            Dim out(8) As Byte
-            Return out
-        End If
+        Return _bytes
     End Function
-
-
-    'Dim versionMonth1 As Byte
-    'Dim versionMonth2 As Byte
-    'Dim versionDay1 As Byte
-    'Dim versionDay2 As Byte
-    'Dim versionYear1 As Byte
-    'Dim versionYear2 As Byte
-    'Dim versionRev1 As Byte
-    'Dim versionRev2 As Byte
-
-    'Private _versionDate As DateTime
-    'Private _versionRev As Integer
-
-
-    'Public Property VersionDate() As DateTime
-    '    Get
-    '        Return _versionDate
-    '    End Get
-    '    Set(ByVal value As DateTime)
-    '        If _versionDate = value Then
-    '            Return
-    '        End If
-    '        _versionDate = value
-    '        RaisePropertyChanged("VersionDate")
-    '    End Set
-    'End Property
-    'Public Property VersionRev() As Integer
-    '    Get
-    '        Return _versionRev
-    '    End Get
-    '    Set(ByVal value As Integer)
-    '        If _versionRev = value Then
-    '            Return
-    '        End If
-    '        _versionRev = value
-    '        RaisePropertyChanged("VersionRev")
-    '    End Set
-    'End Property
 End Class
 
 

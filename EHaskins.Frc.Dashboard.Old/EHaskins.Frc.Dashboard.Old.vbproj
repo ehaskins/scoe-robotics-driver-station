@@ -11,7 +11,7 @@
     <AssemblyName>EHaskins.Frc.Dashboard</AssemblyName>
     <FileAlignment>512</FileAlignment>
     <MyType>Windows</MyType>
-    <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <OptionExplicit>On</OptionExplicit>
     <OptionCompare>Binary</OptionCompare>
     <OptionStrict>Off</OptionStrict>
@@ -20,6 +20,7 @@
     </FileUpgradeFlags>
     <OldToolsVersion>3.5</OldToolsVersion>
     <UpgradeBackupLocation />
+    <TargetFrameworkProfile>Client</TargetFrameworkProfile>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -98,15 +99,9 @@
   <ItemGroup>
     <Compile Include="DS Shared\Parsers\DefaultData\NonUserData.vb" />
     <Compile Include="DS Shared\Parsers\DefaultData\NonUserDataProcessor.vb" />
-    <Compile Include="DS Shared\Configuration.vb" />
-    <Compile Include="DS Shared\DsIO.vb" />
-    <Compile Include="DS Shared\DSVersion.vb" />
-    <Compile Include="DS Shared\Joystick.vb" />
     <Compile Include="DS Shared\Packet Utilities\BinaryReaderExtensions.vb" />
     <Compile Include="DS Shared\Packet Utilities\BinaryWriterExtensions.vb" />
     <Compile Include="DS Shared\Packet Utilities\FrcPacketUtils.vb" />
-    <Compile Include="DS Shared\Mode.vb" />
-    <Compile Include="DS Shared\Errors.vb" />
     <Compile Include="My Project\AssemblyInfo.vb" />
     <Compile Include="My Project\Application.Designer.vb">
       <AutoGen>True</AutoGen>
@@ -122,7 +117,6 @@
       <DependentUpon>Settings.settings</DependentUpon>
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
     </Compile>
-    <Compile Include="DS Shared\Alliance.vb" />
     <Compile Include="DS Shared\CommandData.vb" />
     <Compile Include="DS Shared\RobotStatus.vb" />
   </ItemGroup>
@@ -149,6 +143,10 @@
     <ProjectReference Include="..\Crc32\Crc32.csproj">
       <Project>{8EF12C16-7E36-4320-B9C1-F96FC8E671F9}</Project>
       <Name>Crc32</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\EHaskins.Frc.Communication.Shared\EHaskins.Frc.Communication.Shared.csproj">
+      <Project>{2EC93CB5-6694-4B03-8DCF-BEB31720F2AF}</Project>
+      <Name>EHaskins.Frc.Communication.Shared</Name>
     </ProjectReference>
     <ProjectReference Include="..\EHaskins.Utilities\EHaskins.Utilities.csproj">
       <Project>{A0F0A322-5372-4040-9394-EC661859A4F1}</Project>
