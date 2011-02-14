@@ -13,7 +13,7 @@ namespace EHaskins.Frc.DriverStationCli
         {
             VirtualDS ds = new VirtualDS(1103);
             //ds.Open(1103, new IPEndPoint(IPAddress.Parse("127.0.0.1"), 1110));
-            ds.Open(1103, new IPEndPoint(IPAddress.Parse("172.16.92.198"), 1140));
+            ds.Open(1692, new IPEndPoint(IPAddress.Parse("172.16.92.198"), 1140));
             //ds.Open(1103);
             Console.WriteLine("Enabled");
             ds.CommandData.Mode.Enabled = true;

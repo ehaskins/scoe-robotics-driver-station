@@ -56,7 +56,7 @@ namespace EHaskins.Frc.Communication
             var sendData = _status.CreateStatusPacket();
             IPEndPoint ipep = (IPEndPoint)endpoint;
 
-            ipep.Port = 1150;
+            ipep.Port = Configuration.DsToRobotLocalPortNumber;
 
             _transmitClient.Send(sendData, sendData.Length, ipep);
         }

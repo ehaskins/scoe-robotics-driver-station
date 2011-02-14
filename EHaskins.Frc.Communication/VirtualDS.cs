@@ -34,6 +34,7 @@ namespace EHaskins.Frc.Communication
 
         public void Open(int teamNumber, IPEndPoint transmitEP = null, int receivePort = 1150)
         {
+            CommandData.TeamNumber = teamNumber;
             _transmitEP = transmitEP ?? new IPEndPoint(FrcPacketUtils.GetIP(teamNumber, Devices.Robot), 1110);
 
             _transmitClient = new UdpClient();

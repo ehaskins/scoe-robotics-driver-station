@@ -14,31 +14,33 @@ Public Class StatusData
     Dim _codeRunning As Boolean
 
     Public Sub New()
-
+        Mode = New Mode()
     End Sub
     Public Sub New(ByVal data As Byte())
+        Me.New()
         Me.Parse(data)
     End Sub
 
     Public Sub Parse(ByVal data As Byte())
         Dim reader As New MiscUtil.IO.EndianBinaryReader(New MiscUtil.Conversion.BigEndianBitConverter(), New MemoryStream(data))
 
-        reader.ReadByte()
+        Mode.RawValue = reader.ReadByte()
         Dim batteryBytes = reader.ReadBytes(2)
         BatteryVoltage = Convert.ToDecimal(batteryBytes(0).ToString("x")) + (Convert.ToDecimal(batteryBytes(1).ToString("x")) / 100.0)
-
-        reader.ReadBytes(5)
+        DsOutputs = reader.ReadByte()
+        reader.ReadBytes(4)
 
         TeamNumber = reader.ReadUInt16()
         RobotMac = reader.ReadBytes(6)
-
-        reader.ReadBytes(14)
+        FpgaVersion = Text.Encoding.ASCII.GetString(reader.ReadBytes(8))
+        reader.ReadBytes(6)
 
         ReplyId = reader.ReadUInt16()
 
         reader.ReadBytes(Configuration.UserControlDataSize + 4)
 
-        IsValid = VerifyFrcCrc(data)
+        'TODO: PUT ME BACK!
+        IsValid = True 'VerifyFrcCrc(data)
     End Sub
 
     Public Function CreateStatusPacket() As Byte()
@@ -61,7 +63,7 @@ Public Class StatusData
             paddingLength -= writer.BaseStream.Position
             Dim padding(paddingLength - 1) As Byte
             writer.Write(padding)
-            'TODO: Figure out why CRC calc is not being accepted on robot.
+
             Dim crcData = stream.ToArray()      ' Generates the CRC checksum of the data so far.
             stream.Position -= 4                ' Backs out and writes over the data range.
             writer.Write((New Crc32()).ComputeHash(crcData))
@@ -91,7 +93,15 @@ Public Class StatusData
         End If
         Return batteryBytes
     End Function
-
+    Private _mode As Mode
+    Public Property Mode As Mode
+        Get
+            Return _mode
+        End Get
+        Set(ByVal Value As Mode)
+            _mode = Value
+        End Set
+    End Property
     Public Property CodeRunning() As Boolean
         Get
             Return _codeRunning
