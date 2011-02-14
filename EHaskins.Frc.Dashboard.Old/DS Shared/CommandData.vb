@@ -124,7 +124,7 @@ Public Class CommandData
                 paddingLength -= writer.BaseStream.Position
                 Dim padding(paddingLength - 1) As Byte
                 writer.Write(padding)
-                'TODO: Figure out why CRC calc is not being accepted on robot.
+
                 Dim crcData = stream.ToArray()
                 stream.Position -= 4
                 writer.Write((New Crc32()).ComputeHash(crcData))

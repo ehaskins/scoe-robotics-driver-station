@@ -85,7 +85,13 @@ namespace EHaskins.Frc.Communication
                 IsSyncronized = false;
             }
 
-            if (!IsSyncronized || CommandData.PacketId == int.MaxValue)
+            if (CommandData.PacketId == UInt16.MaxValue)
+            {
+                CommandData.PacketId = 0;
+                IsSyncronized = false;
+            }
+
+            if (!IsSyncronized)
             {
                 CommandData.Mode.Resync = true;
             }
@@ -94,6 +100,7 @@ namespace EHaskins.Frc.Communication
                 CommandData.Mode.Resync = false;
             }
 
+            Console.WriteLine("Packet ID:" + CommandData.PacketId + " Mode: " + CommandData.Mode.RawValue + " Team:" + CommandData.TeamNumber);
 
         }
 

@@ -45,31 +45,31 @@ Public Class StatusData
         Dim data As Byte()
         Using stream As New MemoryStream()
             Dim writer As New MiscUtil.IO.EndianBinaryWriter(New MiscUtil.Conversion.BigEndianBitConverter(), stream, Text.Encoding.ASCII)
-            writer.Write(ControlData.RawValue)
+            writer.Write(ControlData.RawValue)  ' The first section of the status packet is the entire ControlData structure.
 
-            writer.Write(GetBatteryBytes())
-            writer.Write(DsOutputs)
-            Dim pad(3) As Byte '4 bytes
+            writer.Write(GetBatteryBytes())     ' The next section is the battery byte data (two bytes: integer portion & fractional portion)
+            writer.Write(DsOutputs)             ' Next is a single byte which functions as a bitfield containing the outputs to the 8 DS-side digital outputs.
+            Dim pad(3) As Byte '4 bytes         ' God only knows what...
             writer.Write(pad)
-            writer.Write(CType(TeamNumber, UInt16))
-            writer.Write(RobotMac)
-            writer.Write(Text.Encoding.ASCII.GetBytes(FpgaVersion))
+            writer.Write(CType(TeamNumber, UInt16)) ' Writes the team number (16 bits)
+            writer.Write(RobotMac)                  ' Writes the 6-byte MAC address of the robot (used for LabVIEW stuff...)
+            writer.Write(Text.Encoding.ASCII.GetBytes(FpgaVersion)) ' Writes the FPGA version (to make the FMS happy and stuff)
             Dim pad2(5) As Byte '6 bytes
-            writer.Write(pad2)
-            writer.Write(CUShort(ReplyId))
-            Dim paddingLength = 1024
+            writer.Write(pad2)                  ' God only knows what... 'TODO: FIX THIS
+            writer.Write(CUShort(ReplyId))      ' Echo the packet number (2 bytes)
+            Dim paddingLength = 1024            ' Pads packet to 1024 bytes (dear god this is potentially lossy) (may be used for additional user data)
             paddingLength -= writer.BaseStream.Position
             Dim padding(paddingLength - 1) As Byte
             writer.Write(padding)
             'TODO: Figure out why CRC calc is not being accepted on robot.
-            Dim crcData = stream.ToArray()
-            stream.Position -= 4
+            Dim crcData = stream.ToArray()      ' Generates the CRC checksum of the data so far.
+            stream.Position -= 4                ' Backs out and writes over the data range.
             writer.Write((New Crc32()).ComputeHash(crcData))
-            data = stream.ToArray()
+            data = stream.ToArray()             ' Serializes the data.
             writer.Close()
         End Using
 
-        Debug.Assert(VerifyFrcCrc(data))
+        Debug.Assert(VerifyFrcCrc(data))        ' Verify that the packet was valid.
         Return data
     End Function
 
