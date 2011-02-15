@@ -30,34 +30,42 @@ namespace EHaskins.Frc.DriverStationCli
             //ds.Open(1103);
             while (true)
             {
-                Console.WriteLine("Enabled");
-                ds.CommandData.Mode.Enabled = true;
-                ds.CommandData.Mode.Autonomous = true;
-                ds.CommandData.Mode.EStop = false;
-                Console.ReadLine();
-                Console.WriteLine("Disabled");
-                ds.CommandData.Mode.Enabled = false;
-                ds.CommandData.Mode.Autonomous = true;
-                ds.CommandData.Mode.EStop = false;
-                Console.ReadLine();
-                Console.WriteLine("E-Stop");
-                ds.CommandData.Mode.Enabled = false;
-                ds.CommandData.Mode.Autonomous = true;
-                ds.CommandData.Mode.EStop = true;
-                Console.ReadLine();
-                Console.WriteLine("Enabled");
-                ds.CommandData.Mode.Enabled = true;
-                ds.CommandData.Mode.Autonomous = true;
-                ds.CommandData.Mode.EStop = false;
-                Console.ReadLine();
+                var key = Console.ReadKey();
+
+                if (key.Key == ConsoleKey.E)
+                {
+
+                    Console.WriteLine("Enabled");
+                    ds.CommandData.Mode.Enabled = true;
+                    ds.CommandData.Mode.Autonomous = true;
+                    ds.CommandData.Mode.EStop = false;
+                }
+                else if (key.Key == ConsoleKey.D)
+                {
+                    Console.WriteLine("Disabled");
+                    ds.CommandData.Mode.Enabled = false;
+                    ds.CommandData.Mode.Autonomous = true;
+                    ds.CommandData.Mode.EStop = false;
+                }
+                else if (key.Key == ConsoleKey.Spacebar)
+                {
+                    Console.WriteLine("E-Stop");
+                    ds.CommandData.Mode.Enabled = false;
+                    ds.CommandData.Mode.Autonomous = true;
+                    ds.CommandData.Mode.EStop = true;
+                }
+                else if (key.Key == ConsoleKey.Q)
+                {
+                    ds.Close();
+                    return;
+                }
             }
-            ds.Close();
         }
 
         public void NewDataReceived(object sender, EventArgs e)
         {
             try
-            {
+            { 
                 string mode = "";
                 if (ds.RobotStatus != null)
                 {

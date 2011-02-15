@@ -129,7 +129,7 @@ namespace EHaskins.Frc.Communication
                 }
             }
             catch (Exception ex)
-            {
+             {
             }
         }
 
