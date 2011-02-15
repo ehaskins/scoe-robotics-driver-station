@@ -120,8 +120,8 @@ Public Class CommandData
                 writer.Write(FpgaChecksum2)
                 writer.Write(FpgaChecksum3)
                 writer.Write(Version.GetBytes())
-                Dim paddingLength = 1024
-                paddingLength -= writer.BaseStream.Position
+                Dim paddingLength = Configuration.UserControlDataSize + 8
+                'paddingLength -= writer.BaseStream.Position
                 Dim padding(paddingLength - 1) As Byte
                 writer.Write(padding)
 

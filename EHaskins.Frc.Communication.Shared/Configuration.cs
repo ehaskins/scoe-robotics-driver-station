@@ -5,6 +5,7 @@ namespace EHaskins.Frc.Communication
     public static class Configuration
     {
         const int DEFAULT_USER_CONTROL_DATA_SIZE = 936;
+        const int DEFAULT_USER_STATUS_DATA_SIZE = 984;
         const int DEFAULT_INVALID_PACKET_SAFETY_LEVEL = 25;
         const int DS_TO_ROBOT_LOCAL_PORT = 1115;
         const int DS_TO_ROBOT_REMOTE_PORT = 1110;
@@ -12,13 +13,14 @@ namespace EHaskins.Frc.Communication
 
         const int ROBOT_TO_DS_REMOTE_PORT = 1026;
         static int _userControlDataSize = DEFAULT_USER_CONTROL_DATA_SIZE;
-
+        private static int _userStatusDataSize = DEFAULT_USER_STATUS_DATA_SIZE;
         private static int _invalidPacketCountSafety = DEFAULT_INVALID_PACKET_SAFETY_LEVEL;
         private static int _dsToRobotRemotePortNumber = DS_TO_ROBOT_REMOTE_PORT;
         private static int _dsToRobotLocalPortNumber = DS_TO_ROBOT_REMOTE_PORT;
         private static int _robotToDsRemotePortNumber = ROBOT_TO_DS_LOCAL_PORT;
 
         private static int _robotToDsLocalPortNumber = ROBOT_TO_DS_LOCAL_PORT;
+
         public static int DsToRobotLocalPortNumber
         {
             get { return _dsToRobotLocalPortNumber; }
@@ -50,6 +52,15 @@ namespace EHaskins.Frc.Communication
             get { return _userControlDataSize; }
             set { _userControlDataSize = value; }
         }
+        public static int UserStatusDataSize
+        {
+            get { return _userStatusDataSize; }
+            set
+            {
+                _userStatusDataSize = value;
+            }
+        }
+        
 
     }
 }

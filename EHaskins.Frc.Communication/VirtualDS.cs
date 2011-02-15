@@ -10,6 +10,8 @@ namespace EHaskins.Frc.Communication
     public class VirtualDS : IDisposable
     {
 
+        public event EventHandler NewDataReceived;
+
         bool _isOpen;
 
         MicroTimer _transmitTimer;
@@ -44,7 +46,7 @@ namespace EHaskins.Frc.Communication
             _isOpen = true;
             _receviceClient.BeginReceive(this.ReceiveData, null);
 
-            _transmitTimer = new MicroTimer(20000);
+            _transmitTimer = new MicroTimer(20*1000);
             _transmitTimer.Elapsed += this.SendData;
             //_transmitTimer.AutoReset = True
             _transmitTimer.Start();
@@ -101,7 +103,7 @@ namespace EHaskins.Frc.Communication
                 CommandData.Mode.Resync = false;
             }
 
-            Console.WriteLine("Packet ID:" + CommandData.PacketId + " Mode: " + CommandData.Mode.RawValue + " Team:" + CommandData.TeamNumber);
+            //Console.WriteLine("Packet ID:" + CommandData.PacketId + " Mode: " + CommandData.Mode.RawValue + " Team:" + CommandData.TeamNumber);
 
         }
 
@@ -116,9 +118,19 @@ namespace EHaskins.Frc.Communication
 
         public void ReceiveData(IAsyncResult ar)
         {
-            IPEndPoint endpoint = null;
-            var bytes = _receviceClient.EndReceive(ar, ref endpoint);
-            ParseBytes(bytes);
+            try
+            {
+                IPEndPoint endpoint = null;
+                var bytes = _receviceClient.EndReceive(ar, ref endpoint);
+                ParseBytes(bytes);
+                if (NewDataReceived != null)
+                {
+                    NewDataReceived(this, null);
+                }
+            }
+            catch (Exception ex)
+            {
+            }
         }
 
         private bool ReceiveCheck(StatusData status)

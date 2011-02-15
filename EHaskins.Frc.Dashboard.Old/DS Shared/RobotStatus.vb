@@ -37,8 +37,6 @@ Public Class StatusData
 
         ReplyId = reader.ReadUInt16()
 
-        reader.ReadBytes(Configuration.UserControlDataSize + 4)
-
         'TODO: PUT ME BACK!
         IsValid = True 'VerifyFrcCrc(data)
     End Sub
@@ -59,8 +57,8 @@ Public Class StatusData
             Dim pad2(5) As Byte '6 bytes
             writer.Write(pad2)                  ' God only knows what... 'TODO: FIX THIS
             writer.Write(CUShort(ReplyId))      ' Echo the packet number (2 bytes)
-            Dim paddingLength = 1024            ' Pads packet to 1024 bytes (dear god this is potentially lossy) (may be used for additional user data)
-            paddingLength -= writer.BaseStream.Position
+            Dim paddingLength = Configuration.UserStatusDataSize    ' Pads packet to 1024 bytes (dear god this is potentially lossy) (may be used for additional user data)
+
             Dim padding(paddingLength - 1) As Byte
             writer.Write(padding)
 
