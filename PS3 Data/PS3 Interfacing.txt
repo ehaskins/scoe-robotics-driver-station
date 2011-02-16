@@ -1,0 +1,59 @@
+Project: http://www.codeproject.com/KB/mcpp/wiredps3axis.aspx
+Demo w/ Source: http://www.codeproject.com/KB/mcpp/wiredps3axis/PS3SampleApp.zip
+PS3 USB driver (old): http://nijntje.kicks-ass.org/sixaxisdriver.exe
+PS3 report data reference: http://onakasuita.org/ps3/
+Troubleshot Install Guide: http://www.davieslim.com/ps3/using-ps3-controller-in-windows/
+MotioninJoy (new) driver wiki: http://www.motioninjoy.com/wiki/en/install/latest
+
+
+The PS3 sixaxis controller sends data back as a USB HID device, given that a custom 
+(aka "hacked together") driver is installed. Before the system can be run, the driver
+must be downloaded.
+
+The PS3 controller sends back data in the following data structure as quickly as 
+possible. To form support, the project referenced by the links at the top of the page
+creates a thread upon connection events which repeatedly feeds a global instance of
+this structure, which the host program has managed read access to.
+
+The structure for data is as follows:
+
+Bits:	Byte:	Field:		Description:
+8	0	ReportID	The index of the "report" (similar to a packet ID).
+8	1	LAnalogX	The X-value of the left analog stick.
+8	2	LAnalogY	The Y-value of the left analog stick.
+8	3	RAnalogX	The X-value of the right analog stick.
+8	4	RAnalogY	The Y-value of the right analog stick.
+8	5	???		0x41
+8	6	???		0x45
+1	7	Triangle	The /\ button state. (Mask: 0x01)
+1	-	Circle		The () button state. (Mask: 0x02)
+1	-	Cross		The >< button state. (Mask: 0x04)
+1	-	Square		The [] button state. (Mask: 0x08)
+1	-	L2		The L2 button state. (Mask: 0x10)
+1	-	R2		The R2 button state. (Mask: 0x20)
+1	-	L1		The L1 button state. (Mask: 0x40)
+1	-	R1		The R1 button state. (Mask: 0x80)
+1	8	Select		The Select button state. (Mask: 0x01)
+1	-	LAnalogClick	The Left Analog Click button state. (Mask: 0x02)
+1	-	RAnalogClick	The Right Analog Click button state. (Mask: 0x04)
+1	-	Start		The Start button state. (Mask: 0x08)
+4	-	DPad		The D-pad button states. (Up: 0x10, Right: 0x30, Down: 0x50, Left: 0x70)
+40	9-12	???		5 bytes of unused space.
+8	13	UpAnalog	The ^ analog state.
+8	14	RightAnalog	The > analog state.
+8	15	DownAnalog	The v analog state.
+8	16	LeftAnalog	The < analog state.
+8	17	L2Analog	The L2 analog state.
+8	18	R2Analog	The R2 analog state.
+8	19	L1Analog	The L1 analog state.
+8	20	R1Analog	The R1 analog state.
+8	21	TriangleAnalog	The /\ analog state.
+8	22	CircleAnalog	The () analog state.
+8	23	CrossAnalog	The >< analog state.
+8	24	SquareAnalog	The [] analog state.
+120	25-39	???		15 bytes of unused space.
+16	40-41	MotionX		The sixaxis motion X-value (0x40: high, 0x41: low)
+16	42-43	MotionY		The sixaxis motion Y-value (0x42: high, 0x43: low)
+16	44-45	MotionZ		The sixaxis motion Z-value (0x44: high, 0x45: low)
+
+This data can be pulled out of the report structure and presented in a different way than how we
