@@ -69,20 +69,20 @@ namespace EHaskins.Frc.DriverStationCli
                 string mode = "";
                 if (ds.RobotStatus != null)
                 {
-                    if (ds.CommandData.Mode.EStop)
+                    if (ds.RobotStatus.Mode.EStop)
                     {
                         mode = "E-Stop";
                     }
                     else
                     {
-                        mode = ds.CommandData.Mode.Enabled ? "Enabled" : "Disabled";
+                        mode = ds.RobotStatus.Mode.Enabled ? "Enabled" : "Disabled";
                     }
                 }
                 else
                 {
                     mode = "no status";
                 }
-                Console.WriteLine(String.Format("Packet# {0}, {1}, Resync: {2}", ds.CommandData.PacketId, mode, ds.CommandData.Mode.Resync));
+                Console.WriteLine(String.Format("Packet# {0}, {1}, Resync: {2}", ds.RobotStatus.ReplyId, mode, ds.RobotStatus.Mode.Resync));
             }
             catch (Exception)
             {
