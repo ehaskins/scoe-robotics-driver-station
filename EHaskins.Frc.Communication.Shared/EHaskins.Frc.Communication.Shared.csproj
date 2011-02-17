@@ -44,7 +44,9 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Alliance.cs" />
+    <Compile Include="BindableBitField16.cs" />
     <Compile Include="BindableBitField8.cs" />
+    <Compile Include="BitField16.cs" />
     <Compile Include="BitField8.cs" />
     <Compile Include="Configuration.cs" />
     <Compile Include="DSVersion.cs" />

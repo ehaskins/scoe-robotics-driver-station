@@ -19,14 +19,24 @@ namespace EHaskins.Frc.DriverStationCli
     class VirtualDSCli
     {
         VirtualDS ds;
+        VirtualDS ds2;
         public void Run()
         {
             Configuration.UserControlDataSize = 64;
             Configuration.UserStatusDataSize = 64;
-            ds = new VirtualDS(1103);
+            ds = new VirtualDS(1692);
+
             ds.NewDataReceived += NewDataReceived;
-            //ds.Open(1103, new IPEndPoint(IPAddress.Parse("127.0.0.1"), 1110));
             ds.Open(1692, new IPEndPoint(IPAddress.Parse("172.16.92.198"), 1140));
+
+            //ds2 = new VirtualDS(1103);
+            //ds2.TransmitPort = 1240;
+            //ds2.ReceivePort = 1250;
+            //ds2.Open(1103, new IPEndPoint(IPAddress.Parse("127.0.0.1"), 1240));
+            ds2 = new VirtualDS(1692);
+            ds2.TransmitPort = 1240;
+            ds2.ReceivePort = 1250;
+            ds2.Open(1692, new IPEndPoint(IPAddress.Parse("172.16.92.199"), 1240));
             //ds.Open(1103);
             while (true)
             {
@@ -39,6 +49,10 @@ namespace EHaskins.Frc.DriverStationCli
                     ds.CommandData.Mode.Enabled = true;
                     ds.CommandData.Mode.Autonomous = true;
                     ds.CommandData.Mode.EStop = false;
+
+                    ds2.CommandData.Mode.Enabled = true;
+                    ds2.CommandData.Mode.Autonomous = true;
+                    ds2.CommandData.Mode.EStop = false;
                 }
                 else if (key.Key == ConsoleKey.D)
                 {
@@ -46,13 +60,21 @@ namespace EHaskins.Frc.DriverStationCli
                     ds.CommandData.Mode.Enabled = false;
                     ds.CommandData.Mode.Autonomous = true;
                     ds.CommandData.Mode.EStop = false;
-                }
+
+                    ds2.CommandData.Mode.Enabled = false;
+                    ds2.CommandData.Mode.Autonomous = true;
+                    ds2.CommandData.Mode.EStop = false;
+                }     
                 else if (key.Key == ConsoleKey.Spacebar)
                 {
                     Console.WriteLine("E-Stop");
                     ds.CommandData.Mode.Enabled = false;
                     ds.CommandData.Mode.Autonomous = true;
                     ds.CommandData.Mode.EStop = true;
+
+                    ds2.CommandData.Mode.Enabled = false;
+                    ds2.CommandData.Mode.Autonomous = true;
+                    ds2.CommandData.Mode.EStop = true;
                 }
                 else if (key.Key == ConsoleKey.Q)
                 {
@@ -65,7 +87,10 @@ namespace EHaskins.Frc.DriverStationCli
         public void NewDataReceived(object sender, EventArgs e)
         {
             try
-            { 
+            {
+                var stick = ds.CommandData.Joysticks[1];
+                stick.Axes[1] = stick.Axes[1] > 1 ? -1 : stick.Axes[1] + 0.1;
+
                 string mode = "";
                 if (ds.RobotStatus != null)
                 {

@@ -17,28 +17,35 @@ namespace EHaskins.Frc.Communication
 
         bool _isConnected = false;
         private int _invalidPacketCount = 0;
-        private int _missedPacketCount = 0;
         private int _packetCount = 0;
 
         private int _teamNumber = 1103;
         public VirtualRobot(int teamNumber)
         {
-            Start(teamNumber);
+            this.TeamNumber = teamNumber;
+
+            TransmitPort = Configuration.RobotToDsDestinationPortNumber;
+            ReceivePort = Configuration.DsToRobotDestinationPortNumber;
+            UserControlDataLength = Configuration.UserControlDataSize;
+            UserStatusDataLength = Configuration.UserStatusDataSize;
         }
 
         public event EventHandler NewDataReceived;
 
-        private void Start(int teamNumber)
-        {
-            _status = new StatusData();
+        public int TransmitPort { get; set; }
+        public int ReceivePort { get; set; }
+        public int UserStatusDataLength { get; set; }
+        public int UserControlDataLength { get; set; }
 
-            this.TeamNumber = teamNumber;
+        public void Start()
+        {
+            _status = new StatusData(UserStatusDataLength);
 
             _status.TeamNumber = this.TeamNumber;
 
             _transmitClient = new UdpClient();
 
-            _receviceClient = new UdpClient(Configuration.DsToRobotLocalPortNumber);
+            _receviceClient = new UdpClient(ReceivePort);
             _isOpen = true;
             _receviceClient.BeginReceive(this.ReceiveData, null);
         }
@@ -53,10 +60,10 @@ namespace EHaskins.Frc.Communication
             _status.ReplyId = packet.PacketId;
             _status.ControlData = packet.Mode.Clone();
 
-            var sendData = _status.CreateStatusPacket();
+            var sendData = _status.GetBytes();
             IPEndPoint ipep = (IPEndPoint)endpoint;
 
-            ipep.Port = Configuration.DsToRobotLocalPortNumber;
+            ipep.Port = TransmitPort;
 
             _transmitClient.Send(sendData, sendData.Length, ipep);
         }
@@ -71,7 +78,6 @@ namespace EHaskins.Frc.Communication
                 if (packet != null && packet.IsValid && packet.TeamNumber == this.TeamNumber)
                 {
                     SendReply(packet, endpoint);
-                    Debug.WriteLine(packet.PacketId);
                     if (CommandData != null && CommandData.Mode.EStop)
                     {
                         packet.Mode.EStop = true;
@@ -106,7 +112,7 @@ namespace EHaskins.Frc.Communication
             try
             {
                 _packetCount += 1;
-                return new CommandData(data);
+                return new CommandData(data, UserControlDataLength);
             }
             catch (Exception ex)
             {

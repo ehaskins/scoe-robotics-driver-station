@@ -4,26 +4,28 @@ Imports EHaskins.Frc.Communication
 Public Class CommandData
     Implements ICloneable
 
-    Public Sub New(ByVal data As Byte())
-        Me.New(0)
+    Public Sub New(ByVal data As Byte(), ByVal userControlDataSize As Integer)
+        Me.New(0, userControlDataSize)
         Me.IsValid = False
 
         Parse(data)
     End Sub
 
-    Public Sub New(ByVal packetIndex As Integer)
+    Public Sub New(ByVal packetIndex As Integer, ByVal userControlDataSize As Integer)
         Me.PacketId = packetIndex
+        Me.UserControlDataLength = userControlDataSize
         Mode = New Mode()
         DsInputs = New BindableBitField8(0)
         Dim sticks(3) As Joystick
         For i = 0 To 3
-            sticks(i) = New Joystick(i)
+            sticks(i) = New Joystick()
         Next
         Joysticks = sticks
         Version = New DSVersion()
         Dim inputs(3) As UInt16
         AnalogInputs = inputs
     End Sub
+
 
     Private _packetId As UInt16
     Private _controlData As Mode
@@ -46,7 +48,7 @@ Public Class CommandData
     Private _isValid As Boolean
 
     Public Function Clone() As Object Implements System.ICloneable.Clone
-        Dim out As New CommandData(Me.PacketId)
+        Dim out As New CommandData(Me.PacketId, UserControlDataLength)
         out.Alliance = Alliance
         out.AnalogInputs = AnalogInputs
         out.Mode = Mode
@@ -94,12 +96,14 @@ Public Class CommandData
 
         Version = New DSVersion(reader.ReadBytes(8))
 
+        UserControlData = reader.ReadBytes(UserControlDataLength)
+
         Me.IsValid = VerifyFrcCrc(data)
     End Sub
     Public Function GetBytes() As Byte()
         Try
             Dim data As Byte()
-            Using stream As MemoryStream = New MemoryStream(1024)
+            Using stream As MemoryStream = New MemoryStream()
                 Dim writer As New MiscUtil.IO.EndianBinaryWriter(New MiscUtil.Conversion.BigEndianBitConverter(), stream, Text.Encoding.ASCII)
                 writer.Write(CUShort(PacketId))
                 writer.Write(Mode.RawValue)
@@ -120,8 +124,16 @@ Public Class CommandData
                 writer.Write(FpgaChecksum2)
                 writer.Write(FpgaChecksum3)
                 writer.Write(Version.GetBytes())
-                Dim paddingLength = Configuration.UserControlDataSize + 8
-                'paddingLength -= writer.BaseStream.Position
+
+                Dim length As Integer
+                If UserControlData Is Nothing Then
+                    length = 0
+                Else
+                    length = If(UserControlData.Length <= UserControlDataLength, UserControlData.Length, UserControlDataLength)
+                    writer.Write(UserControlData, 0, length)
+                End If
+
+                Dim paddingLength = (UserControlDataLength - length) + 8
                 Dim padding(paddingLength - 1) As Byte
                 writer.Write(padding)
 
@@ -138,6 +150,10 @@ Public Class CommandData
             Throw
         End Try
     End Function
+
+    Public Property UserControlDataLength As Integer
+    Public Property UserControlData As Byte()
+    
 
     Public Property IsValid() As Boolean
         Get
