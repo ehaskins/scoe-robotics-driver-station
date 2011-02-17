@@ -31,11 +31,31 @@ namespace EHaskins.Frc.Communication
         }
 
         public event EventHandler NewDataReceived;
-
         public int TransmitPort { get; set; }
         public int ReceivePort { get; set; }
         public int UserStatusDataLength { get; set; }
         public int UserControlDataLength { get; set; }
+        public bool IsConnected
+        {
+            get { return _isConnected; }
+            set { _isConnected = value; }
+        }
+        public CommandData CommandData { get; set; }
+        public StatusData StatusData
+        {
+            get { return _status; }
+        }
+        public int InvalidPacketCount
+        {
+            get { return _invalidPacketCount; }
+            set { _invalidPacketCount = value; }
+        }
+        public int TeamNumber
+        {
+            get { return _teamNumber; }
+            set { _teamNumber = value; }
+        }
+
 
         public void Start()
         {
@@ -106,7 +126,6 @@ namespace EHaskins.Frc.Communication
             }
         }
 
-
         private CommandData ParseBytes(byte[] data)
         {
             try
@@ -120,34 +139,5 @@ namespace EHaskins.Frc.Communication
                 throw;
             }
         }
-
-        public bool IsConnected
-        {
-            get { return _isConnected; }
-            set { _isConnected = value; }
-        }
-        private CommandData _commandData;
-        public CommandData CommandData
-        {
-            get { return _commandData; }
-            set { _commandData = value; }
-        }
-        public StatusData StatusData
-        {
-            get { return _status; }
-        }
-
-        public int InvalidPacketCount
-        {
-            get { return _invalidPacketCount; }
-            set { _invalidPacketCount = value; }
-        }
-
-        public int TeamNumber
-        {
-            get { return _teamNumber; }
-            set { _teamNumber = value; }
-        }
-
     }
 }
