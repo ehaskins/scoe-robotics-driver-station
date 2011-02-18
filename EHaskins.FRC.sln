@@ -17,6 +17,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EHaskins.Frc.Communication.
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EHaskins.Next.RobotConfiguratorCli", "EHaskins.Next.RobotConfiguratorCli\EHaskins.Next.RobotConfiguratorCli.csproj", "{A11BAAEF-2A29-44D3-AB4A-077CF6A200A1}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EHaskins.Frc.DriverStation", "EHaskins.Frc.DriverStation\EHaskins.Frc.DriverStation.csproj", "{0E74977B-481C-4A10-8DC7-2D3D12B9D408}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -113,6 +115,16 @@ Global
 		{A11BAAEF-2A29-44D3-AB4A-077CF6A200A1}.Release|Mixed Platforms.Build.0 = Release|x86
 		{A11BAAEF-2A29-44D3-AB4A-077CF6A200A1}.Release|x86.ActiveCfg = Release|x86
 		{A11BAAEF-2A29-44D3-AB4A-077CF6A200A1}.Release|x86.Build.0 = Release|x86
+		{0E74977B-481C-4A10-8DC7-2D3D12B9D408}.Debug|Any CPU.ActiveCfg = Debug|x86
+		{0E74977B-481C-4A10-8DC7-2D3D12B9D408}.Debug|Mixed Platforms.ActiveCfg = Debug|x86
+		{0E74977B-481C-4A10-8DC7-2D3D12B9D408}.Debug|Mixed Platforms.Build.0 = Debug|x86
+		{0E74977B-481C-4A10-8DC7-2D3D12B9D408}.Debug|x86.ActiveCfg = Debug|x86
+		{0E74977B-481C-4A10-8DC7-2D3D12B9D408}.Debug|x86.Build.0 = Debug|x86
+		{0E74977B-481C-4A10-8DC7-2D3D12B9D408}.Release|Any CPU.ActiveCfg = Release|x86
+		{0E74977B-481C-4A10-8DC7-2D3D12B9D408}.Release|Mixed Platforms.ActiveCfg = Release|x86
+		{0E74977B-481C-4A10-8DC7-2D3D12B9D408}.Release|Mixed Platforms.Build.0 = Release|x86
+		{0E74977B-481C-4A10-8DC7-2D3D12B9D408}.Release|x86.ActiveCfg = Release|x86
+		{0E74977B-481C-4A10-8DC7-2D3D12B9D408}.Release|x86.Build.0 = Release|x86
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

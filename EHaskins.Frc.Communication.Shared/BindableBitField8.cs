@@ -5,8 +5,6 @@ using MiscUtil.IO;
 
 namespace EHaskins.Frc.Communication
 {
-
-
 	public class BindableBitField8 : BitField8
 	{
 		public BindableBitField8()

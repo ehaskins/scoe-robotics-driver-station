@@ -49,7 +49,7 @@ Public Class NonUserDataProcessor
             Dim userData = reader.ReadBytes(984)
             dataGraph.UserData = userData
             'ProcessUserData(UserDataBytes)
-            'TODO: Confirm checksum, last 8 bytes.
+
             Return userData
             reader.Close()
 

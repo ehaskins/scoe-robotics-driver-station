@@ -10,27 +10,22 @@ namespace EHaskins.Frc.Communication
 
         public Joystick()
         {
-        }
-        public Joystick(int number)
-        {
-            JoystickNumber = number;
+            Buttons = new BindableBitField16();
         }
 
         int _joystickNumber;
         double[] _analogInputs = new double[7];
 
-        bool[] _digitalInputs = new bool[17];
         public void Parse(EndianBinaryReader reader)
         {
             for (int i = 0; i <= 5; i++)
             {
                 int byteRead = reader.ReadByte();
                 double value = (byteRead - 128) / 128;
-                AnalogInputs[i] = value;
+                Axes[i] = value;
             }
 
-            //TODO: Add button handling code
-            object bytes = reader.ReadBytes(2);
+            Buttons.RawValue = reader.ReadUInt16();
 
             if (PropertyChanged != null)
             {
@@ -60,23 +55,22 @@ namespace EHaskins.Frc.Communication
             BinaryWriter writer = new BinaryWriter(stream);
             for (int i = 0; i <= 5; i++)
             {
-                double scaled = AnalogInputs[i] * 128 + 128;
+                double scaled = Axes[i] * 128 + 128;
                 if (scaled > 255)
                     scaled = 255;
                 else if (scaled < 0)
                     scaled = 0;
                 writer.Write(Convert.ToByte(scaled));
             }
-            //TODO: Add button handling code here.
-            writer.Write(Convert.ToByte(0));
-            writer.Write(Convert.ToByte(0));
+
+            writer.Write(Buttons.RawValue);
 
             var data = stream.ToArray();
             writer.Close();
 
             return data;
         }
-        public double[] AnalogInputs
+        public double[] Axes
         {
             get { return _analogInputs; }
             set
@@ -120,38 +114,29 @@ namespace EHaskins.Frc.Communication
                 }
             }
         }
-        public bool[] DigitalInputs
+
+        private BindableBitField16 _Buttons;
+        public BindableBitField16 Buttons
         {
-            get { return _digitalInputs; }
-            set
-            {
-                if ((!object.ReferenceEquals(_digitalInputs, value)))
-                {
-                    return;
-                }
-                _digitalInputs = value;
-                if (PropertyChanged != null)
-                {
-                    PropertyChanged(this, new PropertyChangedEventArgs("DigitalInputs"));
-                }
-            }
+            get { return _Buttons; }
+            set { _Buttons = value; }
         }
 
         public double X
         {
-            get { return AnalogInputs[0]; }
+            get { return Axes[0]; }
         }
         public double Y
         {
-            get { return AnalogInputs[1]; }
+            get { return Axes[1]; }
         }
         public double Z
         {
-            get { return AnalogInputs[2]; }
+            get { return Axes[2]; }
         }
         public double Twist
         {
-            get { return AnalogInputs[3]; }
+            get { return Axes[3]; }
         }
 
         public event PropertyChangedEventHandler PropertyChanged;
