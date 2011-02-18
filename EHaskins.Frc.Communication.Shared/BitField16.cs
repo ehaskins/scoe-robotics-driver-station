@@ -1,17 +1,15 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+using System;
 
 namespace EHaskins.Frc.Communication
 {
-    public abstract class BitField8
+    public abstract class BitField16
     {
-        public BitField8()
+        public BitField16()
         {
-            Length = 8;
+            Length = 16;
         }
-        public BitField8(byte value) : this()
+        public BitField16(ushort value)
+            : this()
         {
             this.RawValue = value;
         }
@@ -43,7 +41,7 @@ namespace EHaskins.Frc.Communication
             }
         }
 
-        public virtual byte RawValue { get; set; }
+        public virtual ushort RawValue { get; set; }
         public int Length { get; protected set; }
     }
 }

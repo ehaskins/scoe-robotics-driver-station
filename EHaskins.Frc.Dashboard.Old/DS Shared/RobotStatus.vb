@@ -13,11 +13,12 @@ Public Class StatusData
     Dim _fpgaVersion As String = "06300800"
     Dim _codeRunning As Boolean
 
-    Public Sub New()
+    Public Sub New(ByVal userStatusDataSize As Integer)
+        UserStatusDataLength = userStatusDataSize
         Mode = New Mode()
     End Sub
-    Public Sub New(ByVal data As Byte())
-        Me.New()
+    Public Sub New(ByVal data As Byte(), ByVal userStatusDataSize As Integer)
+        Me.New(userStatusDataSize)
         Me.Parse(data)
     End Sub
 
@@ -37,11 +38,13 @@ Public Class StatusData
 
         ReplyId = reader.ReadUInt16()
 
+        UserStatusData = reader.ReadBytes(UserStatusDataLength)
+
         'TODO: PUT ME BACK!
         IsValid = True 'VerifyFrcCrc(data)
     End Sub
 
-    Public Function CreateStatusPacket() As Byte()
+    Public Function GetBytes() As Byte()
         Dim data As Byte()
         Using stream As New MemoryStream()
             Dim writer As New MiscUtil.IO.EndianBinaryWriter(New MiscUtil.Conversion.BigEndianBitConverter(), stream, Text.Encoding.ASCII)
@@ -57,8 +60,16 @@ Public Class StatusData
             Dim pad2(5) As Byte '6 bytes
             writer.Write(pad2)                  ' God only knows what... 'TODO: FIX THIS
             writer.Write(CUShort(ReplyId))      ' Echo the packet number (2 bytes)
-            Dim paddingLength = Configuration.UserStatusDataSize    ' Pads packet to 1024 bytes (dear god this is potentially lossy) (may be used for additional user data)
 
+            Dim length As Integer
+            If UserStatusData Is Nothing Then
+                length = 0
+            Else
+                length = If(UserStatusData.Length <= UserStatusDataLength, UserStatusData.Length, UserStatusDataLength)
+                writer.Write(UserStatusData, 0, length)
+            End If
+
+            Dim paddingLength = (UserStatusDataLength - length) + 8
             Dim padding(paddingLength - 1) As Byte
             writer.Write(padding)
 
@@ -91,6 +102,10 @@ Public Class StatusData
         End If
         Return batteryBytes
     End Function
+
+    Public Property UserStatusDataLength As Integer
+    Public Property UserStatusData As Byte()
+    
     Private _mode As Mode
     Public Property Mode As Mode
         Get

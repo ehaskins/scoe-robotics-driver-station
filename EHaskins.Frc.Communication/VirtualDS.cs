@@ -28,20 +28,30 @@ namespace EHaskins.Frc.Communication
 
         public VirtualDS(int teamNumber)
         {
-            CommandData = new CommandData(1);
+            UserControlDataLength = Configuration.UserControlDataSize;
+            UserStatusDataLength = Configuration.UserStatusDataSize;
+            ReceivePort = Configuration.RobotToDsDestinationPortNumber;
+            TransmitPort = Configuration.DsToRobotDestinationPortNumber;
+
+            CommandData = new CommandData(1, UserControlDataLength);
             CommandData.Mode.RawValue = 84;
 
             CommandData.TeamNumber = teamNumber;
         }
 
-        public void Open(int teamNumber, IPEndPoint transmitEP = null, int receivePort = 1150)
+        public int TransmitPort { get; set; }
+        public int ReceivePort { get; set; }
+        public int UserStatusDataLength { get; set; }
+        public int UserControlDataLength { get; set; }
+
+        public void Open(int teamNumber, IPEndPoint transmitEP = null)
         {
             CommandData.TeamNumber = teamNumber;
-            _transmitEP = transmitEP ?? new IPEndPoint(FrcPacketUtils.GetIP(teamNumber, Devices.Robot), 1110);
+            _transmitEP = transmitEP ?? new IPEndPoint(FrcPacketUtils.GetIP(teamNumber, Devices.Robot), TransmitPort);
 
             _transmitClient = new UdpClient();
 
-            _receviceClient = new UdpClient(receivePort);
+            _receviceClient = new UdpClient(ReceivePort);
 
             _isOpen = true;
             _receviceClient.BeginReceive(this.ReceiveData, null);
@@ -76,8 +86,7 @@ namespace EHaskins.Frc.Communication
                 SafteyTriggered = false;
             }
         }
-
-
+        
         private void UpdateMode()
         {
             CommandData.PacketId += 1;
@@ -102,9 +111,6 @@ namespace EHaskins.Frc.Communication
             {
                 CommandData.Mode.Resync = false;
             }
-
-            //Console.WriteLine("Packet ID:" + CommandData.PacketId + " Mode: " + CommandData.Mode.RawValue + " Team:" + CommandData.TeamNumber);
-
         }
 
         public void SendData(object sender, MicroTimerEventArgs e)
@@ -129,7 +135,15 @@ namespace EHaskins.Frc.Communication
                 }
             }
             catch (Exception ex)
-             {
+            {
+                //TODO: Log me!
+            }
+            finally
+            {
+                if (_isOpen)
+                {
+                    _receviceClient.BeginReceive(this.ReceiveData, null);
+                }
             }
         }
 
@@ -141,7 +155,7 @@ namespace EHaskins.Frc.Communication
         {
             try
             {
-                var status = new StatusData(data);
+                var status = new StatusData(data, UserStatusDataLength);
 
                 if (ReceiveCheck(status))
                 {
@@ -160,13 +174,7 @@ namespace EHaskins.Frc.Communication
                 Debug.Assert(false);
                 throw;
             }
-            finally
-            {
-                if (_isOpen)
-                {
-                    _receviceClient.BeginReceive(this.ReceiveData, null);
-                }
-            }
+
         }
 
         public bool IsSyncronized
@@ -174,8 +182,6 @@ namespace EHaskins.Frc.Communication
             get { return _isSyncronized; }
             protected set { _isSyncronized = value; }
         }
-
-
 
         public CommandData CommandData
         {
@@ -217,22 +223,12 @@ namespace EHaskins.Frc.Communication
             {
                 if (disposing)
                 {
-                    // TODO: dispose managed state (managed objects).
                     this.Close();
                 }
 
-                // TODO: free unmanaged resources (unmanaged objects) and override Finalize() below.
-                // TODO: set large fields to null.
             }
             this.disposedValue = true;
         }
-
-        // TODO: override Finalize() only if Dispose(ByVal disposing As Boolean) above has code to free unmanaged resources.
-        //Protected Overrides Sub Finalize()
-        //    ' Do not change this code.  Put cleanup code in Dispose(ByVal disposing As Boolean) above.
-        //    Dispose(False)
-        //    MyBase.Finalize()
-        //End Sub
 
         // This code added by Visual Basic to correctly implement the disposable pattern.
         public void Dispose()
