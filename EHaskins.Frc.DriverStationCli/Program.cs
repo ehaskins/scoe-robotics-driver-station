@@ -27,6 +27,7 @@ namespace EHaskins.Frc.DriverStationCli
             ds.NewDataReceived += NewDataReceived;
             //ds.Open(1103, new IPEndPoint(IPAddress.Parse("127.0.0.1"), 1110));
             ds.Open(1692, new IPEndPoint(IPAddress.Parse("172.16.92.198"), 1140));
+            //ds.Open(1103, new IPEndPoint(IPAddress.Parse("172.11.3.198"), 1140));
             //ds.Open(1103);
             while (true)
             {
