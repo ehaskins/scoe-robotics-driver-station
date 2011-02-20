@@ -77,6 +77,7 @@ public class Crc32 : HashAlgorithm
                 else
                     entry = entry >> 1;
             createTable[i] = entry;
+            Console.WriteLine(String.Format("{0}:{1}", i, entry));
         }
 
         if (polynomial == DefaultPolynomial)
@@ -99,10 +100,10 @@ public class Crc32 : HashAlgorithm
     private byte[] UInt32ToBigEndianBytes(UInt32 x)
     {
         return new byte[] {
-			(byte)((x >> 24) & 0xff),
-			(byte)((x >> 16) & 0xff),
-			(byte)((x >> 8) & 0xff),
-			(byte)(x & 0xff)
-		};
+            (byte)((x >> 24) & 0xff),
+            (byte)((x >> 16) & 0xff),
+            (byte)((x >> 8) & 0xff),
+            (byte)(x & 0xff)
+        };
     }
 }

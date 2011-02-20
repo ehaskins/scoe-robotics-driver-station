@@ -41,7 +41,7 @@ Public Class StatusData
         UserStatusData = reader.ReadBytes(UserStatusDataLength)
 
         'TODO: PUT ME BACK!
-        IsValid = True 'VerifyFrcCrc(data)
+        IsValid = VerifyFrcCrc(data)
     End Sub
 
     Public Function GetBytes() As Byte()
@@ -75,7 +75,7 @@ Public Class StatusData
 
             Dim crcData = stream.ToArray()      ' Generates the CRC checksum of the data so far.
             stream.Position -= 4                ' Backs out and writes over the data range.
-            writer.Write((New Crc32()).ComputeHash(crcData))
+            writer.Write(Crc32.Compute(crcData))
             data = stream.ToArray()             ' Serializes the data.
             writer.Close()
         End Using

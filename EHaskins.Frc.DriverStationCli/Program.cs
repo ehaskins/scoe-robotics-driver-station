@@ -11,6 +11,7 @@ namespace EHaskins.Frc.DriverStationCli
     {
         static void Main(string[] args)
         {
+            Console.WriteLine(Crc32.Compute(new byte[] {1, 2, 3, 4, 5, 6, 7, 8, 9, 0}));
             var app = new VirtualDSCli();
             app.Run();
         }
@@ -36,7 +37,7 @@ namespace EHaskins.Frc.DriverStationCli
             ds2 = new VirtualDS(1692);
             ds2.TransmitPort = 1240;
             ds2.ReceivePort = 1250;
-            ds2.Open(1692, new IPEndPoint(IPAddress.Parse("172.16.92.199"), 1240));
+            //ds2.Open(1692, new IPEndPoint(IPAddress.Parse("172.16.92.199"), 1240));
             //ds.Open(1103);
             while (true)
             {
@@ -92,7 +93,7 @@ namespace EHaskins.Frc.DriverStationCli
                 stick.Axes[1] = stick.Axes[1] > 1 ? -1 : stick.Axes[1] + 0.1;
 
                 string mode = "";
-                if (ds.RobotStatus != null)
+                if (ds.RobotStatus != null && ds.IsSyncronized)
                 {
                     if (ds.RobotStatus.Mode.EStop)
                     {
@@ -105,11 +106,11 @@ namespace EHaskins.Frc.DriverStationCli
                 }
                 else
                 {
-                    mode = "no status";
+                    mode = "Not Connected";
                 }
-                Console.WriteLine(String.Format("Packet# {0}, {1}, Resync: {2}", ds.RobotStatus.ReplyId, mode, ds.RobotStatus.Mode.Resync));
+                Console.WriteLine(String.Format("Packet# {0}, {1}, Resync: {2}", ds.CommandData.PacketId, mode, ds.CommandData.Mode.Resync));
             }
-            catch (Exception)
+            catch (Exception ex)
             {
             }
         }
