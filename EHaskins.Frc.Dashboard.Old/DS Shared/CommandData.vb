@@ -140,6 +140,8 @@ Public Class CommandData
                 Dim crcData = stream.ToArray()
                 stream.Position -= 4
                 writer.Write((New Crc32()).ComputeHash(crcData))
+
+
                 data = stream.ToArray()
                 writer.Close()
             End Using
