@@ -19,7 +19,7 @@ namespace EHaskins.Next.RobotConfiguratorCli
             {
                 Console.WriteLine("Press enter to attempt connection.");
                 Console.ReadLine();
-                var initBytes = new byte[] { 0x01, 0x02, 0x03 };
+                var initBytes = new byte[] { 0x01, 0x00, 0x00 };
                 var epBroad = new IPEndPoint(IPAddress.Broadcast, configPort);
                 client.Send(initBytes, initBytes.Length, epBroad);
 
@@ -33,5 +33,13 @@ namespace EHaskins.Next.RobotConfiguratorCli
             }
             Console.ReadLine();
         }
+    }
+
+    enum Commands
+    {
+        Discover = 0x01,
+        Read = 0x02,
+        Write = 0x03,
+        Erase = 0x04
     }
 }
