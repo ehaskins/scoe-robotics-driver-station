@@ -19,8 +19,8 @@ namespace EHaskins.Frc.Communication
         private int _invalidPacketCount = 0;
         private int _packetCount = 0;
 
-        private int _teamNumber = 1103;
-        public VirtualRobot(int teamNumber)
+        private ushort _teamNumber = 1103;
+        public VirtualRobot(ushort teamNumber)
         {
             this.TeamNumber = teamNumber;
 
@@ -50,7 +50,7 @@ namespace EHaskins.Frc.Communication
             get { return _invalidPacketCount; }
             set { _invalidPacketCount = value; }
         }
-        public int TeamNumber
+        public ushort TeamNumber
         {
             get { return _teamNumber; }
             set { _teamNumber = value; }
@@ -59,7 +59,7 @@ namespace EHaskins.Frc.Communication
 
         public void Start()
         {
-            _status = new StatusData(UserStatusDataLength);
+            //_status = new StatusData(UserStatusDataLength); //TODO:FIX THIS!
 
             _status.TeamNumber = this.TeamNumber;
 
@@ -78,9 +78,9 @@ namespace EHaskins.Frc.Communication
                 return;
             }
             _status.ReplyId = packet.PacketId;
-            _status.ControlData = packet.Mode.Clone();
+            //_status.ControlData = new ControlData(); // packet.Mode.Clone();//TODO:FIX
 
-            var sendData = _status.GetBytes();
+            var sendData = new byte[1024]; //_status.GetBytes(); //TODO:FIX
             IPEndPoint ipep = (IPEndPoint)endpoint;
 
             ipep.Port = TransmitPort;
