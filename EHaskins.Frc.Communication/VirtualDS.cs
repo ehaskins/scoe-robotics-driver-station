@@ -155,7 +155,7 @@ namespace EHaskins.Frc.Communication
         {
             try
             {
-                var status = new StatusData(data, UserStatusDataLength);
+                var status = new StatusData(); // new StatusData(data, UserStatusDataLength); //TODO:FIX
 
                 if (ReceiveCheck(status))
                 {

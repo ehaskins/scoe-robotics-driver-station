@@ -245,11 +245,11 @@ Public Class CommandData
             _joysticks = value
         End Set
     End Property
-    Public Property PacketId() As Integer
+    Public Property PacketId() As UShort
         Get
             Return _packetId
         End Get
-        Set(ByVal value As Integer)
+        Set(ByVal value As UShort)
             _packetId = value
         End Set
     End Property
