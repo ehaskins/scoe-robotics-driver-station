@@ -1,11 +1,8 @@
 ﻿Imports System.IO
 Imports EHaskins.Frc.Communication
-Imports System.ComponentModel
-Imports System.Collections.ObjectModel
 
 Public Class CommandData
     Implements ICloneable
-    Implements INotifyPropertyChanged
 
     Public Sub New(ByVal data As Byte(), ByVal userControlDataSize As Integer)
         Me.New(0, userControlDataSize)
@@ -30,15 +27,15 @@ Public Class CommandData
     End Sub
 
 
-    Private _packetId As ObservableCollection(Of UInt16)
+    Private _packetId As UInt16
     Private _controlData As Mode
     Private _dsInputs As BindableBitField8
     Private _teamNumber As Integer
     Private _alliance As Alliance = Alliance.Red
     Private _position As Byte = 2
 
-    Private _joysticks As ObservableCollection(Of Joystick)
-    Private _analogInputs As ObservableCollection(Of UInt16)
+    Private _joysticks As Joystick()
+    Private _analogInputs As UInt16()
 
     Private _cRioChecksum As UInt64 = 3472328296227680304
     Private _fpgaChecksum0 As UInt32 = 1179010630
@@ -49,9 +46,6 @@ Public Class CommandData
     Private _version As DSVersion
 
     Private _isValid As Boolean
-
-    Event PropertyChanged As PropertyChangedEventHandler Implements INotifyPropertyChanged.PropertyChanged
-
 
     Public Function Clone() As Object Implements System.ICloneable.Clone
         Dim out As New CommandData(Me.PacketId, UserControlDataLength)
@@ -159,210 +153,128 @@ Public Class CommandData
         End Try
     End Function
 
-    Dim _userControlDataLength As Integer
-    Public Property UserControlDataLength() As Integer
-        Get
-            Return _userControlDataLength
-        End Get
-        Set(ByVal value As Integer)
-            If value <> _userControlDataLength Then
-                _userControlDataLength = value
-                RaiseEvent PropertyChanged(Me, New PropertyChangedEventArgs("UserControlDataLength"))
-            End If
-        End Set
-    End Property
-
-    Dim _userControlData As Byte()
-    Public Property UserControlData() As Byte()
-        Get
-            Return _userControlData
-        End Get
-        Set(ByVal value As Byte())
-            _userControlData = value
-            RaiseEvent PropertyChanged(Me, New PropertyChangedEventArgs("UserControlData"))
-        End Set
-    End Property
-
-
+    Public Property UserControlDataLength As Integer
+    Public Property UserControlData As Byte()
+    
 
     Public Property IsValid() As Boolean
         Get
             Return _isValid
         End Get
         Set(ByVal value As Boolean)
-            If value <> _isValid Then
-                _isValid = value
-                RaiseEvent PropertyChanged(Me, New PropertyChangedEventArgs("IsValid"))
-            End If
+            _isValid = value
         End Set
     End Property
-
     Public Property Alliance() As Alliance
         Get
             Return _alliance
         End Get
         Set(ByVal value As Alliance)
-            If value <> _alliance Then
-                _alliance = value
-                RaiseEvent PropertyChanged(Me, New PropertyChangedEventArgs("Alliance"))
-            End If
+            _alliance = value
         End Set
     End Property
-
     Public Property AnalogInputs() As UInt16()
         Get
             Return _analogInputs
         End Get
         Set(ByVal value As UInt16())
-            If value <> _analogInputs Then
-                _analogInputs = value
-                RaiseEvent PropertyChanged(Me, New PropertyChangedEventArgs("AnalogInputs"))
-            End If
+            _analogInputs = value
         End Set
     End Property
-
     Public Property Mode() As Mode
         Get
             Return _controlData
         End Get
         Set(ByVal value As Mode)
-            If value <> _controlData Then
-                _controlData = value
-                RaiseEvent PropertyChanged(Me, New PropertyChangedEventArgs("Mode"))
-            End If
+            _controlData = value
         End Set
     End Property
-
     Public Property CRioChecksum() As UInt64
         Get
             Return _cRioChecksum
         End Get
         Set(ByVal value As UInt64)
-            If value <> _cRioChecksum Then
-                _cRioChecksum = value
-                RaiseEvent PropertyChanged(Me, New PropertyChangedEventArgs("CRioChecksum"))
-            End If
+            _cRioChecksum = value
         End Set
     End Property
-
     Public Property DsInputs() As BindableBitField8
         Get
             Return _dsInputs
         End Get
         Set(ByVal value As BindableBitField8)
-            If value <> _dsInputs Then
-                _dsInputs = value
-                RaiseEvent PropertyChanged(Me, New PropertyChangedEventArgs("DsInputs"))
-            End If
+            _dsInputs = value
         End Set
     End Property
-
     Public Property FpgaChecksum0() As UInt32
         Get
             Return _fpgaChecksum0
         End Get
         Set(ByVal value As UInt32)
-            If value <> _fpgaChecksum0 Then
-                _fpgaChecksum0 = value
-                RaiseEvent PropertyChanged(Me, New PropertyChangedEventArgs("FpgaChecksum0"))
-            End If
+            _fpgaChecksum0 = value
         End Set
     End Property
-
     Public Property FpgaChecksum1() As UInt32
         Get
             Return _fpgaChecksum1
         End Get
         Set(ByVal value As UInt32)
-            If value <> _fpgaChecksum1 Then
-                _fpgaChecksum1 = value
-                RaiseEvent PropertyChanged(Me, New PropertyChangedEventArgs("FpgaChecksum1"))
-            End If
+            _fpgaChecksum1 = value
         End Set
     End Property
-
     Public Property FpgaChecksum2() As UInt32
         Get
             Return _fpgaChecksum2
         End Get
         Set(ByVal value As UInt32)
-            If value <> _fpgaChecksum2 Then
-                _fpgaChecksum2 = value
-                RaiseEvent PropertyChanged(Me, New PropertyChangedEventArgs("FpgaChecksum2"))
-            End If
+            _fpgaChecksum2 = value
         End Set
     End Property
-
     Public Property FpgaChecksum3() As UInt32
         Get
             Return _fpgaChecksum3
         End Get
         Set(ByVal value As UInt32)
-            If value <> _fpgaChecksum3 Then
-                _fpgaChecksum3 = value
-                RaiseEvent PropertyChanged(Me, New PropertyChangedEventArgs("FpgaChecksum3"))
-            End If
+            _fpgaChecksum3 = value
         End Set
     End Property
-
     Public Property Joysticks() As Joystick()
         Get
             Return _joysticks
         End Get
         Set(ByVal value As Joystick())
-            If value <> _joysticks Then
-                _joysticks = value
-                RaiseEvent PropertyChanged(Me, New PropertyChangedEventArgs("Joysticks"))
-            End If
+            _joysticks = value
         End Set
     End Property
-
     Public Property PacketId() As Integer
         Get
             Return _packetId
         End Get
         Set(ByVal value As Integer)
-            If value <> _packetId Then
-                _packetId = value
-                RaiseEvent PropertyChanged(Me, New PropertyChangedEventArgs("PacketId"))
-            End If
+            _packetId = value
         End Set
     End Property
-
     Public Property Position() As Byte
         Get
             Return _position
         End Get
         Set(ByVal value As Byte)
-            If value <> _position Then
-                _position = value
-                RaiseEvent PropertyChanged(Me, New PropertyChangedEventArgs("Position"))
-            End If
+            _position = value
         End Set
     End Property
-
     Public Property TeamNumber() As Integer
         Get
             Return _teamNumber
         End Get
         Set(ByVal value As Integer)
-            If value <> _teamNumber Then
-                _teamNumber = value
-                RaiseEvent PropertyChanged(Me, New PropertyChangedEventArgs("TeamNumber"))
-            End If
+            _teamNumber = value
         End Set
     End Property
-
     Public Property Version() As DSVersion
         Get
             Return _version
         End Get
         Set(ByVal value As DSVersion)
-            If value <> _version Then
-                _version = value
-                RaiseEvent PropertyChanged(Me, New PropertyChangedEventArgs("Version"))
-            End If
+            _version = value
         End Set
     End Property
-
 End Class
