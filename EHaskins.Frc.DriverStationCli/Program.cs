@@ -10,7 +10,7 @@ namespace EHaskins.Frc.DriverStationCli
     {
         static void Main(string[] args)
         {
-            Console.WriteLine(Crc32.Compute(new byte[] {1, 2, 3, 4, 5, 6, 7, 8, 9, 0}));
+            Console.WriteLine(Crc32.Compute(new byte[] { 1, 2, 3, 4, 5, 6, 7, 8, 9, 0 }));
             var app = new VirtualDSCli();
             app.Run();
         }
@@ -44,51 +44,54 @@ namespace EHaskins.Frc.DriverStationCli
             {
                 var key = Console.ReadKey();
 
-                if (key.Key == ConsoleKey.E)
+                switch (key.Key)
                 {
+                    case ConsoleKey.E:
+                        Console.WriteLine("Enabled");
+                        ds.ControlData.Mode.Enabled = true;
+                        ds.ControlData.Mode.EStop = false;
 
-                    Console.WriteLine("Enabled");
-                    ds.ControlData.Mode.Enabled = true;
-                    ds.ControlData.Mode.Autonomous = true;
-                    ds.ControlData.Mode.EStop = false;
+                        ds2.ControlData.Mode.Enabled = true;
+                        ds2.ControlData.Mode.EStop = false;
+                        break;
+                    case ConsoleKey.D:
+                        Console.WriteLine("Disabled");
+                        ds.ControlData.Mode.Enabled = false;
+                        ds.ControlData.Mode.EStop = false;
 
-                    ds2.ControlData.Mode.Enabled = true;
-                    ds2.ControlData.Mode.Autonomous = true;
-                    ds2.ControlData.Mode.EStop = false;
+                        ds2.ControlData.Mode.Enabled = false;
+                        ds2.ControlData.Mode.EStop = false;
+                        break;
+                    case ConsoleKey.Spacebar:
+                        Console.WriteLine("E-Stop");
+                        ds.ControlData.Mode.Enabled = false;
+                        ds.ControlData.Mode.EStop = true;
+
+                        ds2.ControlData.Mode.Enabled = false;
+                        ds2.ControlData.Mode.EStop = true;
+                        break;
+                    case ConsoleKey.T:
+                        ds.ControlData.Mode.Autonomous = false;
+
+                        ds2.ControlData.Mode.Autonomous = false;
+                        break;
+                    case ConsoleKey.A:
+                        ds.ControlData.Mode.Autonomous = true;
+
+                        ds2.ControlData.Mode.Autonomous = true;
+                        break;
+                    case ConsoleKey.Q:
+                        ds.Close();
+                        return;
                 }
-                else if (key.Key == ConsoleKey.D)
-                {
-                    Console.WriteLine("Disabled");
-                    ds.ControlData.Mode.Enabled = false;
-                    ds.ControlData.Mode.Autonomous = true;
-                    ds.ControlData.Mode.EStop = false;
 
-                    ds2.ControlData.Mode.Enabled = false;
-                    ds2.ControlData.Mode.Autonomous = true;
-                    ds2.ControlData.Mode.EStop = false;
-                }     
-                else if (key.Key == ConsoleKey.Spacebar)
-                {
-                    Console.WriteLine("E-Stop");
-                    ds.ControlData.Mode.Enabled = false;
-                    ds.ControlData.Mode.Autonomous = true;
-                    ds.ControlData.Mode.EStop = true;
 
-                    ds2.ControlData.Mode.Enabled = false;
-                    ds2.ControlData.Mode.Autonomous = true;
-                    ds2.ControlData.Mode.EStop = true;
-                }
-                else if (key.Key == ConsoleKey.Q)
-                {
-                    ds.Close();
-                    return;
-                }
             }
         }
 
         private void SendingData(object sender, EventArgs e)
         {
-            
+
         }
         public void NewDataReceived(object sender, EventArgs e)
         {
