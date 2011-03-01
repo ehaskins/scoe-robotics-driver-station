@@ -4,11 +4,39 @@ using System.Linq;
 using System.Text;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.IO;
 
 namespace EHaskins.Frc.Communication
 {
     public class StatusData : INotifyPropertyChanged
     {
+        public StatusData()
+        {
+            Mode = new Mode();
+            DigitalOutputs = new BindableBitField8();
+
+        }
+        public void Update(byte[] data)
+        {
+            using (MiscUtil.IO.EndianBinaryReader reader = new MiscUtil.IO.EndianBinaryReader(new MiscUtil.Conversion.BigEndianBitConverter(), new MemoryStream(data)))
+            {
+                Mode.RawValue = reader.ReadByte();
+                var batteryBytes = reader.ReadBytes(2);
+                BatteryVoltage = Convert.ToDouble(batteryBytes[0].ToString("x")) + (Convert.ToDouble(batteryBytes[1].ToString("x")) / 100.0);
+                DigitalOutputs.RawValue = reader.ReadByte();
+                reader.ReadBytes(4);
+                TeamNumber = reader.ReadUInt16();
+                RobotMac = reader.ReadBytes(6);
+                FpgaVersion = Encoding.ASCII.GetString(reader.ReadBytes(8));
+                reader.ReadBytes(6);
+                ReplyId = reader.ReadUInt16();
+                int userDataLength = data.Length - (int)reader.BaseStream.Position - 8;
+                UserStatusDataLength = userDataLength;
+                UserStatusData = reader.ReadBytes(userDataLength);
+            }
+
+            IsValid = FrcPacketUtils.VerifyFrcCrc(data);
+        }
         double _BatteryVoltage;
         public double BatteryVoltage
         {
@@ -31,14 +59,17 @@ namespace EHaskins.Frc.Communication
         {
             get
             {
-                return _CodeRunning;
+                return BatteryVoltage == 37.37;
             }
             set
             {
-                if (value != _CodeRunning)
+                if (value && !CodeRunning)
                 {
-                    _CodeRunning = value;
-                    PropertyChanged(this, new PropertyChangedEventArgs("CodeRunning"));
+                    BatteryVoltage = 0.0;
+                }
+                else if (!value)
+                {
+                    BatteryVoltage = 37.37;
                 }
             }
         }
@@ -77,18 +108,18 @@ namespace EHaskins.Frc.Communication
             }
         }
 
-        string _FpgeVersion;
-        public string FpgeVersion
+        string _FpgaVersion;
+        public string FpgaVersion
         {
             get
             {
-                return _FpgeVersion;
+                return _FpgaVersion;
             }
             set
             {
-                if (value != _FpgeVersion)
+                if (value != _FpgaVersion)
                 {
-                    _FpgeVersion = value;
+                    _FpgaVersion = value;
                     PropertyChanged(this, new PropertyChangedEventArgs("FpgeVersion"));
                 }
             }
@@ -161,6 +192,7 @@ namespace EHaskins.Frc.Communication
                 }
             }
         }
+
         byte[] _UserStatusData;
         public byte[] UserStatusData
         {
@@ -178,6 +210,22 @@ namespace EHaskins.Frc.Communication
             }
         }
 
+        private int _UserStatusDataLength;
+        public int UserStatusDataLength
+        {
+            get
+            {
+                return _UserStatusDataLength;
+            }
+            set
+            {
+                if (value != _UserStatusDataLength)
+                {
+                    _UserStatusDataLength = value;
+                    PropertyChanged(this, new PropertyChangedEventArgs("UserStatusDataLength"));
+                }
+            }
+        }
 
         public event PropertyChangedEventHandler PropertyChanged = delegate { };
 

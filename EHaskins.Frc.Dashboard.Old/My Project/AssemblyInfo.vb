@@ -10,9 +10,9 @@ Imports System.Runtime.InteropServices
 
 <Assembly: AssemblyTitle("EHaskins.Frc.Dashboard")> 
 <Assembly: AssemblyDescription("")> 
-<Assembly: AssemblyCompany("Microsoft")> 
+<Assembly: AssemblyCompany("EHaskins.net")> 
 <Assembly: AssemblyProduct("EHaskins.Frc.Dashboard")> 
-<Assembly: AssemblyCopyright("Copyright © Microsoft 2009")> 
+<Assembly: AssemblyCopyright("Copyright © EHaskins.net 2009")> 
 <Assembly: AssemblyTrademark("")> 
 
 <Assembly: ComVisible(False)>

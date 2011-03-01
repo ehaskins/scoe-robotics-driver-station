@@ -2,61 +2,52 @@
 using System.Net.Sockets;
 using System.Net;
 using MicroLibrary;
-using EHaskins.Frc.Dashboard;
 using System.Diagnostics;
 
-namespace EHaskins.Frc.Communication.Old
+namespace EHaskins.Frc.Communication
 {
     public class VirtualDS : IDisposable
     {
-
         public event EventHandler NewDataReceived;
+        public event EventHandler SendingData;
 
         bool _isOpen;
 
         MicroTimer _transmitTimer;
-        StatusData _robotStatus;
-        CommandData _controlData;
-        UdpClient _transmitClient;
-        UdpClient _receviceClient;
+        UdpClient _client;
         IPEndPoint _transmitEP;
-        IPEndPoint _receiveEP;
 
-        bool _isSyncronized = false;
-        private int _invalidPacketCount = 0;
-        private int _totalInvalidPacketCount = 0;
-
-        public VirtualDS(int teamNumber)
+        public VirtualDS(ushort teamNumber)
         {
-            UserControlDataLength = Configuration.UserControlDataSize;
-            UserStatusDataLength = Configuration.UserStatusDataSize;
+            ControlData = new ControlData();
+            ControlData.TeamNumber = teamNumber;
+            ControlData.UserControlDataLength = Configuration.UserControlDataSize;
             ReceivePort = Configuration.RobotToDsDestinationPortNumber;
             TransmitPort = Configuration.DsToRobotDestinationPortNumber;
 
-            CommandData = new CommandData(1, UserControlDataLength);
-            CommandData.Mode.RawValue = 84;
 
-            CommandData.TeamNumber = teamNumber;
         }
 
         public int TransmitPort { get; set; }
         public int ReceivePort { get; set; }
-        public int UserStatusDataLength { get; set; }
-        public int UserControlDataLength { get; set; }
+        public bool IsSyncronized { get; protected set; }
+        public ControlData ControlData { get; protected set; }
+        public StatusData StatusData { get; protected set; }
+        public int TotalInvalidPacketCount { get; set; }
+        public int CurrentInvalidPacketCount { get; set; }
+        public bool SafteyTriggered { get; set; }
 
-        public void Open(int teamNumber, IPEndPoint transmitEP = null)
+        public void Open(ushort teamNumber, IPEndPoint transmitEP = null)
         {
-            CommandData.TeamNumber = teamNumber;
+            ControlData.TeamNumber = teamNumber;
             _transmitEP = transmitEP ?? new IPEndPoint(FrcPacketUtils.GetIP(teamNumber, Devices.Robot), TransmitPort);
 
-            _transmitClient = new UdpClient();
-
-            _receviceClient = new UdpClient(ReceivePort);
+            _client = new UdpClient(ReceivePort);
 
             _isOpen = true;
-            _receviceClient.BeginReceive(this.ReceiveData, null);
+            _client.BeginReceive(this.ReceiveData, null);
 
-            _transmitTimer = new MicroTimer(20*1000);
+            _transmitTimer = new MicroTimer(20 * 1000);
             _transmitTimer.Elapsed += this.SendData;
             //_transmitTimer.AutoReset = True
             _transmitTimer.Start();
@@ -64,15 +55,17 @@ namespace EHaskins.Frc.Communication.Old
 
         public void Close()
         {
-            if (_isOpen && _transmitClient != null)
-            {
+            if (_isOpen)
+                _isOpen = false;
+            if (_client != null)
+                _client.Close();
+            if (_transmitTimer.Enabled)
                 _transmitTimer.Stop();
-            }
         }
 
         private void CheckSafties()
         {
-            if (RobotStatus == null || (RobotStatus.ReplyId < CommandData.PacketId))
+            if (StatusData == null || (StatusData.ReplyId < ControlData.PacketId))
             {
                 CurrentInvalidPacketCount += 1;
             }
@@ -86,30 +79,30 @@ namespace EHaskins.Frc.Communication.Old
                 SafteyTriggered = false;
             }
         }
-        
+
         private void UpdateMode()
         {
-            CommandData.PacketId += 1;
+            ControlData.PacketId += 1;
 
             if (SafteyTriggered)
             {
-                CommandData.Mode.Enabled = false;
+                ControlData.Mode.Enabled = false;
                 IsSyncronized = false;
             }
 
-            if (CommandData.PacketId == UInt16.MaxValue)
+            if (ControlData.PacketId == UInt16.MaxValue)
             {
-                CommandData.PacketId = 0;
+                ControlData.PacketId = 0;
                 IsSyncronized = false;
             }
 
             if (!IsSyncronized)
             {
-                CommandData.Mode.Resync = true;
+                ControlData.Mode.Resync = true;
             }
             else
             {
-                CommandData.Mode.Resync = false;
+                ControlData.Mode.Resync = false;
             }
         }
 
@@ -117,9 +110,12 @@ namespace EHaskins.Frc.Communication.Old
         {
             CheckSafties();
             UpdateMode();
-
-            var sendData = CommandData.GetBytes();
-            _transmitClient.Send(sendData, sendData.Length, _transmitEP);
+            if (SendingData != null)
+            {
+                SendingData(this, null);
+            }
+            var sendData = ControlData.GetBytes();
+            _client.Send(sendData, sendData.Length, _transmitEP);
         }
 
         public void ReceiveData(IAsyncResult ar)
@@ -127,12 +123,8 @@ namespace EHaskins.Frc.Communication.Old
             try
             {
                 IPEndPoint endpoint = null;
-                var bytes = _receviceClient.EndReceive(ar, ref endpoint);
+                var bytes = _client.EndReceive(ar, ref endpoint);
                 ParseBytes(bytes);
-                if (NewDataReceived != null)
-                {
-                    NewDataReceived(this, null);
-                }
             }
             catch (Exception ex)
             {
@@ -142,26 +134,32 @@ namespace EHaskins.Frc.Communication.Old
             {
                 if (_isOpen)
                 {
-                    _receviceClient.BeginReceive(this.ReceiveData, null);
+                    _client.BeginReceive(this.ReceiveData, null);
                 }
             }
         }
 
         private bool ReceiveCheck(StatusData status)
         {
-            return status.IsValid && status.TeamNumber == CommandData.TeamNumber && status.ReplyId == CommandData.PacketId;
+            return status.IsValid && status.TeamNumber == ControlData.TeamNumber && status.ReplyId == ControlData.PacketId;
         }
         private void ParseBytes(byte[] data)
         {
             try
             {
                 var status = new StatusData(); // new StatusData(data, UserStatusDataLength); //TODO:FIX
-
+                status.Update(data);
                 if (ReceiveCheck(status))
                 {
                     CurrentInvalidPacketCount = 0;
                     IsSyncronized = true;
-                    RobotStatus = status;
+
+                    StatusData = status;
+
+                    if (NewDataReceived != null)
+                    {
+                        NewDataReceived(this, null);
+                    }
                 }
                 else
                 {
@@ -171,45 +169,9 @@ namespace EHaskins.Frc.Communication.Old
             catch (Exception ex)
             {
                 Debug.WriteLine(ex.Message);
-                Debug.Assert(false);
                 throw;
             }
 
-        }
-
-        public bool IsSyncronized
-        {
-            get { return _isSyncronized; }
-            protected set { _isSyncronized = value; }
-        }
-
-        public CommandData CommandData
-        {
-            get { return _controlData; }
-            protected set { _controlData = value; }
-        }
-        public StatusData RobotStatus
-        {
-            get { return _robotStatus; }
-            protected set { _robotStatus = value; }
-        }
-        public int TotalInvalidPacketCount
-        {
-            get { return _totalInvalidPacketCount; }
-            set { _totalInvalidPacketCount = value; }
-        }
-
-        public int CurrentInvalidPacketCount
-        {
-            get { return _invalidPacketCount; }
-            set { _invalidPacketCount = value; }
-        }
-
-        private bool _safteyTriggered;
-        public bool SafteyTriggered
-        {
-            get { return _safteyTriggered; }
-            set { _safteyTriggered = value; }
         }
 
         #region "IDisposable Support"
