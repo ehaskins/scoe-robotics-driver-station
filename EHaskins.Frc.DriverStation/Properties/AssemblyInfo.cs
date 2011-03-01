@@ -10,9 +10,9 @@ using System.Windows;
 [assembly: AssemblyTitle("EHaskins.Frc.DriverStation")]
 [assembly: AssemblyDescription("")]
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("Microsoft")]
+[assembly: AssemblyCompany("EHaskins.net")]
 [assembly: AssemblyProduct("EHaskins.Frc.DriverStation")]
-[assembly: AssemblyCopyright("Copyright © Microsoft 2011")]
+[assembly: AssemblyCopyright("Copyright © EHaskins.net 2011")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 

@@ -40,7 +40,6 @@ Public Class StatusData
 
         UserStatusData = reader.ReadBytes(UserStatusDataLength)
 
-        'TODO: PUT ME BACK!
         IsValid = VerifyFrcCrc(data)
     End Sub
 

@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using EHaskins.Frc.Dashboard;
 using EHaskins.Frc.Communication;
 using System.Net;
 namespace EHaskins.Frc.DriverStationCli
@@ -28,7 +27,9 @@ namespace EHaskins.Frc.DriverStationCli
             ds = new VirtualDS(1692);
 
             ds.NewDataReceived += NewDataReceived;
-            ds.Open(1692, new IPEndPoint(IPAddress.Parse("172.16.92.198"), 1140));
+            ds.SendingData += SendingData;
+            ds.TransmitPort = 1110;
+            ds.Open(1692, new IPEndPoint(IPAddress.Parse("172.16.92.198"), ds.TransmitPort));
 
             //ds2 = new VirtualDS(1103);
             //ds2.TransmitPort = 1240;
@@ -47,35 +48,35 @@ namespace EHaskins.Frc.DriverStationCli
                 {
 
                     Console.WriteLine("Enabled");
-                    ds.CommandData.Mode.Enabled = true;
-                    ds.CommandData.Mode.Autonomous = true;
-                    ds.CommandData.Mode.EStop = false;
+                    ds.ControlData.Mode.Enabled = true;
+                    ds.ControlData.Mode.Autonomous = true;
+                    ds.ControlData.Mode.EStop = false;
 
-                    ds2.CommandData.Mode.Enabled = true;
-                    ds2.CommandData.Mode.Autonomous = true;
-                    ds2.CommandData.Mode.EStop = false;
+                    ds2.ControlData.Mode.Enabled = true;
+                    ds2.ControlData.Mode.Autonomous = true;
+                    ds2.ControlData.Mode.EStop = false;
                 }
                 else if (key.Key == ConsoleKey.D)
                 {
                     Console.WriteLine("Disabled");
-                    ds.CommandData.Mode.Enabled = false;
-                    ds.CommandData.Mode.Autonomous = true;
-                    ds.CommandData.Mode.EStop = false;
+                    ds.ControlData.Mode.Enabled = false;
+                    ds.ControlData.Mode.Autonomous = true;
+                    ds.ControlData.Mode.EStop = false;
 
-                    ds2.CommandData.Mode.Enabled = false;
-                    ds2.CommandData.Mode.Autonomous = true;
-                    ds2.CommandData.Mode.EStop = false;
+                    ds2.ControlData.Mode.Enabled = false;
+                    ds2.ControlData.Mode.Autonomous = true;
+                    ds2.ControlData.Mode.EStop = false;
                 }     
                 else if (key.Key == ConsoleKey.Spacebar)
                 {
                     Console.WriteLine("E-Stop");
-                    ds.CommandData.Mode.Enabled = false;
-                    ds.CommandData.Mode.Autonomous = true;
-                    ds.CommandData.Mode.EStop = true;
+                    ds.ControlData.Mode.Enabled = false;
+                    ds.ControlData.Mode.Autonomous = true;
+                    ds.ControlData.Mode.EStop = true;
 
-                    ds2.CommandData.Mode.Enabled = false;
-                    ds2.CommandData.Mode.Autonomous = true;
-                    ds2.CommandData.Mode.EStop = true;
+                    ds2.ControlData.Mode.Enabled = false;
+                    ds2.ControlData.Mode.Autonomous = true;
+                    ds2.ControlData.Mode.EStop = true;
                 }
                 else if (key.Key == ConsoleKey.Q)
                 {
@@ -85,30 +86,31 @@ namespace EHaskins.Frc.DriverStationCli
             }
         }
 
+        private void SendingData(object sender, EventArgs e)
+        {
+            
+        }
         public void NewDataReceived(object sender, EventArgs e)
         {
             try
             {
-                var stick = ds.CommandData.Joysticks[1];
-                stick.Axes[1] = stick.Axes[1] > 1 ? -1 : stick.Axes[1] + 0.1;
-
                 string mode = "";
-                if (ds.RobotStatus != null && ds.IsSyncronized)
+                if (ds.StatusData != null && ds.IsSyncronized)
                 {
-                    if (ds.RobotStatus.Mode.EStop)
+                    if (ds.StatusData.Mode.EStop)
                     {
                         mode = "E-Stop";
                     }
                     else
                     {
-                        mode = ds.RobotStatus.Mode.Enabled ? "Enabled" : "Disabled";
+                        mode = ds.StatusData.Mode.Enabled ? "Enabled" : "Disabled";
                     }
                 }
                 else
                 {
                     mode = "Not Connected";
                 }
-                Console.WriteLine(String.Format("Packet# {0}, {1}, Resync: {2}", ds.CommandData.PacketId, mode, ds.CommandData.Mode.Resync));
+                Console.WriteLine(String.Format("Packet# {0}, {1}, Resync: {2}", ds.ControlData.PacketId, mode, ds.ControlData.Mode.Resync));
             }
             catch (Exception ex)
             {
