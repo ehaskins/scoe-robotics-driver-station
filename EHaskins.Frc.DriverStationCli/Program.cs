@@ -4,6 +4,9 @@ using System.Linq;
 using System.Text;
 using EHaskins.Frc.Communication;
 using System.Net;
+using SlimDX;
+using SlimDX.DirectInput;
+
 namespace EHaskins.Frc.DriverStationCli
 {
     class Program
@@ -20,10 +23,14 @@ namespace EHaskins.Frc.DriverStationCli
     {
         VirtualDS ds;
         VirtualDS ds2;
+        DirectInput dinput;
+        List<SlimDX.DirectInput.Joystick> sticks;
         public void Run()
         {
-            Configuration.UserControlDataSize = 64;
-            Configuration.UserStatusDataSize = 64;
+            dinput = new DirectInput();
+            sticks = new List<SlimDX.DirectInput.Joystick>();
+            Communication.Configuration.UserControlDataSize = 64;
+            Communication.Configuration.UserStatusDataSize = 64;
             ds = new VirtualDS(1692);
 
             ds.NewDataReceived += NewDataReceived;
@@ -80,6 +87,9 @@ namespace EHaskins.Frc.DriverStationCli
 
                         ds2.ControlData.Mode.Autonomous = true;
                         break;
+                    case ConsoleKey.J:
+                        UpdateSticks();
+                        break;
                     case ConsoleKey.Q:
                         ds.Close();
                         return;
@@ -89,9 +99,14 @@ namespace EHaskins.Frc.DriverStationCli
             }
         }
 
+
         private void SendingData(object sender, EventArgs e)
         {
-
+            var sticks = ds.ControlData.Joysticks;
+            for (int i = 0; i < 4; i++)
+            {
+                
+            }
         }
         public void NewDataReceived(object sender, EventArgs e)
         {
@@ -118,6 +133,50 @@ namespace EHaskins.Frc.DriverStationCli
             catch (Exception ex)
             {
             }
+        }
+        private void UpdateSticks()
+        {
+            foreach (var stick in sticks)
+            {
+                if (stick != null)
+                {
+                    stick.Unacquire();
+                    stick.Dispose();
+                    sticks.Remove(stick);
+                }
+            }
+            int stickCount = 0;
+            foreach (DeviceInstance device in dinput.GetDevices(DeviceClass.GameController, DeviceEnumerationFlags.AttachedOnly))
+            {
+                // create the device
+                try
+                {
+                    var stick = new Joystick(dinput, device.InstanceGuid);
+                    stick.SetCooperativeLevel(this, CooperativeLevel.Exclusive | CooperativeLevel.Foreground);
+
+                    break;
+                }
+                catch (DirectInputException)
+                {
+                }
+            }
+
+            if (joystick == null)
+            {
+                MessageBox.Show("There are no joysticks attached to the system.");
+                return;
+            }
+
+            foreach (DeviceObjectInstance deviceObject in joystick.GetObjects())
+            {
+                if ((deviceObject.ObjectType & ObjectDeviceType.Axis) != 0)
+                    joystick.GetObjectPropertiesById((int)deviceObject.ObjectType).SetRange(-1000, 1000);
+
+                UpdateControl(deviceObject);
+            }
+
+            // acquire the device
+            joystick.Acquire();
         }
     }
 }
