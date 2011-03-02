@@ -102,11 +102,41 @@ namespace EHaskins.Frc.DriverStationCli
 
         private void SendingData(object sender, EventArgs e)
         {
-            var sticks = ds.ControlData.Joysticks;
+            var dataSticks = ds.ControlData.Joysticks;
             for (int i = 0; i < 4; i++)
             {
-                
+            
+                if (sticks.Count > i)
+                {
+                    var stick = sticks[i];
+                    var dataStick = dataSticks[i];
+                    if (stick.Acquire().IsSuccess && stick.Poll().IsSuccess)
+                    {
+                        var state = stick.GetCurrentState();
+                        if (Result.Last.IsSuccess)
+                        {
+                            dataStick.Axes[0] = state.X / 1000f;
+                            dataStick.Axes[1] = state.Y / 1000f;
+                            dataStick.Axes[2] = state.Z / 1000f;
+                            dataStick.Axes[3] = state.RotationX / 1000f;
+                            dataStick.Axes[4] = state.RotationY / 1000f;
+                            dataStick.Axes[5] = state.RotationZ / 1000f;
+                        }
+
+                        var buttons = state.GetButtons();
+                        for (int button = 0; button < buttons.Length; button++)
+                        {
+                            dataStick.Buttons[button] = buttons[button];
+                        }
+                    }
+                }
             }
+
+            //string axes = "";
+            //foreach (var axis in dataSticks[0].Axes){
+            //    axes += " " + axis.ToString("f2");
+            //}
+            //Console.WriteLine(axes);
         }
         public void NewDataReceived(object sender, EventArgs e)
         {
@@ -136,13 +166,13 @@ namespace EHaskins.Frc.DriverStationCli
         }
         private void UpdateSticks()
         {
-            foreach (var stick in sticks)
+            for (int i = sticks.Count - 1; i >= 0; i--)
             {
-                if (stick != null)
+                if (sticks[i] != null)
                 {
-                    stick.Unacquire();
-                    stick.Dispose();
-                    sticks.Remove(stick);
+                    sticks[i].Unacquire();
+                    sticks[i].Dispose();
+                    sticks.Remove(sticks[i]);
                 }
             }
             int stickCount = 0;
@@ -151,32 +181,35 @@ namespace EHaskins.Frc.DriverStationCli
                 // create the device
                 try
                 {
-                    var stick = new Joystick(dinput, device.InstanceGuid);
-                    stick.SetCooperativeLevel(this, CooperativeLevel.Exclusive | CooperativeLevel.Foreground);
+                    var stick = new SlimDX.DirectInput.Joystick(dinput, device.InstanceGuid);
+                    stick.Acquire();
 
-                    break;
+                    foreach (DeviceObjectInstance deviceObject in stick.GetObjects())
+                    {
+                        if ((deviceObject.ObjectType & ObjectDeviceType.Axis) != 0)
+                            stick.GetObjectPropertiesById((int)deviceObject.ObjectType).SetRange(-1000, 1000);
+                    }
+
+                    sticks.Add(stick);
                 }
                 catch (DirectInputException)
                 {
                 }
             }
 
-            if (joystick == null)
+            foreach (var stick in sticks)
             {
-                MessageBox.Show("There are no joysticks attached to the system.");
-                return;
+                Console.WriteLine(stick.Information.InstanceName);
+                /*foreach (DeviceObjectInstance deviceObject in stick.GetObjects())
+                {
+                    if ((deviceObject.ObjectType & ObjectDeviceType.Axis) != 0)
+                        stick.GetObjectPropertiesById((int)deviceObject.ObjectType).SetRange(-1000, 1000);
+                }
+
+                // acquire the device
+                stick.Acquire();*/
             }
-
-            foreach (DeviceObjectInstance deviceObject in joystick.GetObjects())
-            {
-                if ((deviceObject.ObjectType & ObjectDeviceType.Axis) != 0)
-                    joystick.GetObjectPropertiesById((int)deviceObject.ObjectType).SetRange(-1000, 1000);
-
-                UpdateControl(deviceObject);
-            }
-
-            // acquire the device
-            joystick.Acquire();
+            Console.WriteLine("Found " + sticks.Count() + " sticks.");
         }
     }
 }
