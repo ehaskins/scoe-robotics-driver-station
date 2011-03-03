@@ -5,8 +5,18 @@ using System.Text;
 
 namespace EHaskins.Frc.Communication
 {
+    public delegate void BitChangedEventHandler(object sender, int bit);
+
     public abstract class BitField8
     {
+        public event BitChangedEventHandler BitChanged;
+        protected void RaiseBitChanged(int bit)
+        {
+            if (BitChanged != null)
+            {
+                BitChanged(this, bit);
+            }
+        }
         public BitField8()
         {
             Length = 8;
@@ -39,6 +49,7 @@ namespace EHaskins.Frc.Communication
                     {
                         RawValue -= GetMask(index);
                     }
+                    RaiseBitChanged(index);
                 }
             }
         }

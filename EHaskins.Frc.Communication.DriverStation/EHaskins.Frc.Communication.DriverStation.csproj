@@ -5,11 +5,11 @@
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProductVersion>8.0.30703</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
-    <ProjectGuid>{2EC93CB5-6694-4B03-8DCF-BEB31720F2AF}</ProjectGuid>
+    <ProjectGuid>{1A9DD489-905A-4CED-BA17-CAFACD36604F}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>EHaskins.Frc.Communication</RootNamespace>
-    <AssemblyName>EHaskins.Frc.Communication.Shared</AssemblyName>
+    <RootNamespace>EHaskins.Frc.Communication.DriverStation</RootNamespace>
+    <AssemblyName>EHaskins.Frc.Communication.DriverStation</AssemblyName>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
   </PropertyGroup>
@@ -31,12 +31,7 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="EHaskins.Utilities, Version=1.0.0.0, Culture=neutral, processorArchitecture=x86">
-      <HintPath>..\EHaskins.Utilities\bin\x86\Debug\EHaskins.Utilities.dll</HintPath>
-    </Reference>
-    <Reference Include="MiscUtil">
-      <HintPath>..\libs\MiscUtil.dll</HintPath>
-    </Reference>
+    <Reference Include="SlimDX, Version=4.0.10.43, Culture=neutral, PublicKeyToken=b1b0c32fd1ffe4f9, processorArchitecture=x86" />
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />
@@ -46,30 +41,18 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Alliance.cs" />
-    <Compile Include="BindableBitField16.cs" />
-    <Compile Include="BindableBitField8.cs" />
-    <Compile Include="BitField16.cs" />
-    <Compile Include="BitField8.cs" />
-    <Compile Include="Configuration.cs" />
-    <Compile Include="ControlData.cs" />
-    <Compile Include="DSVersion.cs" />
-    <Compile Include="Error.cs" />
-    <Compile Include="Filters\Filter.cs" />
-    <Compile Include="Filters\PreFilter.cs" />
-    <Compile Include="FrcPacketUtils.cs" />
-    <Compile Include="Joystick.cs" />
-    <Compile Include="Mode.cs" />
+    <Compile Include="DriverStation.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="StatusData.cs" />
+    <Compile Include="SlimDXDriverStation.cs" />
   </ItemGroup>
   <ItemGroup>
-    <WCFMetadata Include="Service References\" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\Crc32\Crc32.csproj">
-      <Project>{8EF12C16-7E36-4320-B9C1-F96FC8E671F9}</Project>
-      <Name>Crc32</Name>
+    <ProjectReference Include="..\EHaskins.Frc.Communication.Shared\EHaskins.Frc.Communication.Shared.csproj">
+      <Project>{2EC93CB5-6694-4B03-8DCF-BEB31720F2AF}</Project>
+      <Name>EHaskins.Frc.Communication.Shared</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\EHaskins.Utilities\EHaskins.Utilities.csproj">
+      <Project>{A0F0A322-5372-4040-9394-EC661859A4F1}</Project>
+      <Name>EHaskins.Utilities</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
