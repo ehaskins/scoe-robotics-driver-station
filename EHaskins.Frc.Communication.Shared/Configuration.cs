@@ -7,7 +7,7 @@ namespace EHaskins.Frc.Communication
         const int DEFAULT_USER_CONTROL_DATA_SIZE = 936;
         const int DEFAULT_USER_STATUS_DATA_SIZE = 984;
         const int DEFAULT_INVALID_PACKET_SAFETY_LEVEL = 25;
-        const int DS_TO_ROBOT_REMOTE_PORT = 1140;
+        const int DS_TO_ROBOT_REMOTE_PORT = 1110;
         const int ROBOT_TO_DS_LOCAL_PORT = 1150;
         static int _userControlDataSize = DEFAULT_USER_CONTROL_DATA_SIZE;
         private static int _userStatusDataSize = DEFAULT_USER_STATUS_DATA_SIZE;

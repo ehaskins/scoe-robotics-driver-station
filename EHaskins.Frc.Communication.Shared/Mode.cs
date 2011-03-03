@@ -2,18 +2,25 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Diagnostics;
 
 namespace EHaskins.Frc.Communication
 {
     public class Mode : BindableBitField8, ICloneable
     {
-        public Mode()
-        {
-            
-        }
+        private string[] Properties = { "IsFpgaChecksum", "IsCRioChecksum", "IsResync", "IsReserved", "IsAutonomous", "IsEnabled", "IsEStop", "IsReset" };
+        public Mode() : this(84) { }
         public Mode(byte value)
             : base(value)
-        { }
+        {
+            this.BitChanged += new BitChangedEventHandler(BitChangedHandler);
+        }
+
+        void BitChangedHandler(object sender, int bit)
+        {
+            Debug.WriteLine(Properties[bit] + ":" + this[bit]);
+            RaisePropertyChanged(Properties[bit]);
+        }
 
         object ICloneable.Clone()
         {
@@ -25,7 +32,7 @@ namespace EHaskins.Frc.Communication
             return new Mode(RawValue);
         }
 
-        public bool FpgaChecksum
+        public bool IsFpgaChecksum
         {
             get { return this[0]; }
             set
@@ -33,7 +40,7 @@ namespace EHaskins.Frc.Communication
                 this[0] = value;
             }
         }
-        public bool CRioChecksum
+        public bool IsCRioChecksum
         {
             get { return this[1]; }
             set
@@ -41,7 +48,7 @@ namespace EHaskins.Frc.Communication
                 this[1] = value;
             }
         }
-        public bool Resync
+        public bool IsResync
         {
             get { return this[2]; }
             set
@@ -49,7 +56,7 @@ namespace EHaskins.Frc.Communication
                 this[2] = value;
             }
         }
-        public bool Reserved
+        public bool IsReserved
         {
             get { return this[3]; }
             set
@@ -57,7 +64,7 @@ namespace EHaskins.Frc.Communication
                 this[3] = value;
             }
         }
-        public bool Autonomous
+        public bool IsAutonomous
         {
             get { return this[4]; }
             set
@@ -65,7 +72,7 @@ namespace EHaskins.Frc.Communication
                 this[4] = value;
             }
         }
-        public bool Enabled
+        public bool IsEnabled
         {
             get { return this[5]; }
             set
@@ -73,7 +80,7 @@ namespace EHaskins.Frc.Communication
                 this[5] = value;
             }
         }
-        public bool EStop
+        public bool IsEStop
         {
             get { return !this[6]; }
             set
@@ -81,7 +88,7 @@ namespace EHaskins.Frc.Communication
                 this[6] = !value;
             }
         }
-        public bool Reset
+        public bool IsReset
         {
             get { return this[7]; }
             set
@@ -89,7 +96,5 @@ namespace EHaskins.Frc.Communication
                 this[7] = value;
             }
         }
-
-
     }
 }

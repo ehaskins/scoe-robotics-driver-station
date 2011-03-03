@@ -34,8 +34,6 @@ namespace EHaskins.Frc.Communication
                 UserStatusDataLength = userDataLength;
                 UserStatusData = reader.ReadBytes(userDataLength);
             }
-
-            IsValid = FrcPacketUtils.VerifyFrcCrc(data);
         }
         double _BatteryVoltage;
         public double BatteryVoltage
@@ -121,23 +119,6 @@ namespace EHaskins.Frc.Communication
                 {
                     _FpgaVersion = value;
                     PropertyChanged(this, new PropertyChangedEventArgs("FpgeVersion"));
-                }
-            }
-        }
-
-        bool _IsValid;
-        public bool IsValid
-        {
-            get
-            {
-                return _IsValid;
-            }
-            set
-            {
-                if (value != _IsValid)
-                {
-                    _IsValid = value;
-                    PropertyChanged(this, new PropertyChangedEventArgs("IsValid"));
                 }
             }
         }

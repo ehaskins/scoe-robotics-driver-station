@@ -72,7 +72,7 @@ namespace EHaskins.Frc.Communication
 
         private void SendReply(CommandData packet, EndPoint endpoint)
         {
-            if (_status.ReplyId > packet.PacketId & !packet.Mode.Resync)
+            if (_status.ReplyId > packet.PacketId & !packet.Mode.IsResync)
             {
                 IsConnected = false;
                 return;
@@ -98,9 +98,9 @@ namespace EHaskins.Frc.Communication
                 if (packet != null && packet.IsValid && packet.TeamNumber == this.TeamNumber)
                 {
                     SendReply(packet, endpoint);
-                    if (CommandData != null && CommandData.Mode.EStop)
+                    if (CommandData != null && CommandData.Mode.IsEStop)
                     {
-                        packet.Mode.EStop = true;
+                        packet.Mode.IsEStop = true;
                     }
                     CommandData = packet;
                     if (NewDataReceived != null)

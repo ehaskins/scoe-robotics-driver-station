@@ -1,8 +1,23 @@
-﻿<Window x:Class="EHaskins.Frc.DriverStation.MainWindow"
+﻿<Window x:Class="EHaskins.Frc.DS.MainWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         Title="MainWindow" Height="350" Width="525">
-    <Grid>
-        
-    </Grid>
+    <StackPanel Orientation="Vertical" >
+        <TextBlock Text="{Binding Test}"/>
+        <ListBox ItemsSource="{Binding DriverStations}">
+            <ListBox.ItemTemplate>
+                <DataTemplate>
+                    <StackPanel Orientation="Horizontal">
+                        <ToggleButton IsChecked="{Binding ControlData.Mode.IsEnabled}">Enabled</ToggleButton>
+                        <ToggleButton IsChecked="{Binding ControlData.Mode.IsAutonomous}">Autonomous</ToggleButton>
+                        <ToggleButton IsChecked="{Binding ControlData.Mode.IsEStop}">E-Stop</ToggleButton>
+                        <TextBox Text="{Binding ControlData.TeamNumber}"/>
+                        <TextBox Text="{Binding ControlData.PacketId}"/>
+                        <CheckBox IsEnabled="False" IsChecked="{Binding Path=IsSyncronized, Mode=OneWay}" Content="Connected" />
+                        <TextBlock Text="{Binding Joysticks[0].Information.InstanceName}"/>
+                    </StackPanel>
+                </DataTemplate>
+            </ListBox.ItemTemplate>
+        </ListBox>
+    </StackPanel>
 </Window>

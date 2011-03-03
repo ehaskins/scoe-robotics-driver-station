@@ -8,7 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace EHaskins.Frc.DriverStation.Properties
+namespace EHaskins.Frc.DS.Properties
 {
 
 

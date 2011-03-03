@@ -5,7 +5,7 @@ using MiscUtil.Conversion;
 public static class FrcPacketUtils
 {
 
-    public static bool VerifyFrcCrc(byte[] data)
+    public static bool IsValidFrcPacket(this byte[] data)
     {
         var tempData = new byte[data.Length];
         data.CopyTo(tempData, 0);

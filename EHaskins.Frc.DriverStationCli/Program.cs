@@ -6,6 +6,7 @@ using EHaskins.Frc.Communication;
 using System.Net;
 using SlimDX;
 using SlimDX.DirectInput;
+using EHaskins.Frc.Communication.DriverStation;
 
 namespace EHaskins.Frc.DriverStationCli
 {
@@ -21,8 +22,8 @@ namespace EHaskins.Frc.DriverStationCli
 
     class VirtualDSCli
     {
-        VirtualDS ds;
-        VirtualDS ds2;
+        DriverStation ds;
+        DriverStation ds2;
         DirectInput dinput;
         List<SlimDX.DirectInput.Joystick> sticks;
         public void Run()
@@ -31,7 +32,7 @@ namespace EHaskins.Frc.DriverStationCli
             sticks = new List<SlimDX.DirectInput.Joystick>();
             Communication.Configuration.UserControlDataSize = 64;
             Communication.Configuration.UserStatusDataSize = 64;
-            ds = new VirtualDS(1692);
+            ds = new DriverStation(1692);
 
             ds.NewDataReceived += NewDataReceived;
             ds.SendingData += SendingData;
@@ -42,7 +43,7 @@ namespace EHaskins.Frc.DriverStationCli
             //ds2.TransmitPort = 1240;
             //ds2.ReceivePort = 1250;
             //ds2.Open(1103, new IPEndPoint(IPAddress.Parse("127.0.0.1"), 1240));
-            ds2 = new VirtualDS(1692);
+            ds2 = new DriverStation(1692);
             ds2.TransmitPort = 1240;
             ds2.ReceivePort = 1250;
             //ds2.Open(1692, new IPEndPoint(IPAddress.Parse("172.16.92.199"), 1240));
@@ -55,37 +56,37 @@ namespace EHaskins.Frc.DriverStationCli
                 {
                     case ConsoleKey.E:
                         Console.WriteLine("Enabled");
-                        ds.ControlData.Mode.Enabled = true;
-                        ds.ControlData.Mode.EStop = false;
+                        ds.ControlData.Mode.IsEnabled = true;
+                        ds.ControlData.Mode.IsEStop = false;
 
-                        ds2.ControlData.Mode.Enabled = true;
-                        ds2.ControlData.Mode.EStop = false;
+                        ds2.ControlData.Mode.IsEnabled = true;
+                        ds2.ControlData.Mode.IsEStop = false;
                         break;
                     case ConsoleKey.D:
                         Console.WriteLine("Disabled");
-                        ds.ControlData.Mode.Enabled = false;
-                        ds.ControlData.Mode.EStop = false;
+                        ds.ControlData.Mode.IsEnabled = false;
+                        ds.ControlData.Mode.IsEStop = false;
 
-                        ds2.ControlData.Mode.Enabled = false;
-                        ds2.ControlData.Mode.EStop = false;
+                        ds2.ControlData.Mode.IsEnabled = false;
+                        ds2.ControlData.Mode.IsEStop = false;
                         break;
                     case ConsoleKey.Spacebar:
                         Console.WriteLine("E-Stop");
-                        ds.ControlData.Mode.Enabled = false;
-                        ds.ControlData.Mode.EStop = true;
+                        ds.ControlData.Mode.IsEnabled = false;
+                        ds.ControlData.Mode.IsEStop = true;
 
-                        ds2.ControlData.Mode.Enabled = false;
-                        ds2.ControlData.Mode.EStop = true;
+                        ds2.ControlData.Mode.IsEnabled = false;
+                        ds2.ControlData.Mode.IsEStop = true;
                         break;
                     case ConsoleKey.T:
-                        ds.ControlData.Mode.Autonomous = false;
+                        ds.ControlData.Mode.IsAutonomous = false;
 
-                        ds2.ControlData.Mode.Autonomous = false;
+                        ds2.ControlData.Mode.IsAutonomous = false;
                         break;
                     case ConsoleKey.A:
-                        ds.ControlData.Mode.Autonomous = true;
+                        ds.ControlData.Mode.IsAutonomous = true;
 
-                        ds2.ControlData.Mode.Autonomous = true;
+                        ds2.ControlData.Mode.IsAutonomous = true;
                         break;
                     case ConsoleKey.J:
                         UpdateSticks();
@@ -145,20 +146,20 @@ namespace EHaskins.Frc.DriverStationCli
                 string mode = "";
                 if (ds.StatusData != null && ds.IsSyncronized)
                 {
-                    if (ds.StatusData.Mode.EStop)
+                    if (ds.StatusData.Mode.IsEStop)
                     {
                         mode = "E-Stop";
                     }
                     else
                     {
-                        mode = ds.StatusData.Mode.Enabled ? "Enabled" : "Disabled";
+                        mode = ds.StatusData.Mode.IsEnabled ? "Enabled" : "Disabled";
                     }
                 }
                 else
                 {
                     mode = "Not Connected";
                 }
-                Console.WriteLine(String.Format("Packet# {0}, {1}, Resync: {2}", ds.ControlData.PacketId, mode, ds.ControlData.Mode.Resync));
+                Console.WriteLine(String.Format("Packet# {0}, {1}, Resync: {2}", ds.ControlData.PacketId, mode, ds.ControlData.Mode.IsResync));
             }
             catch (Exception ex)
             {

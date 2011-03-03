@@ -29,6 +29,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Cli", "Cli", "{5C0862DA-FB3
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EHaskins.Frc.Communication.MF", "EHaskins.Frc.Communication.Shared\EHaskins.Frc.Communication.MF.csproj", "{33AFFFA7-3EA8-4FC1-B7E7-2735CEA102DA}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EHaskins.Frc.Communication.DriverStation", "EHaskins.Frc.Communication.DriverStation\EHaskins.Frc.Communication.DriverStation.csproj", "{1A9DD489-905A-4CED-BA17-CAFACD36604F}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -159,6 +161,16 @@ Global
 		{33AFFFA7-3EA8-4FC1-B7E7-2735CEA102DA}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
 		{33AFFFA7-3EA8-4FC1-B7E7-2735CEA102DA}.Release|Mixed Platforms.Build.0 = Release|Any CPU
 		{33AFFFA7-3EA8-4FC1-B7E7-2735CEA102DA}.Release|x86.ActiveCfg = Release|Any CPU
+		{1A9DD489-905A-4CED-BA17-CAFACD36604F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1A9DD489-905A-4CED-BA17-CAFACD36604F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1A9DD489-905A-4CED-BA17-CAFACD36604F}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
+		{1A9DD489-905A-4CED-BA17-CAFACD36604F}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
+		{1A9DD489-905A-4CED-BA17-CAFACD36604F}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{1A9DD489-905A-4CED-BA17-CAFACD36604F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1A9DD489-905A-4CED-BA17-CAFACD36604F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1A9DD489-905A-4CED-BA17-CAFACD36604F}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
+		{1A9DD489-905A-4CED-BA17-CAFACD36604F}.Release|Mixed Platforms.Build.0 = Release|Any CPU
+		{1A9DD489-905A-4CED-BA17-CAFACD36604F}.Release|x86.ActiveCfg = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -171,6 +183,7 @@ Global
 		{2FE2D3CB-42B0-40F7-87C7-E0C53D38BF34} = {DEFD0E92-F666-414E-A96A-6A98B020277C}
 		{2EC93CB5-6694-4B03-8DCF-BEB31720F2AF} = {DEFD0E92-F666-414E-A96A-6A98B020277C}
 		{8EF12C16-7E36-4320-B9C1-F96FC8E671F9} = {DEFD0E92-F666-414E-A96A-6A98B020277C}
+		{1A9DD489-905A-4CED-BA17-CAFACD36604F} = {DEFD0E92-F666-414E-A96A-6A98B020277C}
 		{2D9337FC-689C-4C8B-A6C2-28F5E8BEFBFA} = {A092082B-48A9-4CA2-B052-8D0A6B92E18F}
 		{33AFFFA7-3EA8-4FC1-B7E7-2735CEA102DA} = {A092082B-48A9-4CA2-B052-8D0A6B92E18F}
 	EndGlobalSection

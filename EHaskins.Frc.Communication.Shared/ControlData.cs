@@ -50,8 +50,6 @@ namespace EHaskins.Frc.Communication
                 UserControlDataLength = userDataLength;
                 UserControlData = reader.ReadBytes(userDataLength);
             }
-
-            this.IsValid = FrcPacketUtils.VerifyFrcCrc(data);
         }
         public byte[] GetBytes()
         {
@@ -104,7 +102,7 @@ namespace EHaskins.Frc.Communication
                 writer.Close();
             }
 
-            Debug.Assert(FrcPacketUtils.VerifyFrcCrc(data));
+            Debug.Assert(data.IsValidFrcPacket());
             return data;
         }
 
@@ -244,23 +242,6 @@ namespace EHaskins.Frc.Communication
             }
         }
 
-        bool _IsValid;
-        public bool IsValid
-        {
-            get
-            {
-                return _IsValid;
-            }
-            set
-            {
-                if (value != _IsValid)
-                {
-                    _IsValid = value;
-                    PropertyChanged(this, new PropertyChangedEventArgs("IsValid"));
-                }
-            }
-        }
-
         ObservableCollection<Joystick> _Joysticks;
         public ObservableCollection<Joystick> Joysticks
         {
@@ -295,8 +276,8 @@ namespace EHaskins.Frc.Communication
             }
         }
 
-        uint _PacketId;
-        public uint PacketId
+        ushort _PacketId;
+        public ushort PacketId
         {
             get
             {

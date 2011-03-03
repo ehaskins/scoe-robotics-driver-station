@@ -77,7 +77,6 @@ public class Crc32 : HashAlgorithm
                 else
                     entry = entry >> 1;
             createTable[i] = entry;
-            Console.WriteLine(String.Format("{0}:{1}", i, entry));
         }
 
         if (polynomial == DefaultPolynomial)
