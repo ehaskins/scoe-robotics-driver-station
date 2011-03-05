@@ -3,7 +3,7 @@
   <PropertyGroup>
     <AssemblyName>EHaskins.Frc.Communication.MF</AssemblyName>
     <OutputType>Library</OutputType>
-    <RootNamespace>EHaskins.Frc.Communication.MF</RootNamespace>
+    <RootNamespace>EHaskins.Frc.Communication</RootNamespace>
     <ProjectTypeGuids>{b69e3092-b931-443c-abe7-7e7b65f2a37f};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
     <ProductVersion>9.0.21022</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
@@ -44,7 +44,6 @@
     <Compile Include="Mode.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="StatusData.cs" />
-    <Compile Include="VirtualDS.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="Microsoft.SPOT.Native">
