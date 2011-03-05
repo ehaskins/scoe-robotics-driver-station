@@ -27,7 +27,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Library", "Library", "{DEFD
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Cli", "Cli", "{5C0862DA-FB39-44CD-977E-50F93920C1DF}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EHaskins.Frc.Communication.MF", "EHaskins.Frc.Communication.Shared\EHaskins.Frc.Communication.MF.csproj", "{33AFFFA7-3EA8-4FC1-B7E7-2735CEA102DA}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EHaskins.Frc.Communication (MF)", "EHaskins.Frc.Communication.Shared\EHaskins.Frc.Communication (MF).csproj", "{33AFFFA7-3EA8-4FC1-B7E7-2735CEA102DA}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EHaskins.Frc.Communication.DriverStation", "EHaskins.Frc.Communication.DriverStation\EHaskins.Frc.Communication.DriverStation.csproj", "{1A9DD489-905A-4CED-BA17-CAFACD36604F}"
 EndProject
