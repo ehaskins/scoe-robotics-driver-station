@@ -2,7 +2,6 @@ using System;
 using System.Net.Sockets;
 using System.Net;
 using MicroLibrary;
-using EHaskins.Frc.Dashboard;
 using System.Diagnostics;
 
 namespace EHaskins.Frc.Communication
@@ -40,7 +39,7 @@ namespace EHaskins.Frc.Communication
             get { return _isConnected; }
             set { _isConnected = value; }
         }
-        public CommandData CommandData { get; set; }
+        public ControlData CommandData { get; set; }
         public StatusData StatusData
         {
             get { return _status; }
@@ -70,7 +69,7 @@ namespace EHaskins.Frc.Communication
             _receviceClient.BeginReceive(this.ReceiveData, null);
         }
 
-        private void SendReply(CommandData packet, EndPoint endpoint)
+        private void SendReply(ControlData packet, EndPoint endpoint)
         {
             if (_status.ReplyId > packet.PacketId & !packet.Mode.IsResync)
             {
@@ -94,15 +93,17 @@ namespace EHaskins.Frc.Communication
             {
                 IPEndPoint endpoint = null;
                 var bytes = _receviceClient.EndReceive(ar, ref endpoint);
-                var packet = ParseBytes(bytes);
-                if (packet != null && packet.IsValid && packet.TeamNumber == this.TeamNumber)
+                bool lastEStop = CommandData.Mode.IsEStop;
+                if (bytes.IsValidFrcPacket())
+                    ParseBytes(bytes);
+
+                if (CommandData != null && CommandData.TeamNumber == this.TeamNumber)
                 {
-                    SendReply(packet, endpoint);
-                    if (CommandData != null && CommandData.Mode.IsEStop)
+                    SendReply(CommandData, endpoint);
+                    if (CommandData != null && lastEStop)
                     {
-                        packet.Mode.IsEStop = true;
+                        CommandData.Mode.IsEStop = true;
                     }
-                    CommandData = packet;
                     if (NewDataReceived != null)
                     {
                         NewDataReceived(this, null);
@@ -126,12 +127,12 @@ namespace EHaskins.Frc.Communication
             }
         }
 
-        private CommandData ParseBytes(byte[] data)
+        private void ParseBytes(byte[] data)
         {
             try
             {
                 _packetCount += 1;
-                return new CommandData(data, UserControlDataLength);
+                CommandData.Update(data);
             }
             catch (Exception ex)
             {
