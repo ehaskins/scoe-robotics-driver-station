@@ -55,10 +55,6 @@
       <Project>{2FE2D3CB-42B0-40F7-87C7-E0C53D38BF34}</Project>
       <Name>EHaskins.Frc.Communication</Name>
     </ProjectReference>
-    <ProjectReference Include="..\EHaskins.Frc.Dashboard.Old\EHaskins.Frc.Dashboard.Old.vbproj">
-      <Project>{F2CABBC3-B84A-4A43-A0D6-D489C4CA2A08}</Project>
-      <Name>EHaskins.Frc.Dashboard.Old</Name>
-    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

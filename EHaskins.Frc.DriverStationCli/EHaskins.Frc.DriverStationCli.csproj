@@ -48,10 +48,6 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Crc32\Crc32.csproj">
-      <Project>{8EF12C16-7E36-4320-B9C1-F96FC8E671F9}</Project>
-      <Name>Crc32</Name>
-    </ProjectReference>
     <ProjectReference Include="..\EHaskins.Frc.Communication.DriverStation\EHaskins.Frc.Communication.DriverStation.csproj">
       <Project>{1A9DD489-905A-4CED-BA17-CAFACD36604F}</Project>
       <Name>EHaskins.Frc.Communication.DriverStation</Name>
@@ -63,10 +59,6 @@
     <ProjectReference Include="..\EHaskins.Frc.Communication\EHaskins.Frc.Communication.csproj">
       <Project>{2FE2D3CB-42B0-40F7-87C7-E0C53D38BF34}</Project>
       <Name>EHaskins.Frc.Communication</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\EHaskins.Frc.Dashboard.Old\EHaskins.Frc.Dashboard.Old.vbproj">
-      <Project>{F2CABBC3-B84A-4A43-A0D6-D489C4CA2A08}</Project>
-      <Name>EHaskins.Frc.Dashboard.Old</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

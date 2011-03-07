@@ -66,12 +66,6 @@
   <ItemGroup>
     <WCFMetadata Include="Service References\" />
   </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\Crc32\Crc32.csproj">
-      <Project>{8EF12C16-7E36-4320-B9C1-F96FC8E671F9}</Project>
-      <Name>Crc32</Name>
-    </ProjectReference>
-  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

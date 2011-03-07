@@ -67,6 +67,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Crc32.cs" />
     <Compile Include="IDisposableExtensions.cs" />
     <Compile Include="MicroStopwatch.cs" />
     <Compile Include="MicroTimer.cs" />
