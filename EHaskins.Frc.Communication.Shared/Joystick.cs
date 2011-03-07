@@ -55,12 +55,12 @@ namespace EHaskins.Frc.Communication
             BinaryWriter writer = new BinaryWriter(stream);
             for (int i = 0; i <= 5; i++)
             {
-                double scaled = Axes[i] * 128 + 128;
-                if (scaled > 255)
+                double scaled = Axes[i] * 128;
+                if (scaled > SByte.MaxValue)
                     scaled = 255;
-                else if (scaled < 0)
+                else if (scaled < -SByte.MinValue)
                     scaled = 0;
-                writer.Write(Convert.ToByte(scaled));
+                writer.Write(Convert.ToSByte(scaled));
             }
 
             writer.Write(Buttons.RawValue);
