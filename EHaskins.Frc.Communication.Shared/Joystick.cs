@@ -5,7 +5,7 @@ using MiscUtil.IO;
 
 namespace EHaskins.Frc.Communication
 {
-    public class Joystick : INotifyPropertyChanged
+    public class Joystick
     {
 
         public Joystick()
@@ -14,11 +14,12 @@ namespace EHaskins.Frc.Communication
         }
 
         int _joystickNumber;
-        double[] _analogInputs = new double[7];
+
+        double[] _analogInputs = new double[6];
 
         public void Parse(EndianBinaryReader reader)
         {
-            for (int i = 0; i <= 5; i++)
+            for (int i = 0; i < 6; i++)
             {
                 int byteRead = reader.ReadByte();
                 double value = (byteRead - 128) / 128;
@@ -53,7 +54,7 @@ namespace EHaskins.Frc.Communication
         {
             MemoryStream stream = new MemoryStream();
             BinaryWriter writer = new BinaryWriter(stream);
-            for (int i = 0; i <= 5; i++)
+            for (int i = 0; i < 6; i++)
             {
                 double scaled = Axes[i] * 128 + 128;
                 if (scaled > 255)
