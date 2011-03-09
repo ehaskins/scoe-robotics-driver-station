@@ -13,7 +13,7 @@ namespace EHaskins.Frc.Communication.Extensions
         }
         static byte[] GetBytes(this ControlData obj)
     {
-    
+        return null;
         }
     }
 }
