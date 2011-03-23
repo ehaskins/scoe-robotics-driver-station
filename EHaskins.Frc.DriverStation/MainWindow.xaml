@@ -3,18 +3,40 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         Title="MainWindow" Height="350" Width="525">
     <StackPanel Orientation="Vertical" >
-        <TextBlock Text="{Binding Test}"/>
         <ListBox ItemsSource="{Binding DriverStations}">
             <ListBox.ItemTemplate>
                 <DataTemplate>
-                    <StackPanel Orientation="Horizontal">
-                        <ToggleButton IsChecked="{Binding ControlData.Mode.IsEnabled}">Enabled</ToggleButton>
-                        <ToggleButton IsChecked="{Binding ControlData.Mode.IsAutonomous}">Autonomous</ToggleButton>
-                        <ToggleButton IsChecked="{Binding ControlData.Mode.IsEStop}">E-Stop</ToggleButton>
-                        <TextBox Text="{Binding ControlData.TeamNumber}"/>
-                        <TextBox Text="{Binding ControlData.PacketId}"/>
-                        <CheckBox IsEnabled="False" IsChecked="{Binding Path=IsSyncronized, Mode=OneWay}" Content="Connected" />
-                        <TextBlock Text="{Binding Joysticks[0].Information.InstanceName}"/>
+                    <StackPanel Orientation="Vertical">
+                        <StackPanel Orientation="Horizontal">
+                            <ToggleButton IsChecked="{Binding ControlData.Mode.IsEnabled}">Enabled</ToggleButton>
+                            <ToggleButton IsChecked="{Binding ControlData.Mode.IsAutonomous}">Autonomous</ToggleButton>
+                            <ToggleButton IsChecked="{Binding ControlData.Mode.IsEStop}">E-Stop</ToggleButton>
+                            <TextBox Text="{Binding ControlData.TeamNumber}"/>
+                        </StackPanel>
+                        <TabControl>
+                            <TabItem Header="Status">
+                                <StackPanel Orientation="Horizontal">
+                                    <TextBox Text="{Binding ControlData.TeamNumber}"/>
+                                    <TextBox Text="{Binding ControlData.PacketId}"/>
+                                    <CheckBox IsEnabled="False" IsChecked="{Binding Path=IsSyncronized, Mode=OneWay}" Content="Connected" />
+                                </StackPanel>
+                            </TabItem>
+                            <TabItem Header="Joysticks">
+                                <ListBox ItemsSource="{Binding ControlData.Joysticks}">
+                                    <ListBox.ItemTemplate>
+                                        <DataTemplate>
+                                            <!--ItemsSource="{Binding Path=DataContext.Joysticks, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type Window}}}"-->
+                                            <StackPanel Orientation="Horizontal">
+                                                <ComboBox SelectedValue="{Binding Path=Name}" 
+                                                          ItemsSource="{Binding Path=DataContext.JoystickManager.JoystickNames, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type Window}}}"/>
+
+                                                <TextBlock Text="{Binding Path=Name, Mode=OneWay}"/>
+                                            </StackPanel>
+                                        </DataTemplate>
+                                    </ListBox.ItemTemplate>
+                                </ListBox>
+                            </TabItem>
+                        </TabControl>
                     </StackPanel>
                 </DataTemplate>
             </ListBox.ItemTemplate>
