@@ -13,20 +13,32 @@ namespace EHaskins.Frc.DS
 {
     public class DriverStationVM 
     {
+        public JoystickManager JoystickManager {get; set;}
+
         public DriverStationVM()
         {
+            JoystickManager = new JoystickManager();
+            var Joysticks = JoystickManager.Joysticks;
             Configuration.UserControlDataSize = 64;
             Configuration.UserStatusDataSize = 64;
             DriverStations = new ObservableCollection<DriverStation>();
-            var ds = new SlimDXDriverStation(1692, GetJoysticks());
+            var ds = new DriverStation(1692);
+            for (int i = 0; i < 4; i++)
+            {
+                var stick = i < Joysticks.Length ? new SlimDxJoystick(JoystickManager, Joysticks[i].Information.InstanceName) : new SlimDxJoystick(JoystickManager, "");
+
+                ds.ControlData.Joysticks[i] = stick;
+            }
+
             ds.Open(1692, new IPEndPoint(IPAddress.Parse("172.16.92.198"), ds.TransmitPort));
 
             DriverStations.Add(ds);
-            DriverStation ds2 = new DriverStation(1103);
+
+            /*DriverStation ds2 = new DriverStation(1103);
             ds2.TransmitPort = 2110;
             ds2.ReceivePort = 2150;
             ds2.Open(1103);
-            DriverStations.Add(ds2);
+            DriverStations.Add(ds2);*/
         }
 
         public ObservableCollection<DriverStation> DriverStations { get; set; }
@@ -41,46 +53,5 @@ namespace EHaskins.Frc.DS
 
         }
 
-        private SlimDX.DirectInput.Joystick[] GetJoysticks()
-        {
-            var dinput = new DirectInput();
-            List<SlimDX.DirectInput.Joystick> sticks = new List<SlimDX.DirectInput.Joystick>();
-            foreach (DeviceInstance device in dinput.GetDevices(DeviceClass.GameController, DeviceEnumerationFlags.AttachedOnly))
-            {
-                // create the device
-                try
-                {
-                    var stick = new SlimDX.DirectInput.Joystick(dinput, device.InstanceGuid);
-                    stick.Acquire();
-
-                    foreach (DeviceObjectInstance deviceObject in stick.GetObjects())
-                    {
-                        if ((deviceObject.ObjectType & ObjectDeviceType.Axis) != 0)
-                            stick.GetObjectPropertiesById((int)deviceObject.ObjectType).SetRange(-1000, 1000);
-                    }
-
-                    sticks.Add(stick);
-                }
-                catch (DirectInputException)
-                {
-                }
-            }
-
-            foreach (var stick in sticks)
-            {
-                Console.WriteLine(stick.Information.InstanceName);
-                /*foreach (DeviceObjectInstance deviceObject in stick.GetObjects())
-                {
-                    if ((deviceObject.ObjectType & ObjectDeviceType.Axis) != 0)
-                        stick.GetObjectPropertiesById((int)deviceObject.ObjectType).SetRange(-1000, 1000);
-                }
-
-                // acquire the device
-                stick.Acquire();*/
-            }
-            Console.WriteLine("Found " + sticks.Count() + " sticks.");
-
-            return sticks.ToArray();
-        }
     }
 }

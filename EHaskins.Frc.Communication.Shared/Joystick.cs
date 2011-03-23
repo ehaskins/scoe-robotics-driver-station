@@ -30,23 +30,23 @@ namespace EHaskins.Frc.Communication
 
             if (PropertyChanged != null)
             {
-                PropertyChanged(this, new PropertyChangedEventArgs("AnalogInputs"));
+                RaisePropertyChanged("AnalogInputs");
             }
             if (PropertyChanged != null)
             {
-                PropertyChanged(this, new PropertyChangedEventArgs("X"));
+                RaisePropertyChanged("X");
             }
             if (PropertyChanged != null)
             {
-                PropertyChanged(this, new PropertyChangedEventArgs("Y"));
+                RaisePropertyChanged("Y");
             }
             if (PropertyChanged != null)
             {
-                PropertyChanged(this, new PropertyChangedEventArgs("Z"));
+                RaisePropertyChanged("Z");
             }
             if (PropertyChanged != null)
             {
-                PropertyChanged(this, new PropertyChangedEventArgs("Twist"));
+                RaisePropertyChanged("Twist");
             }
         }
 
@@ -83,19 +83,19 @@ namespace EHaskins.Frc.Communication
                 //RaiseEvent PropertyChanged(Me, New PropertyChangedEventArgs("AnalogInputs"))
                 if (PropertyChanged != null)
                 {
-                    PropertyChanged(this, new PropertyChangedEventArgs("X"));
+                    RaisePropertyChanged("X");
                 }
                 if (PropertyChanged != null)
                 {
-                    PropertyChanged(this, new PropertyChangedEventArgs("Y"));
+                    RaisePropertyChanged("Y");
                 }
                 if (PropertyChanged != null)
                 {
-                    PropertyChanged(this, new PropertyChangedEventArgs("Z"));
+                    RaisePropertyChanged("Z");
                 }
                 if (PropertyChanged != null)
                 {
-                    PropertyChanged(this, new PropertyChangedEventArgs("Twist"));
+                    RaisePropertyChanged("Twist");
                 }
             }
         }
@@ -111,7 +111,7 @@ namespace EHaskins.Frc.Communication
                 _joystickNumber = value;
                 if (PropertyChanged != null)
                 {
-                    PropertyChanged(this, new PropertyChangedEventArgs("JoystickNumber"));
+                    RaisePropertyChanged("JoystickNumber");
                 }
             }
         }
@@ -140,6 +140,14 @@ namespace EHaskins.Frc.Communication
             get { return Axes[3]; }
         }
 
+        public virtual void Update(){}
+
         public event PropertyChangedEventHandler PropertyChanged;
+
+        protected void RaisePropertyChanged(string property)
+        {
+            if (PropertyChanged != null)
+                PropertyChanged(this, new PropertyChangedEventArgs(property));
+        }
     }
 }

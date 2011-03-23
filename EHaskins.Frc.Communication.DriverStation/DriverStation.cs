@@ -35,6 +35,41 @@ namespace EHaskins.Frc.Communication.DriverStation
 
         }
 
+        protected void InvalidateConnection()
+        {
+            //TODO: Finish this.
+        }
+
+        
+        private byte _Network;
+        public byte Network
+        {
+            get { return _Network; }
+            set
+            {
+                if (_Network == value)
+                    return;
+                _Network = value;
+                RaisePropertyChanged("Network");
+                InvalidateConnection();
+            }
+        }
+        private byte _HostNumber;
+        public byte HostNumber
+        {
+            get { return _HostNumber; }
+            set
+            {
+                if (_HostNumber == value)
+                    return;
+                _HostNumber = value;
+                RaisePropertyChanged("HostNumber");
+                    InvalidateConnection();
+            }
+        }
+              
+        
+
         private int _TransmitPort;
         public int TransmitPort
         {
@@ -48,6 +83,7 @@ namespace EHaskins.Frc.Communication.DriverStation
                     return;
                 _TransmitPort = value;
                 RaisePropertyChanged("TransmitPort");
+                InvalidateConnection();
             }
         }
         private int _ReceivePort;
@@ -63,6 +99,7 @@ namespace EHaskins.Frc.Communication.DriverStation
                     return;
                 _ReceivePort = value;
                 RaisePropertyChanged("ReceivePort");
+                InvalidateConnection();
             }
         }
         private bool _IsSyncronized;
@@ -166,6 +203,8 @@ namespace EHaskins.Frc.Communication.DriverStation
                 RaisePropertyChanged("SafteyTriggered");
             }
         }
+
+
 
         public void Open(ushort teamNumber, IPEndPoint transmitEP = null)
         {
