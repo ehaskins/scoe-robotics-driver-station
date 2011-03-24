@@ -2,6 +2,7 @@ using System;
 using System.IO;
 using System.ComponentModel;
 using MiscUtil.IO;
+using System.Collections.ObjectModel;
 
 namespace EHaskins.Frc.Communication
 {
@@ -11,11 +12,15 @@ namespace EHaskins.Frc.Communication
         public Joystick()
         {
             Buttons = new BindableBitField16();
+            for (int i = 0; i < 6; i++)
+            {
+                _analogInputs.Add(0);
+            }
         }
 
         int _joystickNumber;
 
-        double[] _analogInputs = new double[6];
+        ObservableCollection<double> _analogInputs = new ObservableCollection<double>();
 
         public void Parse(EndianBinaryReader reader)
         {
@@ -52,15 +57,16 @@ namespace EHaskins.Frc.Communication
 
         public byte[] GetBytes()
         {
+            Update();
             MemoryStream stream = new MemoryStream();
             BinaryWriter writer = new BinaryWriter(stream);
             for (int i = 0; i < 6; i++)
             {
                 double scaled = Axes[i] * 128;
                 if (scaled > SByte.MaxValue)
-                    scaled = 255;
-                else if (scaled < -SByte.MinValue)
-                    scaled = 0;
+                    scaled = SByte.MaxValue;
+                else if (scaled < SByte.MinValue)
+                    scaled = SByte.MinValue;
                 writer.Write(Convert.ToSByte(scaled));
             }
 
@@ -71,7 +77,7 @@ namespace EHaskins.Frc.Communication
 
             return data;
         }
-        public double[] Axes
+        public ObservableCollection<double> Axes
         {
             get { return _analogInputs; }
             set
