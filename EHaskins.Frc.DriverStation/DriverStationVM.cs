@@ -34,11 +34,17 @@ namespace EHaskins.Frc.DS
 
             DriverStations.Add(ds);
 
-            /*DriverStation ds2 = new DriverStation(1103);
+            DriverStation ds2 = new DriverStation(1103);
+            for (int i = 0; i < 4; i++)
+            {
+                var stick = i < Joysticks.Length ? new SlimDxJoystick(JoystickManager, Joysticks[i].Information.InstanceName) : new SlimDxJoystick(JoystickManager, "");
+
+                ds2.ControlData.Joysticks[i] = stick;
+            }
             ds2.TransmitPort = 2110;
             ds2.ReceivePort = 2150;
             ds2.Open(1103);
-            DriverStations.Add(ds2);*/
+            DriverStations.Add(ds2);
         }
 
         public ObservableCollection<DriverStation> DriverStations { get; set; }

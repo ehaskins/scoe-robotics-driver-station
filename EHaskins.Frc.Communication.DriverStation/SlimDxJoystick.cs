@@ -4,39 +4,56 @@ using System.Linq;
 using System.Text;
 using EHaskins.Utilities;
 using System.Collections.ObjectModel;
+using System.Windows.Threading;
+using System.Threading;
 
 namespace EHaskins.Frc.Communication.DriverStation
 {
     public  class SlimDxJoystick : Joystick
     {
+        Dispatcher dispatch;
         JoystickManager manager;
-        public SlimDxJoystick(JoystickManager manager, String name)
+        public SlimDxJoystick(JoystickManager manager, String name) : base()
         {
+            this.dispatch = Dispatcher.CurrentDispatcher;
             this.Manager = manager;
             Name = name;
         }
         public override void Update()
         {
-            if (Joystick != null)
+            if (dispatch.CheckAccess())
             {
-                if (Joystick.Acquire().IsSuccess && Joystick.Poll().IsSuccess)
+                if (Joystick != null)
                 {
-                    var state = Joystick.GetCurrentState();
-                    if (SlimDX.Result.Last.IsSuccess)
+                    if (Joystick.Acquire().IsSuccess && Joystick.Poll().IsSuccess)
                     {
-                        Axes[0] = state.X / 1000f;
-                        Axes[1] = state.Y / 1000f;
-                        Axes[2] = state.Z / 1000f;
-                        Axes[3] = state.RotationX / 1000f;
-                        Axes[4] = state.RotationY / 1000f;
-                        Axes[5] = state.RotationZ / 1000f;
-                    }
+                        var state = Joystick.GetCurrentState();
+                        if (SlimDX.Result.Last.IsSuccess)
+                        {
+                            Axes[0] = state.X / 1000f;
+                            Axes[1] = state.Y / 1000f;
+                            Axes[2] = state.Z / 1000f;
+                            Axes[3] = state.RotationX / 1000f;
+                            Axes[4] = state.RotationY / 1000f;
+                            Axes[5] = state.RotationZ / 1000f;
+                        }
 
-                    var buttons = state.GetButtons();
-                    for (int button = 0; button < buttons.Length; button++)
-                    {
-                        Buttons[button] = buttons[button];
+                        var buttons = state.GetButtons();
+                        for (int button = 0; button < buttons.Length; button++)
+                        {
+                            Buttons[button] = buttons[button];
+                        }
                     }
+                }
+            }
+            else
+            {
+                try
+                {
+                    dispatch.Invoke((ThreadStart)delegate { Update(); }, TimeSpan.FromMilliseconds(10), System.Windows.Threading.DispatcherPriority.SystemIdle);
+                }
+                catch(Exception ex){
+                    System.Diagnostics.Debug.WriteLine(ex.Message);
                 }
             }
         }
