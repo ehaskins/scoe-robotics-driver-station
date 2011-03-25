@@ -4,8 +4,9 @@ using SlimDX.DirectInput;
 using System.Linq;
 namespace EHaskins.Frc.Communication.DriverStation
 {
-    public class JoystickManager
+    public class JoystickManager : IDisposable
     {
+        private DirectInput _directInput;
         public String[] JoystickNames
         {
             get
@@ -23,6 +24,7 @@ namespace EHaskins.Frc.Communication.DriverStation
 
         public JoystickManager()
         {
+            _directInput = new DirectInput();
             Joysticks = GetJoysticks().ToArray();
         }
         
@@ -32,14 +34,14 @@ namespace EHaskins.Frc.Communication.DriverStation
 
         private ObservableCollection<SlimDX.DirectInput.Joystick> GetJoysticks()
         {
-            var dinput = new DirectInput();
+            
             var sticks = new ObservableCollection<SlimDX.DirectInput.Joystick>();
-            foreach (DeviceInstance device in dinput.GetDevices(DeviceClass.GameController, DeviceEnumerationFlags.AttachedOnly))
+            foreach (DeviceInstance device in _directInput.GetDevices(DeviceClass.GameController, DeviceEnumerationFlags.AttachedOnly))
             {
                 // create the device
                 try
                 {
-                    var stick = new SlimDX.DirectInput.Joystick(dinput, device.InstanceGuid);
+                    var stick = new SlimDX.DirectInput.Joystick(_directInput, device.InstanceGuid);
                     stick.Acquire();
 
                     foreach (DeviceObjectInstance deviceObject in stick.GetObjects())
@@ -71,5 +73,36 @@ namespace EHaskins.Frc.Communication.DriverStation
 
             return sticks;
         }
+
+        #region "IDisposable Support"
+        // To detect redundant calls
+        private bool disposedValue;
+
+        // IDisposable
+        protected virtual void Dispose(bool disposing)
+        {
+            if (!this.disposedValue)
+            {
+                if (disposing)
+                {
+                    foreach (SlimDX.DirectInput.Joystick joystick in Joysticks)
+                    {
+                        joystick.Dispose();
+                    }
+                    _directInput.Dispose();
+                }
+
+            }
+            this.disposedValue = true;
+        }
+
+        // This code added by Visual Basic to correctly implement the disposable pattern.
+        public void Dispose()
+        {
+            // Do not change this code.  Put cleanup code in Dispose(ByVal disposing As Boolean) above.
+            Dispose(true);
+            GC.SuppressFinalize(this);
+        }
+        #endregion
     }
 }

@@ -11,6 +11,10 @@ namespace EHaskins.Frc.Communication
 {
     public class ControlData : INotifyPropertyChanged
     {
+        public ControlData(ushort teamNumber):this()
+        {
+            TeamNumber = teamNumber;
+        }
         public ControlData()
         {
             AnalogInputs = new ObservableCollection<ushort>();
@@ -317,7 +321,7 @@ namespace EHaskins.Frc.Communication
             {
                 return _TeamNumber;
             }
-            set
+            protected set
             {
                 if (value != _TeamNumber)
                 {

@@ -8,8 +8,8 @@
     <ProjectGuid>{0E74977B-481C-4A10-8DC7-2D3D12B9D408}</ProjectGuid>
     <OutputType>WinExe</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>EHaskins.Frc.DriverStation</RootNamespace>
-    <AssemblyName>EHaskins.Frc.DriverStation</AssemblyName>
+    <RootNamespace>EHaskins.Frc.DriversStation</RootNamespace>
+    <AssemblyName>EHaskins.Frc.DriversStation</AssemblyName>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <TargetFrameworkProfile>Client</TargetFrameworkProfile>
     <FileAlignment>512</FileAlignment>
@@ -56,6 +56,10 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Page Include="DriversStationControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -63,6 +67,9 @@
     <Compile Include="App.xaml.cs">
       <DependentUpon>App.xaml</DependentUpon>
       <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="DriversStationControl.xaml.cs">
+      <DependentUpon>DriversStationControl.xaml</DependentUpon>
     </Compile>
     <Compile Include="DriverStationVM.cs" />
     <Compile Include="MainWindow.xaml.cs">
@@ -103,6 +110,14 @@
       <Project>{2EC93CB5-6694-4B03-8DCF-BEB31720F2AF}</Project>
       <Name>EHaskins.Frc.Communication.Shared</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="teamLogo.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Resource>
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="compLogo.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

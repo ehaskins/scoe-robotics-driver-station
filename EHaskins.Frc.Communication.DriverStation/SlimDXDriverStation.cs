@@ -8,8 +8,8 @@ namespace EHaskins.Frc.Communication.DriverStation
     public class SlimDXDriverStation : DriverStation
     {
         SlimDX.DirectInput.Joystick[] _Joysticks;
-        public SlimDXDriverStation(ushort teamNumber, SlimDX.DirectInput.Joystick[] joysticks)
-            : base(teamNumber)
+        public SlimDXDriverStation(SlimDX.DirectInput.Joystick[] joysticks)
+            : base()
         {
             Joysticks = joysticks;
             SendingData += SendingDataHandler;

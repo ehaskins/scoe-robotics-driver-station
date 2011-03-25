@@ -18,45 +18,45 @@ namespace EHaskins.Frc.DS
         public DriverStationVM()
         {
             JoystickManager = new JoystickManager();
-            var Joysticks = JoystickManager.Joysticks;
             Configuration.UserControlDataSize = 64;
             Configuration.UserStatusDataSize = 64;
             DriverStations = new ObservableCollection<DriverStation>();
-            var ds = new DriverStation(1692);
+
+            var ds = new DriverStation() { TeamNumber = 1692, Network = 172, HostNumber = 198 };
+            ds.Started += this.DSStarted;
+            ds.Start();
+            DriverStations.Add(ds);
+
+            var ds2 = new DriverStation { TeamNumber = 1103, TransmitPort = 2110, ReceivePort = 2150 };
+            ds2.Started += this.DSStarted;
+            ds2.Start();
+            DriverStations.Add(ds2);
+        }
+
+        private void DSStarted(object sender, EventArgs e)
+        {
+            var ds = sender as DriverStation;
+
+            var Joysticks = JoystickManager.Joysticks;
+
             for (int i = 0; i < 4; i++)
             {
                 var stick = i < Joysticks.Length ? new SlimDxJoystick(JoystickManager, Joysticks[i].Information.InstanceName) : new SlimDxJoystick(JoystickManager, "");
 
                 ds.ControlData.Joysticks[i] = stick;
             }
-
-            ds.Open(1692, new IPEndPoint(IPAddress.Parse("172.16.92.198"), ds.TransmitPort));
-
-            DriverStations.Add(ds);
-
-            DriverStation ds2 = new DriverStation(1103);
-            for (int i = 0; i < 4; i++)
-            {
-                var stick = i < Joysticks.Length ? new SlimDxJoystick(JoystickManager, Joysticks[i].Information.InstanceName) : new SlimDxJoystick(JoystickManager, "");
-
-                ds2.ControlData.Joysticks[i] = stick;
-            }
-            ds2.TransmitPort = 2110;
-            ds2.ReceivePort = 2150;
-            ds2.Open(1103);
-            DriverStations.Add(ds2);
         }
 
         public ObservableCollection<DriverStation> DriverStations { get; set; }
 
         public void WindowClosing(object sender, CancelEventArgs e)
         {
-            foreach (DriverStation driverStation in DriverStations)
+            foreach (var driverStation in DriverStations)
             {
-                driverStation.Close();
+                driverStation.Stop();
                 driverStation.Dispose();
             }
-
+            JoystickManager.Dispose();
         }
 
     }
