@@ -13,7 +13,7 @@ public static class FrcPacketUtils
 
         Crc32 crc = new Crc32();
 
-        for (int i = tempData.Length-4; i < tempData.Length; i++)
+        for (int i = tempData.Length - 4; i < tempData.Length; i++)
         {
             tempData[i] = 0;
         }
@@ -24,10 +24,23 @@ public static class FrcPacketUtils
 
     public static IPAddress GetIP(int teamNumber, Devices device)
     {
-        dynamic num2 = teamNumber % 100;
-        dynamic num1 = (teamNumber - num2) / 100;
-        dynamic ipStr = string.Format("10.{0}.{1}.{2}", num1, num2, Convert.ToInt32(device));
+        var num2 = teamNumber % 100;
+        var num1 = (teamNumber - num2) / 100;
+        var ipStr = string.Format("10.{0}.{1}.{2}", num1, num2, Convert.ToInt32(device));
         return IPAddress.Parse(ipStr);
+    }
+
+    public static IPAddress GetIP(byte network, ushort teamNumber, byte hostNumber)
+    {
+        if (teamNumber > 9999)
+            throw new ArgumentOutOfRangeException("teamNumber must be less than or equal to 9999.");
+        var data = new byte[4];
+        data[0] = network;
+        data[1] = (byte)(teamNumber / 100);
+        data[2] = (byte)(teamNumber % 100);
+        data[3] = hostNumber;
+
+        return new IPAddress(data);
     }
 }
 public enum Devices

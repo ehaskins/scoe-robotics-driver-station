@@ -4,6 +4,8 @@ using System.Net;
 using MicroLibrary;
 using System.Diagnostics;
 using System.ComponentModel;
+using System.Threading;
+using System.Windows.Threading;
 
 namespace EHaskins.Frc.Communication.DriverStation
 {
@@ -17,27 +19,55 @@ namespace EHaskins.Frc.Communication.DriverStation
                 PropertyChanged(this, new PropertyChangedEventArgs(property));
             }
         }
+
+        public event EventHandler Starting;
+        public void RaiseStarting()
+        {
+            if (Starting != null)
+                Starting(this, null);
+        }
+
+        public event EventHandler Started;
+        public void RaiseStarted()
+        {
+            if (Started != null)
+                Started(this, null);
+        }
+        
         public event EventHandler NewDataReceived;
         public event EventHandler SendingData;
 
-        bool _isOpen;
+        bool _isEnabled;
+        bool _isStopped;
 
         MicroTimer _transmitTimer;
         UdpClient _client;
         IPEndPoint _transmitEP;
 
-        public DriverStation(ushort teamNumber)
+        public DriverStation()
         {
-            ControlData = new ControlData { TeamNumber = teamNumber, UserControlDataLength = Configuration.UserControlDataSize };
+            Network = 10;
+            HostNumber = 2;
+            UserControlDataSize = Configuration.UserControlDataSize;
             ReceivePort = Configuration.RobotToDsDestinationPortNumber;
             TransmitPort = Configuration.DsToRobotDestinationPortNumber;
-
-
         }
 
         protected void InvalidateConnection()
         {
-            //TODO: Finish this.
+            try
+            {
+                if (IsEnabled)
+                {
+                    Stop(false);
+                    //SpinWait.SpinUntil(() => _isStopped == true);
+                    Start();
+                }
+            }
+            catch
+            {
+                throw;
+            }
         }
 
         
@@ -50,8 +80,9 @@ namespace EHaskins.Frc.Communication.DriverStation
                 if (_Network == value)
                     return;
                 _Network = value;
-                RaisePropertyChanged("Network");
+
                 InvalidateConnection();
+                RaisePropertyChanged("Network");
             }
         }
         private byte _HostNumber;
@@ -63,11 +94,40 @@ namespace EHaskins.Frc.Communication.DriverStation
                 if (_HostNumber == value)
                     return;
                 _HostNumber = value;
+
+                InvalidateConnection();
                 RaisePropertyChanged("HostNumber");
-                    InvalidateConnection();
             }
         }
-              
+        private ushort _TeamNumber;
+        public ushort TeamNumber
+        {
+            get
+            {
+                return _TeamNumber;
+            }
+            set
+            {
+                if (_TeamNumber == value)
+                    return;
+                _TeamNumber = value;
+                InvalidateConnection();
+                RaisePropertyChanged("TeamNumber");
+            }
+        }
+        private int _UserControlDataSize;
+        public int UserControlDataSize
+        {
+            get { return _UserControlDataSize; }
+            set
+            {
+                if (_UserControlDataSize == value)
+                    return;
+                _UserControlDataSize = value;
+                InvalidateConnection();
+                RaisePropertyChanged("UserControlDataSize");
+            }
+        }
         
 
         private int _TransmitPort;
@@ -82,8 +142,9 @@ namespace EHaskins.Frc.Communication.DriverStation
                 if (_TransmitPort == value)
                     return;
                 _TransmitPort = value;
-                RaisePropertyChanged("TransmitPort");
+
                 InvalidateConnection();
+                RaisePropertyChanged("TransmitPort");
             }
         }
         private int _ReceivePort;
@@ -98,8 +159,29 @@ namespace EHaskins.Frc.Communication.DriverStation
                 if (_ReceivePort == value)
                     return;
                 _ReceivePort = value;
-                RaisePropertyChanged("ReceivePort");
+
                 InvalidateConnection();
+                RaisePropertyChanged("ReceivePort");
+            }
+        }
+        public bool IsEnabled
+        {
+            get
+            {
+                return _isEnabled;
+            }
+            set
+            {
+                if (value && !IsEnabled)
+                {
+                    Start();
+                    RaisePropertyChanged("IsEnabled");
+                }
+                else if (!value && IsEnabled)
+                {
+                    Stop();
+                    RaisePropertyChanged("IsEnabled");
+                }
             }
         }
         private bool _IsSyncronized;
@@ -126,6 +208,8 @@ namespace EHaskins.Frc.Communication.DriverStation
             }
             protected set
             {
+                if (_ControlData == value)
+                    return;
                 _ControlData = value;
                 RaisePropertyChanged("ControlData");
             }
@@ -206,28 +290,46 @@ namespace EHaskins.Frc.Communication.DriverStation
 
 
 
-        public void Open(ushort teamNumber, IPEndPoint transmitEP = null)
+        public void Start()
         {
-            ControlData.TeamNumber = teamNumber;
-            _transmitEP = transmitEP ?? new IPEndPoint(FrcPacketUtils.GetIP(teamNumber, Devices.Robot), TransmitPort);
+            RaiseStarting();
+            ControlData = new ControlData(TeamNumber) { UserControlDataLength = Configuration.UserControlDataSize };
+
+            _transmitEP = new IPEndPoint(FrcPacketUtils.GetIP(Network, TeamNumber, HostNumber), TransmitPort);
 
             _client = new UdpClient(ReceivePort);
 
-            _isOpen = true;
+            _isEnabled = true;
             _client.BeginReceive(this.ReceiveData, null);
 
             _transmitTimer = new MicroTimer(20 * 1000);
             _transmitTimer.Elapsed += this.SendData;
             //_transmitTimer.AutoReset = True
+            RaiseStarted();
             _transmitTimer.Start();
         }
 
-        public void Close()
+        public void Stop()
         {
+            Stop(false);
+        }
+        protected void Stop(bool reset)
+        {
+            //TOOD: Add stopped/stoping events
+            //ControlData.Dispose();
+
             if (_transmitTimer.Enabled)
                 _transmitTimer.Stop();
-            if (_isOpen)
-                _isOpen = false;
+            if (_isEnabled)
+                _isEnabled = false;
+
+            if(!reset)
+                ControlData = null;
+
+            if (_client != null)
+            {
+                _client.Close();
+            }
         }
 
         private void CheckSafties()
@@ -292,13 +394,13 @@ namespace EHaskins.Frc.Communication.DriverStation
 
         public void SendData(object sender, MicroTimerEventArgs e)
         {
-            if (!_isOpen)
+            if (!IsEnabled)
             {
-                if (_client != null)
-                    _client.Close();
                 return;
             }
-
+            //HACK: Why do I need this, and why does it fix the binding issue.
+            if (ControlData.PacketId == 0)
+                RaisePropertyChanged("ControlData");
             UpdateMode();
             CheckSafties();
             if (SendingData != null)
@@ -313,9 +415,12 @@ namespace EHaskins.Frc.Communication.DriverStation
         {
             try
             {
-                IPEndPoint endpoint = null;
-                var bytes = _client.EndReceive(ar, ref endpoint);
-                ParseBytes(bytes);
+                if (_client != null && IsEnabled)
+                {
+                    IPEndPoint endpoint = null;
+                    var bytes = _client.EndReceive(ar, ref endpoint);
+                    ParseBytes(bytes);
+                }
             }
             catch (Exception ex)
             {
@@ -323,7 +428,7 @@ namespace EHaskins.Frc.Communication.DriverStation
             }
             finally
             {
-                if (_isOpen)
+                if (IsEnabled)
                 {
                     _client.BeginReceive(this.ReceiveData, null);
                 }
@@ -383,7 +488,7 @@ namespace EHaskins.Frc.Communication.DriverStation
             {
                 if (disposing)
                 {
-                    this.Close();
+                    this.Stop();
                 }
 
             }

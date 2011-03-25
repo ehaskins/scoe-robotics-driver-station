@@ -31,18 +31,22 @@ namespace EHaskins.Frc.DriverStationCli
             sticks = new List<SlimDX.DirectInput.Joystick>();
             Communication.Configuration.UserControlDataSize = 64;
             Communication.Configuration.UserStatusDataSize = 64;
-            ds = new DriverStation(1692);
+            ds = new DriverStation();
 
+            ds.TeamNumber = 1692;
+            ds.Network = 172;
+            ds.HostNumber = 198;
             ds.NewDataReceived += NewDataReceived;
             ds.SendingData += SendingData;
             ds.TransmitPort = 1110;
-            ds.Open(1692, new IPEndPoint(IPAddress.Parse("172.16.92.198"), ds.TransmitPort));
+            ds.Start();
 
             //ds2 = new VirtualDS(1103);
             //ds2.TransmitPort = 1240;
             //ds2.ReceivePort = 1250;
             //ds2.Open(1103, new IPEndPoint(IPAddress.Parse("127.0.0.1"), 1240));
-            ds2 = new DriverStation(1692);
+            ds2 = new DriverStation();
+            ds2.TeamNumber = 1103;
             ds2.TransmitPort = 1240;
             ds2.ReceivePort = 1250;
             //ds2.Open(1692, new IPEndPoint(IPAddress.Parse("172.16.92.199"), 1240));
@@ -91,7 +95,7 @@ namespace EHaskins.Frc.DriverStationCli
                         UpdateSticks();
                         break;
                     case ConsoleKey.Q:
-                        ds.Close();
+                        ds.Stop();
                         return;
                 }
 
