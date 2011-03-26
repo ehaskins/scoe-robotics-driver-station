@@ -59,22 +59,35 @@
                                                     ItemsSource="{Binding Path=DataContext.JoystickManager.JoystickNames, 
                                                                             RelativeSource={RelativeSource Mode=FindAncestor, 
                                                                             AncestorType={x:Type Window}}}"/>
-                                    <ListBox Grid.Row="1" ItemsSource="{Binding Axes}" HorizontalContentAlignment="Stretch">
-                                        <ListBox.ItemTemplate>
+                                    <ItemsControl Grid.Row="1" ItemsSource="{Binding AxisData}" HorizontalContentAlignment="Stretch">
+                                        <ItemsControl.ItemTemplate>
                                             <DataTemplate>
                                                 <Grid>
                                                     <Grid.ColumnDefinitions>
                                                         <ColumnDefinition Width="40"/>
                                                         <ColumnDefinition Width="*"/>
                                                     </Grid.ColumnDefinitions>
+                                                    <Grid.RowDefinitions>
+                                                        <RowDefinition Height="Auto"/>
+                                                        <RowDefinition Height="Auto"/>
+                                                    </Grid.RowDefinitions>
 
 
-                                                    <TextBlock Text="{Binding StringFormat=f2}" Margin="3" />
-                                                    <ProgressBar Grid.Column="1" Minimum="-1" Maximum="1" Value="{Binding Mode=OneWay}" Height="14"/>
+                                                    <TextBlock Grid.Row="0" Grid.Column="0" Text="{Binding Path=Value,StringFormat=f2}" Margin="3" />
+                                                    <ProgressBar Grid.Row="0" Grid.Column="1" Minimum="-1" Maximum="1" Value="{Binding Path=Value, Mode=OneWay}" Height="14"/>
+                                                    
+                                                    <StackPanel Grid.Row="1" Grid.ColumnSpan="2" Orientation="Horizontal" HorizontalAlignment="Stretch">
+                                                        <TextBlock>Deadband:</TextBlock>
+                                                        <TextBox Text="{Binding Deadband, StringFormat=f2}" Width="40"/>
+                                                        <CheckBox IsChecked="{Binding Invert}" Content="Invert"/>
+                                                        <TextBlock>Physical axis:</TextBlock>
+                                                        <TextBox Text="{Binding PhysicalAxis}"/>
+                                                    </StackPanel>
+
                                                 </Grid>
                                             </DataTemplate>
-                                        </ListBox.ItemTemplate>
-                                    </ListBox>
+                                        </ItemsControl.ItemTemplate>
+                                    </ItemsControl>
                                 </Grid>
 
                             </DataTemplate>

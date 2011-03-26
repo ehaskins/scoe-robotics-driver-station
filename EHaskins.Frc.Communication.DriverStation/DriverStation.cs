@@ -68,7 +68,7 @@ namespace EHaskins.Frc.Communication.DriverStation
             {
                 throw;
             }
-        }
+        } 
 
         
         private byte _Network;
