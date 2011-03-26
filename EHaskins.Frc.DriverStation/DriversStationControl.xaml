@@ -18,9 +18,12 @@
             <TextBox Text="{Binding TeamNumber}"  Width="40"/>
             <TextBox Text="{Binding ControlData.PacketId, Mode=OneWay, trace:PresentationTraceSources.TraceLevel=High}" Width="40"/>
             <CheckBox IsEnabled="False" IsChecked="{Binding Path=IsSyncronized, Mode=OneWay}" Content="Connected" />
-            <CheckBox IsChecked="{Binding IsEnabled}" Content="DS Enabled"/>
         </StackPanel>
+        
         <TabControl Grid.Row="1">
+            <TabItem Header="Telemetry">
+                <TextBlock>Stuff goes here</TextBlock>
+            </TabItem>
             <TabItem Header="Joysticks">
                 <Grid>
                     <Grid.ColumnDefinitions>
@@ -35,7 +38,15 @@
                             </DataTemplate>
                         </ListBox.ItemTemplate>
                     </ListBox>
-                    <TabControl Grid.Column="1" ItemsSource="{Binding ControlData.Joysticks}" DisplayMemberPath="JoystickNumber">
+                    <TabControl Grid.Column="1" ItemsSource="{Binding ControlData.Joysticks}" SelectedIndex="0" >
+                        <TabControl.ItemTemplate>
+                            <DataTemplate>
+                                <StackPanel Orientation="Horizontal">
+                                    <TextBlock Text="Joystick "/>
+                                    <TextBlock Text="{Binding JoystickNumber}"/>
+                                </StackPanel>
+                            </DataTemplate>
+                        </TabControl.ItemTemplate>
                         <TabControl.ContentTemplate>
                             <DataTemplate>
                                 <Grid>
@@ -68,18 +79,10 @@
 
                             </DataTemplate>
                         </TabControl.ContentTemplate>
-                        <!--<TabItem Header="Mappings">
-                                        
-                                    </TabItem>
-                                    <TabItem Header="Joystick 0" DataContext="{Binding ControlData.Joysticks[0]}">
-                                        <ListBox ItemsSource="{Binding BindableAxes}">
-                                            
-                                        </ListBox>
-                                    </TabItem>-->
                     </TabControl>
                 </Grid>
             </TabItem>
-            <TabItem Header="Net Conf">
+            <TabItem Header="DS Config">
                 <Grid>
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="Auto"/>
@@ -91,23 +94,29 @@
                         <RowDefinition Height="Auto"/>
                         <RowDefinition Height="Auto"/>
                         <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
                     </Grid.RowDefinitions>
+
+                    <CheckBox Grid.Column="1" IsChecked="{Binding IsEnabled}" Content="DS Enabled"/>
                     
-                    <TextBlock Grid.Row="0" HorizontalAlignment="Right">Network:</TextBlock>
-                    <TextBox Grid.Row="0" Grid.Column="1" Text="{Binding Network}"/>
-                    
-                    <TextBlock Grid.Row="1" HorizontalAlignment="Right">Device address:</TextBlock>
-                    <TextBox Grid.Row="1" Grid.Column="1" Text="{Binding HostNumber}"/>
-                    
-                    <TextBlock Grid.Row="2" HorizontalAlignment="Right">Transmit port:</TextBlock>
-                    <TextBox Grid.Row="2" Grid.Column="1" Text="{Binding TransmitPort}"/>
-                    
-                    <TextBlock Grid.Row="3" HorizontalAlignment="Right">Receive port:</TextBlock>
-                    <TextBox Grid.Row="3" Grid.Column="1" Text="{Binding ReceivePort}"/>
-                    
-                    <TextBlock Grid.Row="4" HorizontalAlignment="Right">User Control Data Size:</TextBlock>
-                    <TextBox Grid.Row="4" Grid.Column="1" Text="{Binding UserControlDataSize}"/>
+                    <TextBlock Grid.Row="1" HorizontalAlignment="Right">Network:</TextBlock>
+                    <TextBox Grid.Row="1" Grid.Column="1" Text="{Binding Network}"/>
+
+                    <TextBlock Grid.Row="2" HorizontalAlignment="Right">Device address:</TextBlock>
+                    <TextBox Grid.Row="2" Grid.Column="1" Text="{Binding HostNumber}"/>
+
+                    <TextBlock Grid.Row="3" HorizontalAlignment="Right">Transmit port:</TextBlock>
+                    <TextBox Grid.Row="3" Grid.Column="1" Text="{Binding TransmitPort}"/>
+
+                    <TextBlock Grid.Row="4" HorizontalAlignment="Right">Receive port:</TextBlock>
+                    <TextBox Grid.Row="4" Grid.Column="1" Text="{Binding ReceivePort}"/>
+
+                    <TextBlock Grid.Row="5" HorizontalAlignment="Right">User Control Data Size:</TextBlock>
+                    <TextBox Grid.Row="5" Grid.Column="1" Text="{Binding UserControlDataSize}"/>
                 </Grid>
+            </TabItem>
+            <TabItem Header="Robot Config">
+                <TextBlock>GUI version of robot configuration goes here someday.</TextBlock>
             </TabItem>
         </TabControl>
     </Grid>

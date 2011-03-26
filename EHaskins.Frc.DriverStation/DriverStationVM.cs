@@ -15,6 +15,7 @@ namespace EHaskins.Frc.DS
     {
         public JoystickManager JoystickManager {get; set;}
 
+
         public DriverStationVM()
         {
             JoystickManager = new JoystickManager();
@@ -41,8 +42,8 @@ namespace EHaskins.Frc.DS
 
             for (int i = 0; i < 4; i++)
             {
-                var stick = i < Joysticks.Length ? new SlimDxJoystick(JoystickManager, Joysticks[i].Information.InstanceName) : new SlimDxJoystick(JoystickManager, "");
-
+                var stick = i < Joysticks.Length ? new SlimDxJoystick(JoystickManager, Joysticks[i].Information.InstanceName, true) : new SlimDxJoystick(JoystickManager, "", true);
+                stick.JoystickNumber = i;
                 ds.ControlData.Joysticks[i] = stick;
             }
         }
