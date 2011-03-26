@@ -13,15 +13,15 @@ namespace EHaskins.Frc.Communication.DriverStation
     {
         Dispatcher dispatch;
         JoystickManager manager;
-        public SlimDxJoystick(JoystickManager manager, String name) : base()
+        public SlimDxJoystick(JoystickManager manager, String name, bool syncronize) : base()
         {
-            this.dispatch = Dispatcher.CurrentDispatcher;
+            this.dispatch = syncronize ? Dispatcher.CurrentDispatcher : null;
             this.Manager = manager;
             Name = name;
         }
         public override void Update()
         {
-            if (dispatch.CheckAccess())
+            if (dispatch == null || dispatch.CheckAccess())
             {
                 if (Joystick != null)
                 {
@@ -30,12 +30,24 @@ namespace EHaskins.Frc.Communication.DriverStation
                         var state = Joystick.GetCurrentState();
                         if (SlimDX.Result.Last.IsSuccess)
                         {
-                            Axes[0] = state.X / 1000f;
-                            Axes[1] = state.Y / 1000f;
-                            Axes[2] = state.Z / 1000f;
-                            Axes[3] = state.RotationX / 1000f;
-                            Axes[4] = state.RotationY / 1000f;
-                            Axes[5] = state.RotationZ / 1000f;
+
+                            var sliders = state.GetSliders();
+                            var physicalAxes = new double[6 + sliders.Length];
+                            physicalAxes[0] = state.X / 1000f;
+                            physicalAxes[1] = state.Y / 1000f;
+                            physicalAxes[2] = state.Z / 1000f;
+                            physicalAxes[3] = state.RotationX / 1000f;
+                            physicalAxes[4] = state.RotationY / 1000f;
+                            physicalAxes[5] = state.RotationZ / 1000f;
+                            for (int i = 0; i < sliders.Length; i++)
+                            {
+                            	physicalAxes[6+i] = sliders[i] / 1000f;
+                            }
+
+                            for (int i = 0; i < 6; i++)
+                            {
+                                Axes[i] = physicalAxes[i];
+                            }
                         }
 
                         var buttons = state.GetButtons();
@@ -50,7 +62,7 @@ namespace EHaskins.Frc.Communication.DriverStation
             {
                 try
                 {
-                    dispatch.Invoke((ThreadStart)delegate { Update(); }, TimeSpan.FromMilliseconds(10), System.Windows.Threading.DispatcherPriority.SystemIdle);
+                    dispatch.Invoke((ThreadStart)delegate { Update(); }, TimeSpan.FromMilliseconds(5), System.Windows.Threading.DispatcherPriority.SystemIdle);
                 }
                 catch(Exception ex){
                     System.Diagnostics.Debug.WriteLine(ex.Message);

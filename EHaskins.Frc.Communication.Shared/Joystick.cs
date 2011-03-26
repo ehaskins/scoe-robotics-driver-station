@@ -77,6 +77,7 @@ namespace EHaskins.Frc.Communication
 
             return data;
         }
+
         public ObservableCollection<double> Axes
         {
             get { return _analogInputs; }
@@ -86,23 +87,7 @@ namespace EHaskins.Frc.Communication
                     return;
                 _analogInputs = value;
 
-                //RaiseEvent PropertyChanged(Me, New PropertyChangedEventArgs("AnalogInputs"))
-                if (PropertyChanged != null)
-                {
-                    RaisePropertyChanged("X");
-                }
-                if (PropertyChanged != null)
-                {
-                    RaisePropertyChanged("Y");
-                }
-                if (PropertyChanged != null)
-                {
-                    RaisePropertyChanged("Z");
-                }
-                if (PropertyChanged != null)
-                {
-                    RaisePropertyChanged("Twist");
-                }
+                RaisePropertyChanged("Axes");
             }
         }
         public int JoystickNumber
@@ -122,31 +107,14 @@ namespace EHaskins.Frc.Communication
             }
         }
 
-        private BindableBitField16 _Buttons;
-        public BindableBitField16 Buttons
+        private BitField16 _Buttons;
+        public BitField16 Buttons
         {
             get { return _Buttons; }
             set { _Buttons = value; }
         }
 
-        public double X
-        {
-            get { return Axes[0]; }
-        }
-        public double Y
-        {
-            get { return Axes[1]; }
-        }
-        public double Z
-        {
-            get { return Axes[2]; }
-        }
-        public double Twist
-        {
-            get { return Axes[3]; }
-        }
-
-        public virtual void Update(){}
+        public virtual void Update() { }
 
         public event PropertyChangedEventHandler PropertyChanged;
 
