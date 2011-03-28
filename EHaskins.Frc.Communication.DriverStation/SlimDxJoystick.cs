@@ -13,210 +13,11 @@ using SlimDX.DirectInput;
 
 namespace EHaskins.Frc.Communication.DriverStation
 {
-    public class ButtonData : INotifyPropertyChanged
-    {
-        private int _Index;
-        public int Index
-        {
-            get { return _Index; }
-            protected set
-            {
-                if (_Index == value)
-                    return;
-                _Index = value;
-                RaisePropertyChanged("Index");
-            }
-        }
-
-        public ButtonData(int index)
-        {
-            Index = index;
-            PhysicalButton = index;
-        }
-
-
-        public void Update(bool[] physicalValues)
-        {
-            bool value;
-            if (PhysicalButton >= physicalValues.Length)
-                value = false;
-            else
-                value = physicalValues[PhysicalButton];
-            if (Invert)
-                value = !Value;
-
-            Value = value;
-        }
-
-        private bool _Value;
-        public bool Value
-        {
-            get
-            {
-                return _Value;
-            }
-            set
-            {
-                if (_Value == value)
-                    return;
-                _Value = value;
-                RaisePropertyChanged("Value");
-            }
-        }
-        private bool _Invert;
-        public bool Invert
-        {
-            get
-            {
-                return _Invert;
-            }
-            set
-            {
-                if (_Invert == value)
-                    return;
-                _Invert = value;
-                RaisePropertyChanged("Invert");
-            }
-        }
-
-        private int _PhysicalButton;
-        public int PhysicalButton
-        {
-            get
-            {
-                return _PhysicalButton;
-            }
-            set
-            {
-                if (_PhysicalButton == value)
-                    return;
-                _PhysicalButton = value;
-                RaisePropertyChanged("PhysicalButton");
-            }
-        }
-
-        public event PropertyChangedEventHandler PropertyChanged;
-        protected void RaisePropertyChanged(string property)
-        {
-            if (PropertyChanged != null)
-            {
-                PropertyChanged(this, new PropertyChangedEventArgs(property));
-            }
-        }
-    }
-
-    public class AxisData : INotifyPropertyChanged
-    {
-        private int _Index;
-        public int Index
-        {
-            get { return _Index; }
-            protected set
-            {
-                if (_Index == value)
-                    return;
-                _Index = value;
-                RaisePropertyChanged("Index");
-            }
-        }
-
-        public AxisData(int index)
-        {
-            Index = index;
-            PhysicalAxis = index;
-        }
-
-        public void Update(double[] physicalValues)
-        {
-            double value;
-            if (PhysicalAxis >= physicalValues.Length)
-                value = 0;
-            else
-                value = physicalValues[PhysicalAxis];
-
-            value = value.Deadband(0.0, 1.0, Deadband);
-
-            if (Invert)
-                value = -value;
-            Value = value;
-        }
-
-        private double _Value;
-        public double Value
-        {
-            get
-            {
-                return _Value;
-            }
-            set
-            {
-                if (_Value == value)
-                    return;
-                _Value = value;
-                RaisePropertyChanged("Value");
-            }
-        }
-
-        private double _DeadBand;
-        public double Deadband
-        {
-            get { return _DeadBand; }
-            set
-            {
-                if (_DeadBand == value)
-                    return;
-                _DeadBand = value;
-                RaisePropertyChanged("Deadband");
-            }
-        }
-
-        private bool _Invert;
-        public bool Invert
-        {
-            get
-            {
-                return _Invert;
-            }
-            set
-            {
-                if (_Invert == value)
-                    return;
-                _Invert = value;
-                RaisePropertyChanged("Invert");
-            }
-        }
-
-        private int _PhysicalAxis;
-        public int PhysicalAxis
-        {
-            get
-            {
-                return _PhysicalAxis;
-            }
-            set
-            {
-                if (_PhysicalAxis == value)
-                    return;
-                _PhysicalAxis = value;
-                RaisePropertyChanged("PhysicalAxis");
-            }
-        }
-
-        public event PropertyChangedEventHandler PropertyChanged;
-        protected void RaisePropertyChanged(string property)
-        {
-            if (PropertyChanged != null)
-            {
-                PropertyChanged(this, new PropertyChangedEventArgs(property));
-            }
-        }
-    }
-
-    public class SlimDxJoystick : Joystick
+    public class SlimDXJoystick : Joystick
     {
         Dispatcher dispatch;
         JoystickManager manager;
-        public SlimDxJoystick(JoystickManager manager, String name, bool syncronize)
+        public SlimDXJoystick(JoystickManager manager, String name, bool syncronize)
             : base()
         {
             this.dispatch = syncronize ? Dispatcher.CurrentDispatcher : null;
@@ -281,6 +82,9 @@ namespace EHaskins.Frc.Communication.DriverStation
                     physicalAxes = new double[0];
                 if (physicalButtons == null)
                     physicalButtons = new bool[0];
+
+                PhysicalAxes = physicalAxes.Length;
+                PhysicalButtons = physicalButtons.Length;
 
                 foreach (ButtonData button in ButtonData)
                 {
@@ -376,6 +180,36 @@ namespace EHaskins.Frc.Communication.DriverStation
             }
         }
 
+        private int _PhysicalAxes;
+        public int PhysicalAxes
+        {
+            get
+            {
+                return _PhysicalAxes;
+            }
+            set
+            {
+                if (_PhysicalAxes == value)
+                    return;
+                _PhysicalAxes = value;
+                RaisePropertyChanged("PhysicalAxes");
+            }
+        }
+        private int _PhysicalButtons;
+        public int PhysicalButtons
+        {
+            get
+            {
+                return _PhysicalButtons;
+            }
+            set
+            {
+                if (_PhysicalButtons == value)
+                    return;
+                _PhysicalButtons = value;
+                RaisePropertyChanged("PhysicalButtons");
+            }
+        }
 
         private SlimDX.DirectInput.Joystick _Joystick;
         public SlimDX.DirectInput.Joystick Joystick
