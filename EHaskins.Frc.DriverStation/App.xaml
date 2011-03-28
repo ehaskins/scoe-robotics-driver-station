@@ -3,6 +3,7 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              StartupUri="MainWindow.xaml">
     <Application.Resources>
-        <ResourceDictionary Source="BureauBlack.xaml"/>
+        <!--<ResourceDictionary Source="WhistlerBlue.xaml"/>-->
+        <ResourceDictionary Source="DataTemplates.xaml"/>
     </Application.Resources>
 </Application>

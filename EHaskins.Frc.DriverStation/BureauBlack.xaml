@@ -282,7 +282,7 @@
         <GradientStop Color="#FFE2E8EE" Offset="1"/>
     </LinearGradientBrush>
 
-    <SolidColorBrush x:Key="WindowBackgroundBrush" Color="#FFF" />
+    <SolidColorBrush x:Key="WindowBackgroundBrush" Color="#2A2A2A" />
 
     <Style x:Key="NuclearButtonFocusVisual">
         <Setter Property="Control.Template">
@@ -2542,8 +2542,8 @@
 
 
     <Style d:IsControlPart="True" TargetType="{x:Type TabItem}">
-        <Setter Property="HorizontalContentAlignment" Value="Center" />
-        <Setter Property="VerticalContentAlignment" Value="Center" />
+        <!--<Setter Property="HorizontalContentAlignment" Value="Center" 
+        <Setter Property="VerticalContentAlignment" Value="Center" /> -->
         <Setter Property="Padding" Value="10,6,10,6" />
         <Setter Property="MinWidth" Value="5" />
         <Setter Property="MinHeight" Value="5" />

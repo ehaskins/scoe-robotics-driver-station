@@ -42,7 +42,7 @@ namespace EHaskins.Frc.DS
 
             for (int i = 0; i < 4; i++)
             {
-                var stick = i < Joysticks.Length ? new SlimDxJoystick(JoystickManager, Joysticks[i].Information.InstanceName, true) : new SlimDxJoystick(JoystickManager, "", true);
+                var stick = i < Joysticks.Length ? new SlimDXJoystick(JoystickManager, Joysticks[i].Information.InstanceName, true) : new SlimDXJoystick(JoystickManager, "", true);
                 stick.JoystickNumber = i;
                 ds.ControlData.Joysticks[i] = stick;
             }

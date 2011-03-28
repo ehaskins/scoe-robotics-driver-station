@@ -52,43 +52,30 @@
                                 <Grid>
                                     <Grid.RowDefinitions>
                                         <RowDefinition Height="Auto"/>
+                                        <RowDefinition Height="Auto"/>
                                         <RowDefinition Height="*"/>
                                     </Grid.RowDefinitions>
-                                    <ComboBox 
+                                    <ComboBox Grid.ColumnSpan="2"
                                                     SelectedValue="{Binding Path=Name}" 
                                                     ItemsSource="{Binding Path=DataContext.JoystickManager.JoystickNames, 
                                                                             RelativeSource={RelativeSource Mode=FindAncestor, 
                                                                             AncestorType={x:Type Window}}}"/>
-                                    <ItemsControl Grid.Row="1" ItemsSource="{Binding AxisData}" HorizontalContentAlignment="Stretch">
-                                        <ItemsControl.ItemTemplate>
-                                            <DataTemplate>
-                                                <Grid>
-                                                    <Grid.ColumnDefinitions>
-                                                        <ColumnDefinition Width="40"/>
-                                                        <ColumnDefinition Width="*"/>
-                                                    </Grid.ColumnDefinitions>
-                                                    <Grid.RowDefinitions>
-                                                        <RowDefinition Height="Auto"/>
-                                                        <RowDefinition Height="Auto"/>
-                                                    </Grid.RowDefinitions>
-
-
-                                                    <TextBlock Grid.Row="0" Grid.Column="0" Text="{Binding Path=Value,StringFormat=f2}" Margin="3" />
-                                                    <ProgressBar Grid.Row="0" Grid.Column="1" Minimum="-1" Maximum="1" Value="{Binding Path=Value, Mode=OneWay}" Height="14"/>
-                                                    
-                                                    <StackPanel Grid.Row="1" Grid.ColumnSpan="2" Orientation="Horizontal" HorizontalAlignment="Stretch">
-                                                        <TextBlock>Deadband:</TextBlock>
-                                                        <TextBox Text="{Binding Deadband, StringFormat=f2}" Width="40"/>
-                                                        <CheckBox IsChecked="{Binding Invert}" Content="Invert"/>
-                                                        <TextBlock>Physical axis:</TextBlock>
-                                                        <TextBox Text="{Binding PhysicalAxis}"/>
-                                                    </StackPanel>
-
-                                                </Grid>
-                                            </DataTemplate>
-                                        </ItemsControl.ItemTemplate>
-                                    </ItemsControl>
+                                    <StackPanel Grid.Row="1" Orientation="Horizontal">
+                                        <TextBlock>Axes:</TextBlock>
+                                        <TextBlock Text="{Binding PhysicalAxes}"/>
+                                        <TextBlock Margin="3 0 0 0">Buttons:</TextBlock>
+                                        <TextBlock Text="{Binding PhysicalButtons}"/>
+                                    </StackPanel>
+                                    <TabControl Grid.Row="2" Grid.Column="0" >
+                                        <TabItem Header="Axes">
+                                            <ItemsControl ItemsSource="{Binding AxisData}" HorizontalContentAlignment="Stretch"/>
+                                        </TabItem>
+                                        <TabItem Header="Buttons">
+                                            <ItemsControl ItemsSource="{Binding ButtonData}" HorizontalContentAlignment="Stretch"/>
+                                        </TabItem>
+                                    </TabControl>
                                 </Grid>
+                                
 
                             </DataTemplate>
                         </TabControl.ContentTemplate>
