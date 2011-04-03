@@ -12,14 +12,14 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 
-namespace EHaskins.Frc.DriversStation
+namespace EHaskins.Frc.DriverStation
 {
     /// <summary>
-    /// Interaction logic for JoystickControl.xaml
+    /// Interaction logic for UdpConfig.xaml
     /// </summary>
-    public partial class JoystickControl : UserControl
+    public partial class UdpConfig : UserControl
     {
-        public JoystickControl()
+        public UdpConfig()
         {
             InitializeComponent();
         }

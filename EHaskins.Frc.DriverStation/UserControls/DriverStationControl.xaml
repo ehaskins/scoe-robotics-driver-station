@@ -1,12 +1,12 @@
-﻿<UserControl x:Class="EHaskins.Frc.DS.DriversStationControl"
+﻿<UserControl x:Class="EHaskins.Frc.DriverStation.DriverStationControl"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
-             xmlns:trace="clr-namespace:System.Diagnostics;assembly=WindowsBase"
+             xmlns:local="clr-namespace:EHaskins.Frc.DriverStation"
              mc:Ignorable="d" 
              d:DesignHeight="550" d:DesignWidth="512">
-    <Grid>
+    <Grid Opacity="0.8">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="*"/>
@@ -16,7 +16,7 @@
             <ToggleButton IsChecked="{Binding ControlData.Mode.IsAutonomous}">Autonomous</ToggleButton>
             <ToggleButton IsChecked="{Binding ControlData.Mode.IsEStop}">E-Stop</ToggleButton>
             <TextBox Text="{Binding TeamNumber}"  Width="40"/>
-            <TextBox Text="{Binding ControlData.PacketId, Mode=OneWay, trace:PresentationTraceSources.TraceLevel=High}" Width="40"/>
+            <TextBox Text="{Binding ControlData.PacketId, Mode=OneWay}" Width="40"/>
             <CheckBox IsEnabled="False" IsChecked="{Binding Path=IsSyncronized, Mode=OneWay}" Content="Connected" />
         </StackPanel>
         
@@ -98,21 +98,16 @@
                     </Grid.RowDefinitions>
 
                     <CheckBox Grid.Column="1" IsChecked="{Binding IsEnabled}" Content="DS Enabled"/>
-                    
-                    <TextBlock Grid.Row="1" HorizontalAlignment="Right">Network:</TextBlock>
-                    <TextBox Grid.Row="1" Grid.Column="1" Text="{Binding Network}"/>
-
-                    <TextBlock Grid.Row="2" HorizontalAlignment="Right">Device address:</TextBlock>
-                    <TextBox Grid.Row="2" Grid.Column="1" Text="{Binding HostNumber}"/>
-
-                    <TextBlock Grid.Row="3" HorizontalAlignment="Right">Transmit port:</TextBlock>
-                    <TextBox Grid.Row="3" Grid.Column="1" Text="{Binding TransmitPort}"/>
-
-                    <TextBlock Grid.Row="4" HorizontalAlignment="Right">Receive port:</TextBlock>
-                    <TextBox Grid.Row="4" Grid.Column="1" Text="{Binding ReceivePort}"/>
-
-                    <TextBlock Grid.Row="5" HorizontalAlignment="Right">User Control Data Size:</TextBlock>
-                    <TextBox Grid.Row="5" Grid.Column="1" Text="{Binding UserControlDataSize}"/>
+                    <TextBlock Grid.Row="1" HorizontalAlignment="Right">User Control Data Size:</TextBlock>
+                    <TextBox Grid.Row="1" Grid.Column="1" Text="{Binding UserControlDataSize}"/>
+                    <local:UdpConfig Grid.Row="2" Grid.ColumnSpan="2" DataContext="{Binding Connection}"/>
+                    <!--<ContentControl Grid.Row="2" Grid.ColumnSpan="2" DataContext="{Binding Connection}">
+                        <ContentControl.ContentTemplate>
+                            <DataTemplate>
+                                
+                            </DataTemplate>
+                        </ContentControl.ContentTemplate>
+                    </ContentControl>-->
                 </Grid>
             </TabItem>
             <TabItem Header="Robot Config">
