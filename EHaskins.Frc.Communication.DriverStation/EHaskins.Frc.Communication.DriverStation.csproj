@@ -44,12 +44,13 @@
   <ItemGroup>
     <Compile Include="AxisData.cs" />
     <Compile Include="ButtonData.cs" />
+    <Compile Include="DataReceivedEventArgs.cs" />
     <Compile Include="DriverStation.cs" />
     <Compile Include="JoystickManager.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="SlimDXDriverStation.cs" />
     <Compile Include="SlimDxJoystick.cs" />
-    <Compile Include="Transmitter.cs" />
+    <Compile Include="Transceiver.cs" />
     <Compile Include="UdpTransmitter.cs" />
   </ItemGroup>
   <ItemGroup>

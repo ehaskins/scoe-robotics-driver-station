@@ -58,9 +58,13 @@ namespace EHaskins.Frc.Communication
 
         public void Start()
         {
-            //_status = new StatusData(UserStatusDataLength); //TODO:FIX THIS!
+            Console.WriteLine("Starting team " + TeamNumber + "on receive:" + ReceivePort + ", transmit:" + TransmitPort);
+            _status = new StatusData();
+            _status.UserStatusDataLength = UserControlDataLength;
 
             _status.TeamNumber = this.TeamNumber;
+
+            CommandData = new ControlData();
 
             _transmitClient = new UdpClient();
 
@@ -79,7 +83,7 @@ namespace EHaskins.Frc.Communication
             _status.ReplyId = packet.PacketId;
             //_status.ControlData = new ControlData(); // packet.Mode.Clone();//TODO:FIX
 
-            var sendData = new byte[1024]; //_status.GetBytes(); //TODO:FIX
+            var sendData = _status.GetBytes(); //TODO:FIX
             IPEndPoint ipep = (IPEndPoint)endpoint;
 
             ipep.Port = TransmitPort;

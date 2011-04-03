@@ -85,9 +85,7 @@ namespace EHaskins.Frc.Communication
 
                 int length = 0;
                 if (UserControlData == null)
-                {
                     length = 0;
-                }
                 else
                 {
                     length = UserControlData.Length <= UserControlDataLength ? UserControlData.Length : UserControlDataLength;

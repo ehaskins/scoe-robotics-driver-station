@@ -8,8 +8,9 @@ using System.Net;
 using System.ComponentModel;
 using EHaskins.Frc.Communication.DriverStation;
 using SlimDX.DirectInput;
+using System.Windows;
 
-namespace EHaskins.Frc.DS
+namespace EHaskins.Frc.DriverStation
 {
     public class DriverStationVM 
     {
@@ -21,22 +22,24 @@ namespace EHaskins.Frc.DS
             JoystickManager = new JoystickManager();
             Configuration.UserControlDataSize = 64;
             Configuration.UserStatusDataSize = 64;
-            DriverStations = new ObservableCollection<DriverStation>();
+            DriverStations = new ObservableCollection<Communication.DriverStation.DriverStation>();
 
-            var ds = new DriverStation() { TeamNumber = 1692, Network = 172, HostNumber = 198 };
+            //var ds = new Communication.DriverStation.DriverStation() { TeamNumber = 1692, Connection = new UdpTransmitter() { Network = 172, Host = 198 } };
+            //var ds = new Communication.DriverStation.DriverStation() { TeamNumber = 0, Connection = new UdpTransmitter() { Network = 127, Host = 1 } };
+            var ds = new Communication.DriverStation.DriverStation() { TeamNumber = 9245, Connection = new UdpTransmitter() { Network = 155, Host = 43 } };
             ds.Started += this.DSStarted;
             ds.Start();
             DriverStations.Add(ds);
 
-            var ds2 = new DriverStation { TeamNumber = 1103, TransmitPort = 2110, ReceivePort = 2150 };
+            var ds2 = new Communication.DriverStation.DriverStation { TeamNumber = 1103, Connection = new UdpTransmitter() { TransmitPort = 2110, ReceivePort = 2150 } };
             ds2.Started += this.DSStarted;
-            ds2.Start();
+            //ds2.Start();
             DriverStations.Add(ds2);
         }
 
         private void DSStarted(object sender, EventArgs e)
         {
-            var ds = sender as DriverStation;
+            var ds = sender as Communication.DriverStation.DriverStation;
 
             var Joysticks = JoystickManager.Joysticks;
 
@@ -48,14 +51,18 @@ namespace EHaskins.Frc.DS
             }
         }
 
-        public ObservableCollection<DriverStation> DriverStations { get; set; }
+        public ObservableCollection<Communication.DriverStation.DriverStation> DriverStations { get; set; }
 
         public void WindowClosing(object sender, CancelEventArgs e)
         {
-            foreach (var driverStation in DriverStations)
+            foreach (var ds in DriverStations)
             {
-                driverStation.Stop();
-                driverStation.Dispose();
+                if (ds != null)
+                {
+                    if (ds.IsEnabled)
+                        ds.Stop();
+                    ds.Dispose();
+                }
             }
             JoystickManager.Dispose();
         }

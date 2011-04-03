@@ -5,7 +5,7 @@ using System.Text;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.IO;
-
+using EHaskins.Utilities.NumericExtensions;
 namespace EHaskins.Frc.Communication
 {
     public class StatusData : INotifyPropertyChanged
@@ -34,6 +34,61 @@ namespace EHaskins.Frc.Communication
                 UserStatusDataLength = userDataLength;
                 UserStatusData = reader.ReadBytes(userDataLength);
             }
+        }
+        private byte[] GetBatteryBytes()
+        {
+            byte[] data;
+            if (CodeRunning)
+            {
+                var tempV = BatteryVoltage.Limit(0, 99);
+
+                double VInt = Math.Truncate(tempV);
+                double VFrac = (tempV - VInt) * 100;
+                var i = byte.Parse(VInt.ToString(), System.Globalization.NumberStyles.HexNumber);
+                var f = byte.Parse(VFrac.ToString(), System.Globalization.NumberStyles.HexNumber);
+                data = new byte[] { i, f };
+            }
+            else 
+                data = new byte[] { 0x37, 0x37};
+
+            return data;
+        }
+        public byte[] GetBytes()
+        {
+            byte[] data;
+            using (MemoryStream stream = new MemoryStream())
+            {
+                var writer = new MiscUtil.IO.EndianBinaryWriter(new MiscUtil.Conversion.BigEndianBitConverter(), stream, System.Text.Encoding.ASCII);
+                writer.Write(Mode.RawValue);
+                writer.Write(GetBatteryBytes());
+                writer.Write(DigitalOutputs.RawValue);
+                writer.Write(new byte[4]);
+                writer.Write(TeamNumber);
+                writer.Write(RobotMac ?? new byte[6]);
+                writer.Write(FpgaVersion != null ? System.Text.Encoding.ASCII.GetBytes(FpgaVersion) : new byte[8]);
+                writer.Write(new byte[6]);
+                writer.Write(ReplyId);
+                int length = 0;
+                if (UserStatusData == null)
+                    length = 0;
+                else
+                {
+                    length = UserStatusData.Length <= UserStatusDataLength ? UserStatusData.Length : UserStatusDataLength;
+                    writer.Write(UserStatusData, 0, length);
+                }
+
+                var paddingLength = (UserStatusDataLength - length) + 8;
+                byte[] padding = new byte[paddingLength];
+                writer.Write(padding);
+
+                var crcData = stream.ToArray();
+                stream.Position -= 4;
+                writer.Write((new Crc32()).ComputeHash(crcData));
+
+                data = stream.ToArray();
+                writer.Close();
+            }
+            return data;
         }
         double _BatteryVoltage;
         public double BatteryVoltage
@@ -117,6 +172,8 @@ namespace EHaskins.Frc.Communication
             {
                 if (value != _FpgaVersion)
                 {
+                    if (value.Length != 8)
+                        throw new ArgumentOutOfRangeException("FpgaVersion must be exactly 8 characters in length.");
                     _FpgaVersion = value;
                     PropertyChanged(this, new PropertyChangedEventArgs("FpgeVersion"));
                 }
