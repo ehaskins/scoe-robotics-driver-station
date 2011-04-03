@@ -22,9 +22,11 @@ namespace EHaskins.Frc.RobotEmulatorCLI
         VirtualRobot vRobot;
         public void Run()
         {
-            vRobot = new VirtualRobot(1103);
-            vRobot.ReceivePort = 1240;
-            vRobot.TransmitPort = 1250;
+            vRobot = new VirtualRobot(9245);
+            vRobot.UserControlDataLength = 64;
+            vRobot.UserStatusDataLength = 64;
+            vRobot.ReceivePort = 1110;
+            vRobot.TransmitPort = 1120;
             vRobot.Start();
             vRobot.StatusData.BatteryVoltage = 11.03;
             vRobot.NewDataReceived += NewDataReceived;

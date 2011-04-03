@@ -32,13 +32,10 @@ namespace EHaskins.Frc.DriverStationCli
             Communication.Configuration.UserControlDataSize = 64;
             Communication.Configuration.UserStatusDataSize = 64;
             ds = new DriverStation();
-
+            ds.Connection = new UdpTransmitter { Network = 172, Host = 198 };
             ds.TeamNumber = 1692;
-            ds.Network = 172;
-            ds.HostNumber = 198;
             ds.NewDataReceived += NewDataReceived;
             ds.SendingData += SendingData;
-            ds.TransmitPort = 1110;
             ds.Start();
 
             //ds2 = new VirtualDS(1103);
@@ -47,8 +44,7 @@ namespace EHaskins.Frc.DriverStationCli
             //ds2.Open(1103, new IPEndPoint(IPAddress.Parse("127.0.0.1"), 1240));
             ds2 = new DriverStation();
             ds2.TeamNumber = 1103;
-            ds2.TransmitPort = 1240;
-            ds2.ReceivePort = 1250;
+            ds2.Connection = new UdpTransmitter { TransmitPort = 1240, ReceivePort = 1250 };
             //ds2.Open(1692, new IPEndPoint(IPAddress.Parse("172.16.92.199"), 1240));
             //ds.Open(1103);
             while (true)
