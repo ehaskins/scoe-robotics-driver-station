@@ -154,7 +154,8 @@ namespace EHaskins.Frc.Communication.DriverStation
             _client = new UdpClient(ReceivePort);
 
             //_client.BeginReceive(this.ReceiveData, null);
-
+            _receieveThread = new Thread((ThreadStart)this.ReceiveDataSync);
+            _receieveThread.Start();
         }
         public override void Stop()
         {

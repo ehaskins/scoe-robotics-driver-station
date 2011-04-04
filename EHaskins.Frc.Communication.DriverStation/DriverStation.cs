@@ -162,8 +162,8 @@ namespace EHaskins.Frc.Communication.DriverStation
             {
                 if (_ControlData == value)
                     return;
-                if (value != null)
-                    value.Joysticks = Joysticks.ToArray();
+                /*if (value != null)
+                    value.Joysticks = Joysticks.ToArray();*/
                 _ControlData = value;
                 RaisePropertyChanged("ControlData");
             }
@@ -394,7 +394,7 @@ namespace EHaskins.Frc.Communication.DriverStation
             }
             catch (Exception ex)
             {
-                
+                Debug.WriteLine(ex.Message + " at DriverStation.SendData");
             }
         }
 

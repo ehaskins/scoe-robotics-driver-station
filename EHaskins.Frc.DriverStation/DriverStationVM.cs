@@ -20,13 +20,13 @@ namespace EHaskins.Frc.DriverStation
         public DriverStationVM()
         {
             JoystickManager = new JoystickManager();
-            Configuration.UserControlDataSize = 64;
-            Configuration.UserStatusDataSize = 64;
+            Configuration.UserControlDataSize = 104;
+            Configuration.UserStatusDataSize = 152;
             DriverStations = new ObservableCollection<Communication.DriverStation.DriverStation>();
 
             //var ds = new Communication.DriverStation.DriverStation() { TeamNumber = 1692, Connection = new UdpTransmitter() { Network = 172, Host = 198 } };
             //var ds = new Communication.DriverStation.DriverStation() { TeamNumber = 0, Connection = new UdpTransmitter() { Network = 127, Host = 1 } };
-            var ds = new Communication.DriverStation.DriverStation() { TeamNumber = 9245, Connection = new UdpTransmitter() { Network = 155, Host = 43 } };
+            var ds = new Communication.DriverStation.DriverStation() { TeamNumber = 1103, Connection = new UdpTransmitter() { Network = 10, Host = 2, ReceivePort=1150, TransmitPort=1110 } };
             ds.Started += this.DSStarted;
             ds.Start();
             DriverStations.Add(ds);
