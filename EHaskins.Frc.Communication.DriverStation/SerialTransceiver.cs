@@ -11,6 +11,21 @@ namespace EHaskins.Frc.Communication.DriverStation
 		        Thread _receieveThread;
 		        bool _isStopped;
 
+                private string _PortName;
+                public string PortName
+                {
+                    get { return _PortName; }
+                    set
+                    {
+                        if (_PortName == value)
+                            return;
+                        _PortName = value;
+                        RaisePropertyChanged("PortName");
+                    }
+                }
+
+                
+
                 private int _MaxLength;
                 public int 
                     MaxLength
@@ -48,7 +63,7 @@ namespace EHaskins.Frc.Communication.DriverStation
 
 		                    RaiseDataReceived(data);
 		                }
-		                catch (SocketException ex)
+		                catch (Exception ex)
 		                {
 		                    if (IsEnabled)
 		                        Stop();
@@ -60,9 +75,7 @@ namespace EHaskins.Frc.Communication.DriverStation
 		        public override void Start()
 		        {
 		            _IsEnabled = true;
-		            _transmitEP = new IPEndPoint(FrcPacketUtils.GetIP(Network, TeamNumber, Host), TransmitPort);
-
-		            _port = new UdpClient(ReceivePort);
+                    _port = new SerialPort();
 
 		            //_client.BeginReceive(this.ReceiveData, null);
 

@@ -60,7 +60,7 @@
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="UserControls\UdpConfig.xaml.cs">
+    <Compile Include="Views\UdpConfig.xaml.cs">
       <DependentUpon>UdpConfig.xaml</DependentUpon>
     </Compile>
     <Page Include="BureauBlack.xaml">
@@ -79,11 +79,11 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="UserControls\DriverStationControl.xaml">
+    <Page Include="Views\DriverStationControl.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="UserControls\JoystickControl.xaml">
+    <Page Include="Views\JoystickControl.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -91,14 +91,14 @@
       <DependentUpon>App.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="UserControls\DriverStationControl.xaml.cs">
+    <Compile Include="Views\DriverStationControl.xaml.cs">
       <DependentUpon>DriverStationControl.xaml</DependentUpon>
     </Compile>
     <Compile Include="DriverStationVM.cs" />
-    <Compile Include="UserControls\JoystickControl.xaml.cs">
+    <Compile Include="Views\JoystickControl.xaml.cs">
       <DependentUpon>JoystickControl.xaml</DependentUpon>
     </Compile>
-    <Page Include="UserControls\UdpConfig.xaml">
+    <Page Include="Views\UdpConfig.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
