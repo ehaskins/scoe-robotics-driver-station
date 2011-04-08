@@ -1,8 +1,5 @@
 using System;
-    using System.IO;
 using System.ComponentModel;
-using MiscUtil.IO;
-using System.Diagnostics;
 
 namespace EHaskins.Frc.Communication
 {
@@ -35,7 +32,6 @@ namespace EHaskins.Frc.Communication
         {
             if (PropertyChanged != null)
             {
-                Debug.WriteLine(property);
                 PropertyChanged(this, new PropertyChangedEventArgs(property));
             }
         }

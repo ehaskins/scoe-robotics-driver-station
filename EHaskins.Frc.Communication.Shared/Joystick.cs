@@ -2,36 +2,41 @@ using System;
 using System.IO;
 using System.ComponentModel;
 using MiscUtil.IO;
-using System.Collections.ObjectModel;
+using MiscUtil.Conversion;
 
 namespace EHaskins.Frc.Communication
 {
     public class Joystick
     {
+        public const int NUM_BYTES = 8;
+        public const int NUM_AXES = 6;
 
         public Joystick()
         {
             Buttons = new BindableBitField16();
-            for (int i = 0; i < 6; i++)
+            for (int i = 0; i < NUM_AXES; i++)
             {
-                _analogInputs.Add(0);
+                _analogInputs[i] = 0;
             }
         }
 
         int _joystickNumber;
 
-        ObservableCollection<double> _analogInputs = new ObservableCollection<double>();
+        double[] _analogInputs = new double[NUM_AXES];
 
-        public void Parse(EndianBinaryReader reader)
+        public void Parse(byte[] data)
         {
-            for (int i = 0; i < 6; i++)
+            MemoryStream stream = new MemoryStream(data);
+            using (EndianBinaryReader reader = new EndianBinaryReader(new BigEndianBitConverter(), stream))
             {
-                int byteRead = reader.ReadByte();
-                double value = (byteRead - 128) / 128;
-                Axes[i] = value;
+                for (int i = 0; i < 6; i++)
+                {
+                    int byteRead = reader.ReadByte();
+                    double value = (byteRead - 128) / 128;
+                    Axes[i] = value;
+                }
+                Buttons.RawValue = reader.ReadUInt16();
             }
-
-            Buttons.RawValue = reader.ReadUInt16();
 
             if (PropertyChanged != null)
             {
@@ -55,6 +60,7 @@ namespace EHaskins.Frc.Communication
             }
         }
 
+#if !NETMF
         public byte[] GetBytes()
         {
             Update();
@@ -77,8 +83,9 @@ namespace EHaskins.Frc.Communication
 
             return data;
         }
+#endif
 
-        public ObservableCollection<double> Axes
+        public double[] Axes
         {
             get { return _analogInputs; }
             set

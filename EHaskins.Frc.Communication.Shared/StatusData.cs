@@ -1,11 +1,9 @@
 using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Text;
-using System.Collections.ObjectModel;
-using System.ComponentModel;
 using System.IO;
+using System.ComponentModel;
 using EHaskins.Utilities.NumericExtensions;
+
 namespace EHaskins.Frc.Communication
 {
     public class StatusData : INotifyPropertyChanged
@@ -16,18 +14,19 @@ namespace EHaskins.Frc.Communication
             DigitalOutputs = new BindableBitField8();
 
         }
+#if !NETMF
         public void Update(byte[] data)
         {
             using (MiscUtil.IO.EndianBinaryReader reader = new MiscUtil.IO.EndianBinaryReader(new MiscUtil.Conversion.BigEndianBitConverter(), new MemoryStream(data)))
             {
                 Mode.RawValue = reader.ReadByte();
                 var batteryBytes = reader.ReadBytes(2);
-                BatteryVoltage = Convert.ToDouble(batteryBytes[0].ToString("x")) + (Convert.ToDouble(batteryBytes[1].ToString("x")) / 100.0);
+                BatteryVoltage = (double)batteryBytes[0] + (double)batteryBytes[1] / 100.0;
                 DigitalOutputs.RawValue = reader.ReadByte();
                 reader.ReadBytes(4);
                 TeamNumber = reader.ReadUInt16();
                 RobotMac = reader.ReadBytes(6);
-                FpgaVersion = Encoding.ASCII.GetString(reader.ReadBytes(8));
+                FpgaVersion = Encoding.UTF8.GetString(reader.ReadBytes(8));
                 reader.ReadBytes(6);
                 ReplyId = reader.ReadUInt16();
                 int userDataLength = data.Length - (int)reader.BaseStream.Position - 8;
@@ -35,6 +34,7 @@ namespace EHaskins.Frc.Communication
                 UserStatusData = reader.ReadBytes(userDataLength);
             }
         }
+#endif
         private byte[] GetBatteryBytes()
         {
             byte[] data;
@@ -42,10 +42,12 @@ namespace EHaskins.Frc.Communication
             {
                 var tempV = BatteryVoltage.Limit(0, 99);
 
-                double VInt = Math.Truncate(tempV);
+                double VInt = (int)tempV;
                 double VFrac = (tempV - VInt) * 100;
-                var i = byte.Parse(VInt.ToString(), System.Globalization.NumberStyles.HexNumber);
-                var f = byte.Parse(VFrac.ToString(), System.Globalization.NumberStyles.HexNumber);
+                //var i = byte.Parse(VInt.ToString(), System.Globalization.NumberStyles.HexNumber);
+                //var f = byte.Parse(VFrac.ToString(), System.Globalization.NumberStyles.HexNumber);
+                var i = (byte)VInt;
+                var f = (byte)VFrac;
                 data = new byte[] { i, f };
             }
             else 
@@ -53,19 +55,20 @@ namespace EHaskins.Frc.Communication
 
             return data;
         }
+
         public byte[] GetBytes()
         {
             byte[] data;
             using (MemoryStream stream = new MemoryStream())
             {
-                var writer = new MiscUtil.IO.EndianBinaryWriter(new MiscUtil.Conversion.BigEndianBitConverter(), stream, System.Text.Encoding.ASCII);
+                var writer = new MiscUtil.IO.EndianBinaryWriter(new MiscUtil.Conversion.BigEndianBitConverter(), stream, System.Text.Encoding.UTF8);
                 writer.Write(Mode.RawValue);
                 writer.Write(GetBatteryBytes());
                 writer.Write(DigitalOutputs.RawValue);
                 writer.Write(new byte[4]);
                 writer.Write(TeamNumber);
                 writer.Write(RobotMac ?? new byte[6]);
-                writer.Write(FpgaVersion != null ? System.Text.Encoding.ASCII.GetBytes(FpgaVersion) : new byte[8]);
+                writer.Write(FpgaVersion != null ? System.Text.Encoding.UTF8.GetBytes(FpgaVersion) : new byte[8]);
                 writer.Write(new byte[6]);
                 writer.Write(ReplyId);
                 int length = 0;
@@ -83,13 +86,14 @@ namespace EHaskins.Frc.Communication
 
                 var crcData = stream.ToArray();
                 stream.Position -= 4;
-                writer.Write((new Crc32()).ComputeHash(crcData));
+                writer.Write(Crc32.Compute(crcData));
 
                 data = stream.ToArray();
                 writer.Close();
             }
             return data;
         }
+
         double _BatteryVoltage;
         public double BatteryVoltage
         {
@@ -102,7 +106,7 @@ namespace EHaskins.Frc.Communication
                 if (value != _BatteryVoltage)
                 {
                     _BatteryVoltage = value;
-                    PropertyChanged(this, new PropertyChangedEventArgs("BatteryVoltage"));
+                    RaisePropertyChanged("BatteryVoltage");
                 }
             }
         }
@@ -139,7 +143,7 @@ namespace EHaskins.Frc.Communication
                 if (value != _Mode)
                 {
                     _Mode = value;
-                    PropertyChanged(this, new PropertyChangedEventArgs("Mode"));
+                    RaisePropertyChanged("Mode");
                 }
             }
         }
@@ -156,7 +160,7 @@ namespace EHaskins.Frc.Communication
                 if (value != _DigitalOutputs)
                 {
                     _DigitalOutputs = value;
-                    PropertyChanged(this, new PropertyChangedEventArgs("DigitalOutputs"));
+                    RaisePropertyChanged("DigitalOutputs");
                 }
             }
         }
@@ -175,7 +179,7 @@ namespace EHaskins.Frc.Communication
                     if (value.Length != 8)
                         throw new ArgumentOutOfRangeException("FpgaVersion must be exactly 8 characters in length.");
                     _FpgaVersion = value;
-                    PropertyChanged(this, new PropertyChangedEventArgs("FpgeVersion"));
+                    RaisePropertyChanged("FpgeVersion");
                 }
             }
         }
@@ -192,7 +196,7 @@ namespace EHaskins.Frc.Communication
                 if (value != _ReplyId)
                 {
                     _ReplyId = value;
-                    PropertyChanged(this, new PropertyChangedEventArgs("ReplyId"));
+                    RaisePropertyChanged("ReplyId");
                 }
             }
         }
@@ -209,7 +213,7 @@ namespace EHaskins.Frc.Communication
                 if (value != _RobotMac)
                 {
                     _RobotMac = value;
-                    PropertyChanged(this, new PropertyChangedEventArgs("RobotMac"));
+                    RaisePropertyChanged("RobotMac");
                 }
             }
         }
@@ -226,7 +230,7 @@ namespace EHaskins.Frc.Communication
                 if (value != _TeamNumber)
                 {
                     _TeamNumber = value;
-                    PropertyChanged(this, new PropertyChangedEventArgs("TeamNumber"));
+                    RaisePropertyChanged("TeamNumber");
                 }
             }
         }
@@ -243,7 +247,7 @@ namespace EHaskins.Frc.Communication
                 if (value != _UserStatusData)
                 {
                     _UserStatusData = value;
-                    PropertyChanged(this, new PropertyChangedEventArgs("UserStatusData"));
+                    RaisePropertyChanged("UserStatusData");
                 }
             }
         }
@@ -260,12 +264,19 @@ namespace EHaskins.Frc.Communication
                 if (value != _UserStatusDataLength)
                 {
                     _UserStatusDataLength = value;
-                    PropertyChanged(this, new PropertyChangedEventArgs("UserStatusDataLength"));
+                    RaisePropertyChanged("UserStatusDataLength");
                 }
             }
         }
 
-        public event PropertyChangedEventHandler PropertyChanged = delegate { };
+        public event PropertyChangedEventHandler PropertyChanged;
+        protected void RaisePropertyChanged(string property)
+        {
+            if (PropertyChanged != null)
+            {
+                PropertyChanged(this, new PropertyChangedEventArgs(property));
+            }
+        }
 
     }
 }

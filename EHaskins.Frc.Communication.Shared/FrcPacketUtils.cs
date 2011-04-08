@@ -22,14 +22,6 @@ public static class FrcPacketUtils
         return dataCrc == calculatedCrc;
     }
 
-    public static IPAddress GetIP(int teamNumber, Devices device)
-    {
-        var num2 = teamNumber % 100;
-        var num1 = (teamNumber - num2) / 100;
-        var ipStr = string.Format("10.{0}.{1}.{2}", num1, num2, Convert.ToInt32(device));
-        return IPAddress.Parse(ipStr);
-    }
-
     public static IPAddress GetIP(byte network, ushort teamNumber, byte hostNumber)
     {
         if (teamNumber > 9999)
@@ -43,7 +35,7 @@ public static class FrcPacketUtils
         return new IPAddress(data);
     }
 }
-public enum Devices
+public enum Devices : byte
 {
     Robot = 2,
     PC = 6,

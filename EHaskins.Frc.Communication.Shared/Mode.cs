@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Text;
 using System.Diagnostics;
 
@@ -18,7 +16,6 @@ namespace EHaskins.Frc.Communication
 
         void BitChangedHandler(object sender, int bit)
         {
-            Debug.WriteLine(Properties[bit] + ":" + this[bit]);
             RaisePropertyChanged(Properties[bit]);
         }
 

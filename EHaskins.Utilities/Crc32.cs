@@ -1,7 +1,11 @@
 ﻿using System;
+#if !NETMF
 using System.Security.Cryptography;
 
 public class Crc32 : HashAlgorithm
+#else
+public class Crc32
+#endif
 {
     public const UInt32 DefaultPolynomial = 0xedb88320;
     public const UInt32 DefaultSeed = 0xffffffff;
@@ -15,36 +19,14 @@ public class Crc32 : HashAlgorithm
     {
         table = InitializeTable(DefaultPolynomial);
         seed = DefaultSeed;
-        Initialize();
+        Init();
     }
 
     public Crc32(UInt32 polynomial, UInt32 seed)
     {
         table = InitializeTable(polynomial);
         this.seed = seed;
-        Initialize();
-    }
-
-    public override void Initialize()
-    {
-        hash = seed;
-    }
-
-    protected override void HashCore(byte[] buffer, int start, int length)
-    {
-        hash = CalculateHash(table, hash, buffer, start, length);
-    }
-
-    protected override byte[] HashFinal()
-    {
-        byte[] hashBuffer = UInt32ToBigEndianBytes(~hash);
-        this.HashValue = hashBuffer;
-        return hashBuffer;
-    }
-
-    public override int HashSize
-    {
-        get { return 32; }
+        Init();
     }
 
     public static UInt32 Compute(byte[] buffer)
@@ -105,4 +87,33 @@ public class Crc32 : HashAlgorithm
             (byte)(x & 0xff)
         };
     }
+
+    private void Init()
+    {
+        hash = seed;
+    }
+#if !NETMF
+    public override void Initialize()
+    {
+        Init();
+    }
+
+    protected override void HashCore(byte[] buffer, int start, int length)
+    {
+        hash = CalculateHash(table, hash, buffer, start, length);
+    }
+
+    protected override byte[] HashFinal()
+    {
+        byte[] hashBuffer = UInt32ToBigEndianBytes(~hash);
+        this.HashValue = hashBuffer;
+        return hashBuffer;
+    }
+
+    public override int HashSize
+    {
+        get { return 32; }
+    }
+
+#endif
 }

@@ -1,4 +1,5 @@
-﻿using System;
+﻿#if !NETMF
+using System;
 
 namespace MicroLibrary
 {
@@ -122,3 +123,4 @@ namespace MicroLibrary
         }
     }
 }
+#endif
