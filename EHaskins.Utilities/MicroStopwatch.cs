@@ -1,5 +1,5 @@
 using System;
-
+#if !NETMF
 namespace MicroLibrary
 {
     public class MicroStopwatch : System.Diagnostics.Stopwatch
@@ -19,3 +19,4 @@ namespace MicroLibrary
         }
     }
 }
+#endif

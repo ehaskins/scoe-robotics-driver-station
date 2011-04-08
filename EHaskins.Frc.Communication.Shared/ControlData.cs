@@ -1,31 +1,28 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Text;
-using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.IO;
 using System.Diagnostics;
-
+#if NETMF
+using Microsoft.SPOT;
+#endif
 namespace EHaskins.Frc.Communication
 {
     public class ControlData : INotifyPropertyChanged
     {
+        public const int NUM_STICKS = 4;
+        public const int NUM_ANALOG_INPUTS = 4;
         public ControlData(ushort teamNumber):this()
         {
             TeamNumber = teamNumber;
         }
         public ControlData()
         {
-            AnalogInputs = new ObservableCollection<ushort>();
-            for (int i = 0; i < 4; i++)
+            AnalogInputs = new ushort[NUM_ANALOG_INPUTS];
+            Joysticks = new Joystick[NUM_STICKS];
+            for (int i = 0; i < NUM_STICKS; i++)
             {
-                AnalogInputs.Add(0);
-            }
-            Joysticks = new ObservableCollection<Joystick>();
-            for (int i = 0; i < 4; i++)
-            {
-                Joysticks.Add(new Joystick());
+                Joysticks[i] = new Joystick();
             }
             Mode = new Mode((byte)84);
             DigitalInputs = new BindableBitField8();
@@ -40,33 +37,35 @@ namespace EHaskins.Frc.Communication
                 TeamNumber = reader.ReadUInt16();
                 Alliance = (Alliance)reader.ReadByte();
                 Position = (byte)(reader.ReadByte() - 48);
-                for (int i = 0; i <= 3; i++)
-                    Joysticks[i].Parse(reader);
-                for (int i = 0; i <= 3; i++)
+                for (int i = 0; i < NUM_STICKS; i++)
+                    Joysticks[i].Parse(reader.ReadBytes(Joystick.NUM_BYTES));
+                for (int i = 0; i < NUM_ANALOG_INPUTS; i++)
                     AnalogInputs[i] = reader.ReadUInt16();
                 CRioChecksum = reader.ReadUInt64();
                 FpgaChecksum0 = reader.ReadUInt32();
                 FpgaChecksum1 = reader.ReadUInt32();
                 FpgaChecksum2 = reader.ReadUInt32();
                 FpgaChecksum3 = reader.ReadUInt32();
-                Version = Encoding.ASCII.GetString(reader.ReadBytes(8));
+                Version = new String(Encoding.UTF8.GetChars(reader.ReadBytes(8)));
                 int userDataLength = data.Length - (int)reader.BaseStream.Position - 8;
                 UserControlDataLength = userDataLength;
                 UserControlData = reader.ReadBytes(userDataLength);
             }
         }
-        public byte[] GetBytes()
+
+#if !NETMF
+                public byte[] GetBytes()
         {
             byte[] data = null;
             using (MemoryStream stream = new MemoryStream())
             {
-                MiscUtil.IO.EndianBinaryWriter writer = new MiscUtil.IO.EndianBinaryWriter(new MiscUtil.Conversion.BigEndianBitConverter(), stream, Encoding.ASCII);
-                writer.Write(Convert.ToUInt16(PacketId));
+                MiscUtil.IO.EndianBinaryWriter writer = new MiscUtil.IO.EndianBinaryWriter(new MiscUtil.Conversion.BigEndianBitConverter(), stream, Encoding.UTF8);
+                writer.Write(PacketId);
                 writer.Write(Mode.RawValue);
                 writer.Write(DigitalInputs.RawValue);
-                writer.Write((UInt16)TeamNumber);
-                writer.Write(Convert.ToByte(Alliance));
-                writer.Write(Convert.ToByte(48 + Position));
+                writer.Write(TeamNumber);
+                writer.Write((byte)Alliance);
+                writer.Write((byte)48 + Position);
                 foreach (var joystick in Joysticks)
                 {
                     byte[] joystickData = joystick.GetBytes();
@@ -81,7 +80,7 @@ namespace EHaskins.Frc.Communication
                 writer.Write(FpgaChecksum1);
                 writer.Write(FpgaChecksum2);
                 writer.Write(FpgaChecksum3);
-                writer.Write(Version != null ? Encoding.ASCII.GetBytes(Version) : new byte[8]);
+                writer.Write(Version != null ? Encoding.UTF8.GetBytes(Version) : new byte[8]);
 
                 int length = 0;
                 if (UserControlData == null)
@@ -98,7 +97,7 @@ namespace EHaskins.Frc.Communication
 
                 var crcData = stream.ToArray();
                 stream.Position -= 4;
-                writer.Write((new Crc32()).ComputeHash(crcData));
+                writer.Write(Crc32.Compute(crcData));
 
                 data = stream.ToArray();
                 writer.Close();
@@ -107,6 +106,7 @@ namespace EHaskins.Frc.Communication
             Debug.Assert(data.IsValidFrcPacket());
             return data;
         }
+#endif
 
         Alliance _Alliance;
         public Alliance Alliance
@@ -125,8 +125,8 @@ namespace EHaskins.Frc.Communication
             }
         }
 
-        ObservableCollection<ushort> _AnalogInputs;
-        public ObservableCollection<ushort> AnalogInputs
+        ushort[] _AnalogInputs;
+        public ushort[] AnalogInputs
         {
             get
             {
@@ -244,8 +244,8 @@ namespace EHaskins.Frc.Communication
             }
         }
 
-        ObservableCollection<Joystick> _Joysticks;
-        public ObservableCollection<Joystick> Joysticks
+        Joystick[] _Joysticks;
+        public Joystick[] Joysticks
         {
             get
             {
