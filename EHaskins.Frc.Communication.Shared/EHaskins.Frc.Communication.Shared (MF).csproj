@@ -1,13 +1,13 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
-    <AssemblyName>EHaskins.Utilties %28MF%29</AssemblyName>
+    <AssemblyName>EHaskins.Frc.Communication.Shared-MF</AssemblyName>
     <OutputType>Library</OutputType>
-    <RootNamespace>EHaskins.Utilities</RootNamespace>
+    <RootNamespace>EHaskins.Frc.Communication</RootNamespace>
     <ProjectTypeGuids>{b69e3092-b931-443c-abe7-7e7b65f2a37f};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
     <ProductVersion>9.0.21022</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
-    <ProjectGuid>{0BBD57A5-12BA-4511-B874-F9BF8528AA36}</ProjectGuid>
+    <ProjectGuid>{D5CB3525-25F7-40A7-B128-E30194FF16E1}</ProjectGuid>
     <TargetFrameworkVersion>v4.1</TargetFrameworkVersion>
     <NetMfTargetsBaseDir Condition="'$(NetMfTargetsBaseDir)'==''">$(MSBuildExtensionsPath32)\Microsoft\.NET Micro Framework\</NetMfTargetsBaseDir>
   </PropertyGroup>
@@ -30,27 +30,31 @@
   </PropertyGroup>
   <Import Project="$(NetMfTargetsBaseDir)$(TargetFrameworkVersion)\CSharp.Targets" />
   <ItemGroup>
-    <Compile Include="MF\Conversion\BigEndianBitConverter.cs" />
-    <Compile Include="MF\IO\EndianBinaryReader.cs" />
-    <Compile Include="MF\IO\EndianBinaryWriter.cs" />
-    <Compile Include="MF\Conversion\EndianBitConverter.cs" />
-    <Compile Include="MF\Conversion\Endianness.cs" />
-    <Compile Include="MF\Conversion\LittleEndianBitConverter.cs" />
-    <Compile Include="Crc32.cs" />
-    <Compile Include="IDisposableExtensions.cs" />
-    <Compile Include="MF\ExtensionAttribute.cs" />
-    <Compile Include="MF\INotifyPropertyChanged.cs" />
-    <Compile Include="MF\IO\EndOfStreamException.cs" />
-    <Compile Include="MF\PropertyChangedEventArgs.cs" />
-    <Compile Include="MF\PropertyChangedEventHandler.cs" />
-    <Compile Include="MicroStopwatch.cs" />
-    <Compile Include="MicroTimer.cs" />
-    <Compile Include="MicroTimerEventArgs.cs" />
-    <Compile Include="NumericExtensions\DoubleExtensions.cs" />
+    <Compile Include="Alliance.cs" />
+    <Compile Include="BindableBitField16.cs" />
+    <Compile Include="BindableBitField8.cs" />
+    <Compile Include="BitField16.cs" />
+    <Compile Include="BitField8.cs" />
+    <Compile Include="Configuration.cs" />
+    <Compile Include="ControlData.cs" />
+    <Compile Include="Error.cs" />
+    <Compile Include="FrcPacketUtils.cs" />
+    <Compile Include="Joystick.cs" />
+    <Compile Include="Mode.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="StatusData.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="Microsoft.SPOT.Native">
     </Reference>
+    <Reference Include="Microsoft.SPOT.Net" />
+    <Reference Include="System" />
+    <Reference Include="System.IO" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\EHaskins.Utilities\EHaskins.Utilities-MF.csproj">
+      <Project>{0BBD57A5-12BA-4511-B874-F9BF8528AA36}</Project>
+      <Name>EHaskins.Utilities-MF</Name>
+    </ProjectReference>
   </ItemGroup>
 </Project>
