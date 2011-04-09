@@ -26,7 +26,7 @@ namespace EHaskins.Frc.DriverStation
 
             //var ds = new Communication.DriverStation.DriverStation() { TeamNumber = 1692, Connection = new UdpTransmitter() { Network = 172, Host = 198 } };
             //var ds = new Communication.DriverStation.DriverStation() { TeamNumber = 0, Connection = new UdpTransmitter() { Network = 127, Host = 1 } };
-            var ds = new Communication.DriverStation.DriverStation() { TeamNumber = 1103, Connection = new UdpTransmitter() { Network = 10, Host = 2, ReceivePort=1150, TransmitPort=1110 } };
+            var ds = new Communication.DriverStation.DriverStation() { TeamNumber = 1692, Connection = new UdpTransmitter() { Network = 172, Host = 198, ReceivePort=1150, TransmitPort=1110 } };
             ds.Started += this.DSStarted;
             ds.Start();
             DriverStations.Add(ds);
