@@ -24,40 +24,17 @@ namespace EHaskins.Frc.Communication
 
         double[] _analogInputs = new double[NUM_AXES];
 
-        public void Parse(byte[] data)
+        public void Parse(byte[] data, int offset)
         {
-            MemoryStream stream = new MemoryStream(data);
-            using (EndianBinaryReader reader = new EndianBinaryReader(new BigEndianBitConverter(), stream))
+            for (int i = 0; i < 6; i++)
             {
-                for (int i = 0; i < 6; i++)
-                {
-                    int byteRead = reader.ReadByte();
-                    double value = (byteRead - 128) / 128;
-                    Axes[i] = value;
-                }
-                Buttons.RawValue = reader.ReadUInt16();
+                int byteRead = data[offset++];
+                double value = (byteRead - 128) / 128;
+                Axes[i] = value;
             }
+            Buttons.RawValue = EndianBitConverter.Big.ToUInt16(data, offset); offset += 2;
 
-            if (PropertyChanged != null)
-            {
-                RaisePropertyChanged("AnalogInputs");
-            }
-            if (PropertyChanged != null)
-            {
-                RaisePropertyChanged("X");
-            }
-            if (PropertyChanged != null)
-            {
-                RaisePropertyChanged("Y");
-            }
-            if (PropertyChanged != null)
-            {
-                RaisePropertyChanged("Z");
-            }
-            if (PropertyChanged != null)
-            {
-                RaisePropertyChanged("Twist");
-            }
+            RaisePropertyChanged("AnalogInputs");
         }
 
 #if !NETMF

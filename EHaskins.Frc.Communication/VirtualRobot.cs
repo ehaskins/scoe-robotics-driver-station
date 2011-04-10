@@ -82,8 +82,8 @@ namespace EHaskins.Frc.Communication
             }
             _status.ReplyId = packet.PacketId;
             //_status.ControlData = new ControlData(); // packet.Mode.Clone();//TODO:FIX
-
-            var sendData = _status.GetBytes(); //TODO:FIX
+            //TODO:FIX
+            var sendData = new byte[0]; //_status.GetBytes(); 
             IPEndPoint ipep = (IPEndPoint)endpoint;
 
             ipep.Port = TransmitPort;

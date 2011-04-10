@@ -1,5 +1,6 @@
 using System;
 using Microsoft.SPOT;
+using EHaskins.Utilities;
 namespace EHaskins.Frc.Communication
 {
     public class Robot
@@ -15,8 +16,6 @@ namespace EHaskins.Frc.Communication
         {
             this.TeamNumber = teamNumber;
 
-            TransmitPort = 1150;
-            ReceivePort = 1110;
             UserControlDataLength = 104;
             UserStatusDataLength = 152;
         }
@@ -30,11 +29,10 @@ namespace EHaskins.Frc.Communication
         		}
         		set
         		{
-        				_connection = value;
+                    value.TeamNumber = TeamNumber;
+        			_connection = value;
         		}
         }
-        public int TransmitPort { get; set; }
-        public int ReceivePort { get; set; }
         public int UserStatusDataLength { get; set; }
         public int UserControlDataLength { get; set; }
         public bool IsConnected { get; set; }
@@ -44,20 +42,31 @@ namespace EHaskins.Frc.Communication
             get { return _status; }
         }
         public int InvalidPacketCount { get; set; }
-        public ushort TeamNumber { get; set; }
+        private ushort _TeamNumber;
+        public ushort TeamNumber
+        {
+            get
+            {
+                return _TeamNumber;
+            }
+            set
+            {
+                _TeamNumber = value;
+                if (Connection != null)
+                    Connection.TeamNumber = value;
+            }
+        }
 
 
         public void Start()
         {
-            Debug.Print("Starting team " + TeamNumber + "on receive:" + ReceivePort + ", transmit:" + TransmitPort);
+            Debug.Print("Starting team " + TeamNumber);
             _status = new StatusData();
             _status.UserStatusDataLength = UserControlDataLength;
 
             _status.TeamNumber = this.TeamNumber;
 
             ControlData = new ControlData();
-
-            Connection = new UdpTransmitter() { ReceivePort = ReceivePort, TransmitPort = TransmitPort };
             Connection.DataReceived += new DataReceivedEventHandler(DataReceived);
             Connection.Start();
             _isOpen = true;
@@ -65,17 +74,22 @@ namespace EHaskins.Frc.Communication
 
         void DataReceived(object sender, DataReceivedEventArgs e)
         {
+            var sw = new CrappyStopwatch();
             try
             {
                 bool lastEStop = ControlData.Mode.IsEStop;
                 var bytes = e.Data;
+                sw.PrintElapsed("starting");
                 if (bytes.IsValidFrcPacket())
+                {
+                    sw.PrintElapsed("Verified");
                     ParseBytes(bytes);
-
+                    sw.PrintElapsed("Parsed");
+                }
                 if (ControlData != null && ControlData.TeamNumber == this.TeamNumber)
                 {
                     SendReply(ControlData);
-
+                    sw.PrintElapsed("ReplySent");
                     if (ControlData != null && lastEStop)
                     {
                         ControlData.Mode.IsEStop = true;
@@ -89,6 +103,7 @@ namespace EHaskins.Frc.Communication
                 {
                     InvalidPacketCount += 1;
                 }
+                sw.PrintElapsed("Done");
             }
             catch (Exception ex)
             {
@@ -106,7 +121,7 @@ namespace EHaskins.Frc.Communication
             _status.ReplyId = packet.PacketId;
             //_status.ControlData = new ControlData(); // packet.Mode.Clone();//TODO:FIX
 
-            Connection.Transmit(_status.GetBytes());
+            Connection.Transmit(_status.GetBytes(Connection.PacketSize));
         }
 
         private void ParseBytes(byte[] data)

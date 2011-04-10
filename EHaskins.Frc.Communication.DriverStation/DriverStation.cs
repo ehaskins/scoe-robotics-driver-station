@@ -45,6 +45,7 @@ namespace EHaskins.Frc.Communication.DriverStation
         public DriverStation()
         {
             UserControlDataSize = Configuration.UserControlDataSize;
+            Interval = 20;
         }
 
         protected void InvalidateConnection()
@@ -241,6 +242,8 @@ namespace EHaskins.Frc.Communication.DriverStation
                 RaisePropertyChanged("SafteyTriggered");
             }
         }
+        public int Interval { get; set; }
+
         private List<Joystick> _Joysticks;
         public List<Joystick> Joysticks
         {
@@ -273,7 +276,7 @@ namespace EHaskins.Frc.Communication.DriverStation
                 if (!Connection.IsEnabled)
                     Connection.Start();
 
-                _transmitTimer = new MicroTimer(20 * 1000);
+                _transmitTimer = new MicroTimer(Interval * 1000);
                 _transmitTimer.Elapsed += this.SendData;
                 //_transmitTimer.AutoReset = True
                 RaiseStarted();
@@ -404,8 +407,11 @@ namespace EHaskins.Frc.Communication.DriverStation
         }
         private void ConnectionReset(object sender, EventArgs e)
         {
-            Stop(true);
-            Start();
+            if (IsEnabled)
+            {
+                Stop(true);
+                Start();
+            }
         }
         private bool ReceiveCheck(StatusData status)
         {

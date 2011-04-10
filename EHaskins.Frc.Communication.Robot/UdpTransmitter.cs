@@ -62,10 +62,10 @@ namespace EHaskins.Frc.Communication
             _socket.SendTo(data, new IPEndPoint(_lastAddress, TransmitPort));
         }
 
-        byte[] buffer = new byte[1024];
         EndPoint endpoint;
         private void ReceiveDataSync()
         {
+            var buffer = new byte[PacketSize];
             endpoint = new IPEndPoint(IPAddress.Any, ReceivePort);
             _isStopped = false;
             while (IsEnabled)
@@ -73,14 +73,10 @@ namespace EHaskins.Frc.Communication
                 try
                 {
                     var count = _socket.ReceiveFrom(buffer, ref endpoint);
-                    var shortData = new byte[count];
 
-                    for (int i = 0; i < count; i++)
-                    {
-                        shortData[i] = buffer[i];
-                    }
                     _lastAddress = ((IPEndPoint)endpoint).Address;
-                    RaiseDataReceived(shortData);
+
+                    RaiseDataReceived(buffer);
                 }
                 catch (SocketException ex)
                 {

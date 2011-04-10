@@ -72,6 +72,7 @@
     <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="CrappyStopwatch.cs" />
     <Compile Include="Crc32.cs" />
     <Compile Include="MF\Conversion\BigEndianBitConverter.cs" />
     <Compile Include="MF\Conversion\EndianBitConverter.cs" />

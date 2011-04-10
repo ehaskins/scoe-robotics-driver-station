@@ -3,6 +3,7 @@ using System.Text;
 using System.ComponentModel;
 using System.IO;
 using System.Diagnostics;
+using EHaskins.Utilities;
 #if NETMF
 using Microsoft.SPOT;
 #endif
@@ -29,28 +30,73 @@ namespace EHaskins.Frc.Communication
         }
         public void Update(byte[] data)
         {
-            using (var reader = new MiscUtil.IO.EndianBinaryReader(new MiscUtil.Conversion.BigEndianBitConverter(), new MemoryStream(data)))
+            var sw = new CrappyStopwatch();
+            var converter = MiscUtil.Conversion.EndianBitConverter.Big;
+            sw.PrintElapsed("Started");
+            var offset = 0;
+            PacketId = converter.ToUInt16(data, offset); offset += 2;
+            Mode = new Mode(data[offset++]);
+            DigitalInputs = new BindableBitField8(data[offset++]);
+            TeamNumber = converter.ToUInt16(data, offset); offset += 2;
+            Alliance = (Alliance)data[offset++];
+            Position = (byte)(data[offset++] - 48);
+            sw.PrintElapsed("Starting sticks");
+            for (int i = 0; i < NUM_STICKS; i++)
             {
-                PacketId = reader.ReadUInt16();
-                Mode = new Mode(reader.ReadByte());
-                DigitalInputs = new BindableBitField8(reader.ReadByte());
-                TeamNumber = reader.ReadUInt16();
-                Alliance = (Alliance)reader.ReadByte();
-                Position = (byte)(reader.ReadByte() - 48);
-                for (int i = 0; i < NUM_STICKS; i++)
-                    Joysticks[i].Parse(reader.ReadBytes(Joystick.NUM_BYTES));
-                for (int i = 0; i < NUM_ANALOG_INPUTS; i++)
-                    AnalogInputs[i] = reader.ReadUInt16();
-                CRioChecksum = reader.ReadUInt64();
-                FpgaChecksum0 = reader.ReadUInt32();
-                FpgaChecksum1 = reader.ReadUInt32();
-                FpgaChecksum2 = reader.ReadUInt32();
-                FpgaChecksum3 = reader.ReadUInt32();
-                Version = new String(Encoding.UTF8.GetChars(reader.ReadBytes(8)));
-                int userDataLength = data.Length - (int)reader.BaseStream.Position - 8;
-                UserControlDataLength = userDataLength;
-                UserControlData = reader.ReadBytes(userDataLength);
+                Joysticks[i].Parse(data, offset);
+                offset += Joystick.NUM_BYTES;
             }
+            for (int i = 0; i < NUM_ANALOG_INPUTS; i++)
+            {
+                AnalogInputs[i] = converter.ToUInt16(data, offset);
+                offset += 2;
+            }
+            sw.PrintElapsed("starting checksums");
+            CRioChecksum = converter.ToUInt64(data, offset); offset += 8;
+            FpgaChecksum0 = converter.ToUInt32(data, offset); offset += 4;
+            FpgaChecksum1 = converter.ToUInt32(data, offset); offset += 4;
+            FpgaChecksum2 = converter.ToUInt32(data, offset); offset += 4;
+            FpgaChecksum3 = converter.ToUInt32(data, offset); offset += 4;
+
+            var verBuf = new byte[8];
+            for (int i = 0; i < 8; i++)
+            {
+                verBuf[i] = data[offset++];
+            }
+            sw.PrintElapsed("starting userdata");
+            Version = new String(Encoding.UTF8.GetChars(verBuf));
+            int userDataLength = data.Length - offset - 8;
+            UserControlDataLength = userDataLength;
+#if !NETMF
+            var userData = new byte[userDataLength];
+            for (int i = 0; i < userDataLength; i++)
+            {
+            	userData[i] = data[offset++];
+            }
+#endif
+            sw.PrintElapsed("done");
+            //using (var reader = new MiscUtil.IO.EndianBinaryReader(new MiscUtil.Conversion.BigEndianBitConverter(), new MemoryStream(data)))
+            //{
+            //    PacketId = reader.ReadUInt16();
+            //    Mode = new Mode(reader.ReadByte());
+            //    DigitalInputs = new BindableBitField8(reader.ReadByte());
+            //    TeamNumber = reader.ReadUInt16();
+            //    Alliance = (Alliance)reader.ReadByte();
+            //    Position = (byte)(reader.ReadByte() - 48);
+            //    for (int i = 0; i < NUM_STICKS; i++)
+            //        Joysticks[i].Parse(reader.ReadBytes(Joystick.NUM_BYTES));
+            //    for (int i = 0; i < NUM_ANALOG_INPUTS; i++)
+            //        AnalogInputs[i] = reader.ReadUInt16();
+            //    CRioChecksum = reader.ReadUInt64();
+            //    FpgaChecksum0 = reader.ReadUInt32();
+            //    FpgaChecksum1 = reader.ReadUInt32();
+            //    FpgaChecksum2 = reader.ReadUInt32();
+            //    FpgaChecksum3 = reader.ReadUInt32();
+            //    Version = new String(Encoding.UTF8.GetChars(reader.ReadBytes(8)));
+            //    int userDataLength = data.Length - (int)reader.BaseStream.Position - 8;
+            //    UserControlDataLength = userDataLength;
+            //    UserControlData = reader.ReadBytes(userDataLength);
+            //}
         }
 
 #if !NETMF
@@ -102,8 +148,6 @@ namespace EHaskins.Frc.Communication
                 data = stream.ToArray();
                 writer.Close();
             }
-
-            Debug.Assert(data.IsValidFrcPacket());
             return data;
         }
 #endif
