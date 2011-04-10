@@ -7,18 +7,14 @@ public static class FrcPacketUtils
 
     public static bool IsValidFrcPacket(this byte[] data)
     {
-        var tempData = new byte[data.Length];
-        data.CopyTo(tempData, 0);
-        uint dataCrc = EndianBitConverter.Big.ToUInt32(tempData, tempData.Length - 4);
+        uint dataCrc = EndianBitConverter.Big.ToUInt32(data, data.Length - 4);
 
-        Crc32 crc = new Crc32();
-
-        for (int i = tempData.Length - 4; i < tempData.Length; i++)
+        for (int i = data.Length - 4; i < data.Length; i++)
         {
-            tempData[i] = 0;
+            data[i] = 0;
         }
         //Dim calculatedCrc = BitConverter.ToUInt32(calulatedCrcBytes, 0)
-        var calculatedCrc = Crc32.Compute(tempData);
+        var calculatedCrc = Crc32.Compute(data);
         return dataCrc == calculatedCrc;
     }
 

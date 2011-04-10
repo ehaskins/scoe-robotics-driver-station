@@ -44,7 +44,17 @@ namespace EHaskins.Frc.Communication
                 RaisePropertyChanged("TeamNumber");
             }
         }
-
+        private int _PacketSize;
+        public int PacketSize
+        {
+            get { return _PacketSize; }
+            set
+            {
+                _PacketSize = value;
+                RaisePropertyChanged("PacketSize");
+                InvalidateConnection();
+            }
+        }
         protected bool _IsEnabled;
         public bool IsEnabled
         {
@@ -67,5 +77,7 @@ namespace EHaskins.Frc.Communication
         }
         public abstract void Transmit(byte[] data);
 
+
+        
     }
 }

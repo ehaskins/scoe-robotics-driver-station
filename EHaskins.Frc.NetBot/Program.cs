@@ -55,8 +55,7 @@ namespace EHaskins.Frc.NetBot
             robot = new Robot(1692);
             robot.UserControlDataLength = 64;
             robot.UserStatusDataLength = 64;
-            robot.ReceivePort = 1110;
-            robot.TransmitPort = 1120;
+            robot.Connection = new UdpTransmitter() { ReceivePort = 1110, TransmitPort = 1150, PacketSize=155 };
             robot.Start();
             robot.StatusData.BatteryVoltage = 11.03;
             robot.NewDataReceived += NewDataReceived;

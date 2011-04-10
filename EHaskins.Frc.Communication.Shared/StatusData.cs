@@ -50,47 +50,50 @@ namespace EHaskins.Frc.Communication
                 var f = (byte)VFrac;
                 data = new byte[] { i, f };
             }
-            else 
-                data = new byte[] { 0x37, 0x37};
+            else
+                data = new byte[] { 0x37, 0x37 };
 
             return data;
         }
 
-        public byte[] GetBytes()
+        public byte[] GetBytes(int packetSize)
         {
-            byte[] data;
-            using (MemoryStream stream = new MemoryStream())
+            var converter = MiscUtil.Conversion.EndianBitConverter.Big;
+            var data = new byte[packetSize];
+            int offset = 0;
+
+            data[offset++]=Mode.RawValue;
+            var batt = GetBatteryBytes();
+            data[offset++]= batt[0];
+            data[offset++] = batt[1];
+            data[offset++] = DigitalOutputs.RawValue;
+            offset += 4;
+            converter.CopyBytes(TeamNumber, data, offset); offset += 2;
+            var mac = RobotMac ?? new byte[6];
+            for (int i = 0; i < 6; i++)
             {
-                var writer = new MiscUtil.IO.EndianBinaryWriter(new MiscUtil.Conversion.BigEndianBitConverter(), stream, System.Text.Encoding.UTF8);
-                writer.Write(Mode.RawValue);
-                writer.Write(GetBatteryBytes());
-                writer.Write(DigitalOutputs.RawValue);
-                writer.Write(new byte[4]);
-                writer.Write(TeamNumber);
-                writer.Write(RobotMac ?? new byte[6]);
-                writer.Write(FpgaVersion != null ? System.Text.Encoding.UTF8.GetBytes(FpgaVersion) : new byte[8]);
-                writer.Write(new byte[6]);
-                writer.Write(ReplyId);
-                int length = 0;
-                if (UserStatusData == null)
-                    length = 0;
-                else
-                {
-                    length = UserStatusData.Length <= UserStatusDataLength ? UserStatusData.Length : UserStatusDataLength;
-                    writer.Write(UserStatusData, 0, length);
-                }
-
-                var paddingLength = (UserStatusDataLength - length) + 8;
-                byte[] padding = new byte[paddingLength];
-                writer.Write(padding);
-
-                var crcData = stream.ToArray();
-                stream.Position -= 4;
-                writer.Write(Crc32.Compute(crcData));
-
-                data = stream.ToArray();
-                writer.Close();
+            	data[offset++] = mac[i];
             }
+            var fpga = FpgaVersion != null ? System.Text.Encoding.UTF8.GetBytes(FpgaVersion) : new byte[8];
+            for (int i = 0; i < 8; i++)
+            {
+            	data[offset++] = fpga[i];
+            }
+            offset += 6;
+            converter.CopyBytes(ReplyId, data, offset); offset += 2;
+
+            int length = 0;
+            if (UserStatusData == null)
+                length = 0;
+            else
+            {
+                length = UserStatusData.Length <= UserStatusDataLength ? UserStatusData.Length : UserStatusDataLength;
+                for (int i = 0; i < length; i++)
+                {
+                	data[offset++] = UserStatusData[i];
+                }
+            }
+            converter.CopyBytes(Crc32.Compute(data), data, data.Length-4);
             return data;
         }
 

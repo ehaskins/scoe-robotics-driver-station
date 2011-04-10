@@ -30,6 +30,7 @@
   </PropertyGroup>
   <Import Project="$(NetMfTargetsBaseDir)$(TargetFrameworkVersion)\CSharp.Targets" />
   <ItemGroup>
+    <Compile Include="CrappyStopwatch.cs" />
     <Compile Include="MF\Conversion\BigEndianBitConverter.cs" />
     <Compile Include="MF\IO\EndianBinaryReader.cs" />
     <Compile Include="MF\IO\EndianBinaryWriter.cs" />
