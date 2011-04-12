@@ -9,6 +9,8 @@ namespace EHaskins.Utilities
 {
     public class CrappyStopwatch
     {
+        static bool IsEnabled{get; set;}
+
         DateTime start;
         public CrappyStopwatch()
         {
@@ -17,9 +19,12 @@ namespace EHaskins.Utilities
 
         public void PrintElapsed(string msg)
         {
-            var now = DateTime.Now;
-            var elapsed = now - start;
-            Debug.Print(elapsed.ToString() + ":" + msg);
+            if (IsEnabled)
+            {
+                var now = DateTime.Now;
+                var elapsed = now - start;
+                Debug.Print(elapsed.ToString() + ":" + msg);
+            }
         }
     }
 }

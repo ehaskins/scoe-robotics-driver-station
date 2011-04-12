@@ -46,6 +46,7 @@ namespace EHaskins.Frc.Communication.DriverStation
         {
             UserControlDataSize = Configuration.UserControlDataSize;
             Interval = 20;
+            var sticks = new Joystick[4];
         }
 
         protected void InvalidateConnection()
@@ -165,6 +166,8 @@ namespace EHaskins.Frc.Communication.DriverStation
                     return;
                 /*if (value != null)
                     value.Joysticks = Joysticks.ToArray();*/
+                if (Joysticks != null)
+                    value.Joysticks = Joysticks;
                 _ControlData = value;
                 RaisePropertyChanged("ControlData");
             }
@@ -244,18 +247,20 @@ namespace EHaskins.Frc.Communication.DriverStation
         }
         public int Interval { get; set; }
 
-        private List<Joystick> _Joysticks;
-        public List<Joystick> Joysticks
+        private Joystick[] _Joysticks;
+        public Joystick[] Joysticks
         {
             get
             {
                 return _Joysticks;
             }
-            set
+            protected set
             {
                 if (_Joysticks == value)
                     return;
                 _Joysticks = value;
+                if (ControlData != null)
+                    ControlData.Joysticks = value;
                 RaisePropertyChanged("Joysticks");
             }
         }
