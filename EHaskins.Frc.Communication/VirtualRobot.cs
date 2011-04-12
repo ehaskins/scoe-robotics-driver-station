@@ -39,7 +39,7 @@ namespace EHaskins.Frc.Communication
             get { return _isConnected; }
             set { _isConnected = value; }
         }
-        public ControlData CommandData { get; set; }
+        public ControlData ControlData { get; set; }
         public StatusData StatusData
         {
             get { return _status; }
@@ -64,7 +64,7 @@ namespace EHaskins.Frc.Communication
 
             _status.TeamNumber = this.TeamNumber;
 
-            CommandData = new ControlData();
+            ControlData = new ControlData();
 
             _transmitClient = new UdpClient();
 
@@ -97,16 +97,16 @@ namespace EHaskins.Frc.Communication
             {
                 IPEndPoint endpoint = null;
                 var bytes = _receviceClient.EndReceive(ar, ref endpoint);
-                bool lastEStop = CommandData.Mode.IsEStop;
+                bool lastEStop = ControlData.Mode.IsEStop;
                 if (bytes.IsValidFrcPacket())
                     ParseBytes(bytes);
 
-                if (CommandData != null && CommandData.TeamNumber == this.TeamNumber)
+                if (ControlData != null && ControlData.TeamNumber == this.TeamNumber)
                 {
-                    SendReply(CommandData, endpoint);
-                    if (CommandData != null && lastEStop)
+                    SendReply(ControlData, endpoint);
+                    if (ControlData != null && lastEStop)
                     {
-                        CommandData.Mode.IsEStop = true;
+                        ControlData.Mode.IsEStop = true;
                     }
                     if (NewDataReceived != null)
                     {
@@ -136,7 +136,7 @@ namespace EHaskins.Frc.Communication
             try
             {
                 _packetCount += 1;
-                CommandData.Update(data);
+                ControlData.Update(data);
             }
             catch (Exception ex)
             {

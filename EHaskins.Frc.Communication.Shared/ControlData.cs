@@ -43,8 +43,16 @@ namespace EHaskins.Frc.Communication
             sw.PrintElapsed("Starting sticks");
             for (int i = 0; i < NUM_STICKS; i++)
             {
-                Joysticks[i].Parse(data, offset);
-                offset += Joystick.NUM_BYTES;
+                var stick = Joysticks[i];
+                if (stick != null)
+                {
+                    Joysticks[i].Parse(data, offset);
+                    offset += Joystick.NUM_BYTES;
+                }
+                else
+                {
+                    offset += Joystick.NUM_BYTES;
+                }
             }
             for (int i = 0; i < NUM_ANALOG_INPUTS; i++)
             {
@@ -75,32 +83,10 @@ namespace EHaskins.Frc.Communication
             }
 #endif
             sw.PrintElapsed("done");
-            //using (var reader = new MiscUtil.IO.EndianBinaryReader(new MiscUtil.Conversion.BigEndianBitConverter(), new MemoryStream(data)))
-            //{
-            //    PacketId = reader.ReadUInt16();
-            //    Mode = new Mode(reader.ReadByte());
-            //    DigitalInputs = new BindableBitField8(reader.ReadByte());
-            //    TeamNumber = reader.ReadUInt16();
-            //    Alliance = (Alliance)reader.ReadByte();
-            //    Position = (byte)(reader.ReadByte() - 48);
-            //    for (int i = 0; i < NUM_STICKS; i++)
-            //        Joysticks[i].Parse(reader.ReadBytes(Joystick.NUM_BYTES));
-            //    for (int i = 0; i < NUM_ANALOG_INPUTS; i++)
-            //        AnalogInputs[i] = reader.ReadUInt16();
-            //    CRioChecksum = reader.ReadUInt64();
-            //    FpgaChecksum0 = reader.ReadUInt32();
-            //    FpgaChecksum1 = reader.ReadUInt32();
-            //    FpgaChecksum2 = reader.ReadUInt32();
-            //    FpgaChecksum3 = reader.ReadUInt32();
-            //    Version = new String(Encoding.UTF8.GetChars(reader.ReadBytes(8)));
-            //    int userDataLength = data.Length - (int)reader.BaseStream.Position - 8;
-            //    UserControlDataLength = userDataLength;
-            //    UserControlData = reader.ReadBytes(userDataLength);
-            //}
         }
 
 #if !NETMF
-                public byte[] GetBytes()
+        public byte[] GetBytes()
         {
             byte[] data = null;
             using (MemoryStream stream = new MemoryStream())
