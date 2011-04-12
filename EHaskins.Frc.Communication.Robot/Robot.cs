@@ -1,11 +1,15 @@
 using System;
+#if NETMF
 using Microsoft.SPOT;
+#else
+using System.Diagnostics;
+#endif
 using EHaskins.Utilities;
 namespace EHaskins.Frc.Communication
 {
     public class Robot
     {
-        bool _isOpen;
+        bool _IsEnabled;
 
         StatusData _status;
         Transceiver _connection;
@@ -23,15 +27,33 @@ namespace EHaskins.Frc.Communication
         public event EventHandler NewDataReceived;
         public Transceiver Connection
         {
-        		get
-        		{
-        				return _connection;
-        		}
-        		set
-        		{
-                    value.TeamNumber = TeamNumber;
-        			_connection = value;
-        		}
+            get
+            {
+                return _connection;
+            }
+            set
+            {
+                value.TeamNumber = TeamNumber;
+                _connection = value;
+            }
+        }
+        public bool IsEnabled
+        {
+            get
+            {
+                return _IsEnabled;
+            }
+            set
+            {
+                if (value && !IsEnabled)
+                {
+                    Start();
+                }
+                else if (!value && IsEnabled)
+                {
+                    Stop();
+                }
+            }
         }
         public int UserStatusDataLength { get; set; }
         public int UserControlDataLength { get; set; }
@@ -69,9 +91,21 @@ namespace EHaskins.Frc.Communication
             ControlData = new ControlData();
             Connection.DataReceived += new DataReceivedEventHandler(DataReceived);
             Connection.Start();
-            _isOpen = true;
+            _IsEnabled = true;
         }
-
+        public void Stop()
+        {
+            if (!IsEnabled)
+                throw new InvalidOperationException("DriverStation is already closed.");
+            if (IsEnabled)
+            {
+                _IsEnabled = false;
+            }
+            if (Connection != null)
+            {
+                Connection.Stop();
+            }
+        }
         void DataReceived(object sender, DataReceivedEventArgs e)
         {
             var sw = new CrappyStopwatch();

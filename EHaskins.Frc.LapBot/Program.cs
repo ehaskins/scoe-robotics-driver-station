@@ -1,10 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using EHaskins.Frc.Communication;
 using Phidgets;
 using EHaskins.Utilities.NumericExtensions;
+using System.Diagnostics;
 
 namespace EHaskins.Frc.RobotEmulatorCLI
 {
@@ -22,31 +20,35 @@ namespace EHaskins.Frc.RobotEmulatorCLI
     class RobotTestApp
     {
         Servo servoController;
-        VirtualRobot vRobot;
+        Robot robot;
         public void Run()
         {
             servoController = new Servo();
-            servoController.Attach += this.ServoAttached;
-            vRobot = new VirtualRobot(9245);
-            vRobot.UserControlDataLength = 64;
-            vRobot.UserStatusDataLength = 64;
-            vRobot.ReceivePort = 1110;
-            vRobot.TransmitPort = 1120;
-            vRobot.Start();
-            vRobot.StatusData.BatteryVoltage = 11.03;
-            vRobot.NewDataReceived += NewDataReceived;
+            servoController.open();
+            robot = new Robot(1692);
+            robot.UserControlDataLength = 64;
+            robot.UserStatusDataLength = 64;
+            robot.Connection = new UdpTransmitter() { ReceivePort = 1110, TransmitPort = 1150, PacketSize = 155, IsResponderMode = true };
+            robot.Start();
+            robot.StatusData.BatteryVoltage = 11.03;
+            robot.NewDataReceived += NewDataReceived;
 
-            Console.WriteLine("vRobot Started");
+            Debug.WriteLine("vRobot Started");
+            robot.StatusData.CodeRunning = true;
             Console.ReadLine();
-            vRobot.StatusData.CodeRunning = true;
+            robot.StatusData.CodeRunning = true;
 
             Console.ReadLine();
+
+            robot.Stop();
         }
 
+        double camX = 0;
+        double camY = 0;
         private void NewDataReceived(object sender, EventArgs e)
         {
             string mode = "";
-            ControlData control = vRobot.ControlData;
+            ControlData control = robot.ControlData;
             if (control.Mode.IsEStop)
             {
                 mode = "E-Stop";
@@ -55,13 +57,42 @@ namespace EHaskins.Frc.RobotEmulatorCLI
             {
                 mode = control.Mode.IsEnabled ? "Enabled" : "Disabled";
             }
-            Console.WriteLine(String.Format("Packet# {0}, {1}, Resync: {2}", vRobot.StatusData.ReplyId, mode, control.Mode.IsResync));
+            Console.WriteLine(String.Format("Packet# {0}, {1}, Resync: {2}", robot.StatusData.ReplyId, mode, control.Mode.IsResync));
 
+            if (control.Mode.IsEnabled)
+            {
+                if (control.Mode.IsAutonomous)
+                    AutonomousPeriodic();
+                else
+                    TeleopPeriodic();
+            }
+            else
+            {
+                DisabledPeriodic();
+            }
+            
+        }
+        private void ServoAttached(object sender, Phidgets.Events.AttachEventArgs e)
+        {
+            for (int i = 0; i < 8; i++)
+            {
+                servoController.servos[i].setServoParameters(0.9, 2.1, 2);
+            }
+        }
 
+        private void TeleopPeriodic()
+        {
+            ControlData control = robot.ControlData;
+            Console.WriteLine("Servo attached?" + servoController.Attached);
             if (servoController.Attached)
             {
-                var camX = control.Joysticks[0].Axes[2];
-                var camY = control.Joysticks[0].Axes[4];
+                for (int i = 0; i < 6; i++)
+                {
+                    servoController.servos[i].Engaged = true;
+                    servoController.servos[i].setServoParameters(0.9, 2.1, 2);
+                }
+                //var camX = control.Joysticks[0].Axes[2];
+                //var camY = control.Joysticks[0].Axes[4];
                 var x = control.Joysticks[0].Axes[0];
                 var y = control.Joysticks[0].Axes[1];
                 var z = control.Joysticks[0].Axes[3];
@@ -83,15 +114,29 @@ namespace EHaskins.Frc.RobotEmulatorCLI
                 servoController.servos[3].Position = se + 1;
                 servoController.servos[4].Position = camX + 1;
                 servoController.servos[5].Position = camY + 1;
-            }
-        }
-        private void ServoAttached(object sender, Phidgets.Events.AttachEventArgs e)
-        {
-            for (int i = 0; i < 8; i++)
-            {
-                servoController.servos[i].setServoParameters(0.9, 2.1, 2);
+
+                camX += 0.01;
+                camY += 0.01;
+                if (camX > -1)
+                    camX = 0;
+                if (camY > 1)
+                    camY = -1;
             }
         }
 
+        private void AutonomousPeriodic()
+        {
+            
+        }
+        private void DisabledPeriodic()
+        {
+            if (servoController.Attached)
+            {
+                for (int i = 0; i < 8; i++)
+                {
+                    servoController.servos[i].Engaged = false;
+                }
+            }
+        }
     }
 }
