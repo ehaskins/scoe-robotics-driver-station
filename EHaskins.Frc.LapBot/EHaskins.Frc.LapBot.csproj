@@ -54,13 +54,13 @@
       <Project>{A6995CC8-EF11-4751-8411-D02EB794B7C6}</Project>
       <Name>EHaskins.Frc.Communication.RobotConfig</Name>
     </ProjectReference>
+    <ProjectReference Include="..\EHaskins.Frc.Communication.Robot\EHaskins.Frc.Communication.Robot.csproj">
+      <Project>{058334F9-9156-4FFF-858E-3FDB24648368}</Project>
+      <Name>EHaskins.Frc.Communication.Robot</Name>
+    </ProjectReference>
     <ProjectReference Include="..\EHaskins.Frc.Communication.Shared\EHaskins.Frc.Communication.Shared.csproj">
       <Project>{2EC93CB5-6694-4B03-8DCF-BEB31720F2AF}</Project>
       <Name>EHaskins.Frc.Communication.Shared</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\EHaskins.Frc.Communication\EHaskins.Frc.Communication.csproj">
-      <Project>{2FE2D3CB-42B0-40F7-87C7-E0C53D38BF34}</Project>
-      <Name>EHaskins.Frc.Communication</Name>
     </ProjectReference>
     <ProjectReference Include="..\EHaskins.Utilities\EHaskins.Utilities.csproj">
       <Project>{A0F0A322-5372-4040-9394-EC661859A4F1}</Project>

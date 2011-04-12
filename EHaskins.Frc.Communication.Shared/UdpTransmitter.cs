@@ -2,17 +2,52 @@
 using System.Net.Sockets;
 using System.Net;
 using System.Threading;
+#if NETMF
 using Microsoft.SPOT;
+#else
+using System.Diagnostics;
+#endif
 
 namespace EHaskins.Frc.Communication
 {
     public class UdpTransmitter : Transceiver
     {
-        private IPAddress _lastAddress = null;
-        Socket _socket;
+        UdpClient _client;
         Thread _receieveThread;
         bool _isStopped;
 
+        private IPAddress _lastAddress;
+        private IPEndPoint _destEP;
+
+        private byte _Network;
+        public byte Network
+        {
+            get { return _Network; }
+            set
+            {
+                if (_Network == value)
+                    return;
+                _Network = value;
+
+                InvalidateConnection();
+                RaisePropertyChanged("Network");
+            }
+        }
+        private byte _Host;
+        public byte Host
+        {
+            get { return _Host; }
+            set
+            {
+                if (_Host == value)
+                    return;
+                _Host = value;
+
+                InvalidateConnection();
+                RaisePropertyChanged("HostNumber");
+            }
+        }
+        
         private int _TransmitPort;
         public int TransmitPort
         {
@@ -47,7 +82,20 @@ namespace EHaskins.Frc.Communication
                 RaisePropertyChanged("ReceivePort");
             }
         }
-
+        private bool _IsResponderMode;
+        public bool IsResponderMode
+        {
+            get { return _IsResponderMode; }
+            set
+            {
+                if (_IsResponderMode == value)
+                    return;
+                _IsResponderMode = value;
+                RaisePropertyChanged("IsResponderMode");
+                InvalidateConnection();
+            }
+        }
+        
         public UdpTransmitter()
             : base()
         {
@@ -57,24 +105,34 @@ namespace EHaskins.Frc.Communication
 
         public override void Transmit(byte[] data)
         {
-            if (_socket == null && _lastAddress != null)
-                return;
-            _socket.SendTo(data, new IPEndPoint(_lastAddress, TransmitPort));
+            IPEndPoint ep;
+            if (IsResponderMode)
+            {
+                if (_lastAddress == null)
+                    return;
+                ep = new IPEndPoint(_lastAddress, TransmitPort);
+            }
+            else
+            {
+                ep = _destEP;
+            }
+            if (IsEnabled && _client != null && ep != null)
+                _client.Send(data, data.Length, ep);
         }
 
-        EndPoint endpoint;
+        IPEndPoint endpoint;
         private void ReceiveDataSync()
         {
-            var buffer = new byte[PacketSize];
             endpoint = new IPEndPoint(IPAddress.Any, ReceivePort);
             _isStopped = false;
             while (IsEnabled)
             {
                 try
                 {
-                    var count = _socket.ReceiveFrom(buffer, ref endpoint);
+                    var buffer = _client.Receive(ref endpoint);
 
-                    _lastAddress = ((IPEndPoint)endpoint).Address;
+                    if (IsResponderMode)
+                        _lastAddress = ((IPEndPoint)endpoint).Address;
 
                     RaiseDataReceived(buffer);
                 }
@@ -90,10 +148,8 @@ namespace EHaskins.Frc.Communication
         public override void Start()
         {
             _IsEnabled = true;
-
-            _socket = new Socket(AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp);
-            _socket.Bind(new IPEndPoint(IPAddress.Any, ReceivePort));
-
+            _destEP = new IPEndPoint(FrcPacketUtils.GetIP(Network, TeamNumber, Host), TransmitPort);
+            _client = new UdpClient(ReceivePort);
             //_client.BeginReceive(this.ReceiveData, null);
             _receieveThread = new Thread((ThreadStart)this.ReceiveDataSync);
             _receieveThread.Start();
@@ -101,11 +157,12 @@ namespace EHaskins.Frc.Communication
         public override void Stop()
         {
             _IsEnabled = false;
-            if (_socket != null)
-                _socket.Close();
-            _socket = null;
-            //SpinWait.SpinUntil(() => _isStopped, 100);
-            //HACK: Better spin loop.
+            if (_client != null)
+                _client.Close();
+            _client = null;
+#if !NETMF
+            SpinWait.SpinUntil(() => _isStopped, 100);
+#else
             var count = 0;
             while (!_isStopped)
             {
@@ -114,6 +171,7 @@ namespace EHaskins.Frc.Communication
                 if (count > 100)
                     throw new Exception("Stop timedout");
             }
+#endif
         }
         protected override void InvalidateConnection()
         {

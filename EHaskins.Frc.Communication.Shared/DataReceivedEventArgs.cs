@@ -1,6 +1,4 @@
 using System;
-using System.Net;
-using Microsoft.SPOT;
 
 namespace EHaskins.Frc.Communication
 {
