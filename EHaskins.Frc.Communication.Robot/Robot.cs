@@ -5,7 +5,8 @@ using Microsoft.SPOT;
 using System.Diagnostics;
 #endif
 using EHaskins.Utilities;
-namespace EHaskins.Frc.Communication
+using System.Timers;
+namespace EHaskins.Frc.Communication.Robot
 {
     public class Robot
     {
@@ -13,9 +14,27 @@ namespace EHaskins.Frc.Communication
 
         StatusData _status;
         Transceiver _connection;
+        Timer _watchDogTimer;
 
         private int _packetCount = 0;
 
+         DateTime _lastPacketTime;
+         int maxInterval = 500;
+
+         public event EventHandler Connected;
+
+         protected void RaiseConnected()
+         {
+             if (Connected != null)
+                 Connected(this, null);
+         }
+
+         public event EventHandler Disconnected;
+         public void RaiseDisconnected()
+         {
+             if (Disconnected != null)
+                 Disconnected(this, null);
+         }
         public Robot(ushort teamNumber)
         {
             this.TeamNumber = teamNumber;
@@ -57,7 +76,24 @@ namespace EHaskins.Frc.Communication
         }
         public int UserStatusDataLength { get; set; }
         public int UserControlDataLength { get; set; }
-        public bool IsConnected { get; set; }
+        private bool _IsConnected;
+        public bool IsConnected
+        {
+            get
+            {
+                return _IsConnected;
+            }
+            set
+            {
+                if (_IsConnected == value)
+                    return;
+                _IsConnected = value;
+                if (value)
+                    RaiseConnected();
+                else
+                    RaiseDisconnected();
+            }
+        }
         public ControlData ControlData { get; set; }
         public StatusData StatusData
         {
@@ -80,9 +116,21 @@ namespace EHaskins.Frc.Communication
         }
 
 
+        private void WatchDogElapsed(object sender, ElapsedEventArgs e)
+        {
+            var now = DateTime.Now;
+            var max = TimeSpan.FromMilliseconds(maxInterval);
+            if (now - _lastPacketTime > max)
+            {
+                IsConnected = false;
+            }
+        }
         public void Start()
         {
             Debug.Print("Starting team " + TeamNumber);
+            _watchDogTimer = new Timer(250);
+            _watchDogTimer.Elapsed += new ElapsedEventHandler(WatchDogElapsed);
+            _watchDogTimer.Enabled = true;
             _status = new StatusData();
             _status.UserStatusDataLength = UserControlDataLength;
 
@@ -108,36 +156,32 @@ namespace EHaskins.Frc.Communication
         }
         void DataReceived(object sender, DataReceivedEventArgs e)
         {
-            var sw = new CrappyStopwatch();
             try
             {
                 bool lastEStop = ControlData.Mode.IsEStop;
                 var bytes = e.Data;
-                sw.PrintElapsed("starting");
                 if (bytes.IsValidFrcPacket())
                 {
-                    sw.PrintElapsed("Verified");
                     ParseBytes(bytes);
-                    sw.PrintElapsed("Parsed");
-                }
-                if (ControlData != null && ControlData.TeamNumber == this.TeamNumber)
-                {
-                    SendReply(ControlData);
-                    sw.PrintElapsed("ReplySent");
-                    if (ControlData != null && lastEStop)
+                    _lastPacketTime = DateTime.Now;
+
+                    if (ControlData != null && ControlData.TeamNumber == this.TeamNumber)
                     {
-                        ControlData.Mode.IsEStop = true;
+                        SendReply(ControlData);
+                        if (ControlData != null && lastEStop)
+                        {
+                            ControlData.Mode.IsEStop = true;
+                        }
+                        if (NewDataReceived != null)
+                        {
+                            NewDataReceived(this, null);
+                        }
                     }
-                    if (NewDataReceived != null)
+                    else
                     {
-                        NewDataReceived(this, null);
+                        InvalidPacketCount += 1;
                     }
                 }
-                else
-                {
-                    InvalidPacketCount += 1;
-                }
-                sw.PrintElapsed("Done");
             }
             catch (Exception ex)
             {
@@ -147,7 +191,10 @@ namespace EHaskins.Frc.Communication
 
         private void SendReply(ControlData packet)
         {
-            if (_status.ReplyId > packet.PacketId & !packet.Mode.IsResync)
+            int elapsedPackets = _status.ReplyId < packet.PacketId ? _status.ReplyId - packet.PacketId - 1 : ushort.MaxValue - _status.ReplyId + packet.PacketId;
+            if (elapsedPackets < 25)
+                IsConnected = true;
+            else
             {
                 IsConnected = false;
                 return;

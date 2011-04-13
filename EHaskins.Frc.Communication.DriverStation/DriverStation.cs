@@ -46,7 +46,7 @@ namespace EHaskins.Frc.Communication.DriverStation
         {
             Interval = 20;
             Joysticks = new Joystick[4];
-            
+            UserControlDataSize = Configuration.UserControlDataSize;
         }
 
         protected void InvalidateConnection()
@@ -129,12 +129,10 @@ namespace EHaskins.Frc.Communication.DriverStation
                 if (value && !IsEnabled)
                 {
                     Start();
-                    RaisePropertyChanged("IsEnabled");
                 }
                 else if (!value && IsEnabled)
                 {
                     Stop();
-                    RaisePropertyChanged("IsEnabled");
                 }
             }
         }
@@ -271,27 +269,33 @@ namespace EHaskins.Frc.Communication.DriverStation
         }
         public void Start()
         {
-            try
+            if (!IsEnabled)
             {
-                RaiseStarting();
-                ControlData = GetNewControlData();
+                try
+                {
+                    RaiseStarting();
+                    ControlData = GetNewControlData();
 
-                _isEnabled = true;
+                    _isEnabled = true;
+                    RaisePropertyChanged("IsEnabled");
 
-                if (!Connection.IsEnabled)
-                    Connection.Start();
+                    if (!Connection.IsEnabled)
+                        Connection.Start();
 
-                _transmitTimer = new MicroTimer(Interval * 1000);
-                _transmitTimer.Elapsed += this.SendData;
-                //_transmitTimer.AutoReset = True
-                RaiseStarted();
-                _transmitTimer.Start();
+                    _transmitTimer = new MicroTimer(Interval * 1000);
+                    _transmitTimer.Elapsed += this.SendData;
+                    //_transmitTimer.AutoReset = True
+                    RaiseStarted();
+                    _transmitTimer.Start();
+                }
+                catch (Exception ex)
+                {
+                    Debug.WriteLine(ex.Message);
+                    throw;
+                }
             }
-            catch (Exception ex)
-            {
-                Debug.WriteLine(ex.Message);
-                throw;
-            }
+            else
+                throw new InvalidOperationException("DriverStation is already open.");
         }
 
         public void Stop()
@@ -426,7 +430,7 @@ namespace EHaskins.Frc.Communication.DriverStation
         {
             try
             {
-                if (data.IsValidFrcPacket())
+                if (data.IsValidFrcPacket() && IsEnabled)
                 {
                     var status = new StatusData(); // new StatusData(data, UserStatusDataLength); //TODO:FIX
                     status.Update(data);
