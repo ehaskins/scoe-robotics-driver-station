@@ -29,7 +29,7 @@ namespace EHaskins.Frc.Communication
             for (int i = 0; i < 6; i++)
             {
                 int byteRead = data[offset++];
-                double value = (byteRead - 128) / 128;
+                double value = byteRead / 128.0 - 1;
                 Axes[i] = value;
             }
             Buttons.RawValue = EndianBitConverter.Big.ToUInt16(data, offset); offset += 2;
@@ -45,12 +45,12 @@ namespace EHaskins.Frc.Communication
             BinaryWriter writer = new BinaryWriter(stream);
             for (int i = 0; i < 6; i++)
             {
-                double scaled = Axes[i] * 128;
-                if (scaled > SByte.MaxValue)
-                    scaled = SByte.MaxValue;
-                else if (scaled < SByte.MinValue)
-                    scaled = SByte.MinValue;
-                writer.Write(Convert.ToSByte(scaled));
+                double scaled = (Axes[i] + 1) * 128;
+                if (scaled > byte.MaxValue)
+                    scaled = byte.MaxValue;
+                else if (scaled < byte.MinValue)
+                    scaled = byte.MinValue;
+                writer.Write((byte)scaled);
             }
 
             writer.Write(Buttons.RawValue);

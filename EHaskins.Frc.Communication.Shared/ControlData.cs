@@ -32,7 +32,6 @@ namespace EHaskins.Frc.Communication
         {
             var sw = new CrappyStopwatch();
             var converter = MiscUtil.Conversion.EndianBitConverter.Big;
-            sw.PrintElapsed("Started");
             var offset = 0;
             PacketId = converter.ToUInt16(data, offset); offset += 2;
             Mode = new Mode(data[offset++]);
@@ -40,7 +39,6 @@ namespace EHaskins.Frc.Communication
             TeamNumber = converter.ToUInt16(data, offset); offset += 2;
             Alliance = (Alliance)data[offset++];
             Position = (byte)(data[offset++] - 48);
-            sw.PrintElapsed("Starting sticks");
             for (int i = 0; i < NUM_STICKS; i++)
             {
                 var stick = Joysticks[i];
@@ -59,7 +57,6 @@ namespace EHaskins.Frc.Communication
                 AnalogInputs[i] = converter.ToUInt16(data, offset);
                 offset += 2;
             }
-            sw.PrintElapsed("starting checksums");
             CRioChecksum = converter.ToUInt64(data, offset); offset += 8;
             FpgaChecksum0 = converter.ToUInt32(data, offset); offset += 4;
             FpgaChecksum1 = converter.ToUInt32(data, offset); offset += 4;
@@ -71,7 +68,6 @@ namespace EHaskins.Frc.Communication
             {
                 verBuf[i] = data[offset++];
             }
-            sw.PrintElapsed("starting userdata");
             Version = new String(Encoding.UTF8.GetChars(verBuf));
             int userDataLength = data.Length - offset - 8;
             UserControlDataLength = userDataLength;
@@ -97,7 +93,7 @@ namespace EHaskins.Frc.Communication
                 writer.Write(DigitalInputs.RawValue);
                 writer.Write(TeamNumber);
                 writer.Write((byte)Alliance);
-                writer.Write((byte)48 + Position);
+                writer.Write((byte)(48 + Position));
                 foreach (var joystick in Joysticks)
                 {
                     byte[] joystickData = joystick.GetBytes();

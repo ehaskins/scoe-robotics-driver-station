@@ -20,13 +20,13 @@ namespace EHaskins.Frc.DriverStation
         public DriverStationVM()
         {
             JoystickManager = new JoystickManager();
-            Configuration.UserControlDataSize = 104;
+            Configuration.UserControlDataSize = 101;
             Configuration.UserStatusDataSize = 152;
             DriverStations = new ObservableCollection<Communication.DriverStation.DriverStation>();
 
             //var ds = new Communication.DriverStation.DriverStation() { TeamNumber = 1692, Connection = new UdpTransmitter() { Network = 172, Host = 198 } };
             //var ds = new Communication.DriverStation.DriverStation() { TeamNumber = 0, Connection = new UdpTransmitter() { Network = 127, Host = 1 } };
-            var ds = new Communication.DriverStation.DriverStation() { TeamNumber = 1692, Connection = new UdpTransmitter() { Network = 172, Host = 198, ReceivePort = 1150, TransmitPort = 1110 } };
+            var ds = new Communication.DriverStation.DriverStation() { TeamNumber = 9246, Connection = new UdpTransmitter() { Network = 155, Host = 130, ReceivePort = 1150, TransmitPort = 1110 } };
             var Joysticks = JoystickManager.Joysticks;
 
             for (int i = 0; i < 4; i++)
@@ -36,6 +36,7 @@ namespace EHaskins.Frc.DriverStation
                 ds.Joysticks[i] = stick;
             }
 
+            ds.Started += new EventHandler(DriverStationStarted);
             ds.Start();
             DriverStations.Add(ds);
 
@@ -52,6 +53,11 @@ namespace EHaskins.Frc.DriverStation
 
         public ObservableCollection<Communication.DriverStation.DriverStation> DriverStations { get; set; }
 
+        private void DriverStationStarted(object sender, EventArgs e)
+        {
+            var ds = sender as Communication.DriverStation.DriverStation;
+            ds.ControlData.Mode.IsAutonomous = false;
+        }
         public void WindowClosing(object sender, CancelEventArgs e)
         {
             foreach (var ds in DriverStations)
