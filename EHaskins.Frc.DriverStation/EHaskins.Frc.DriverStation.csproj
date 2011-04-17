@@ -60,6 +60,10 @@
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Views\RobotConfiguratorView.xaml.cs">
+      <DependentUpon>RobotConfiguratorView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="VMs\RobotConfigurator.cs" />
     <Compile Include="Views\UdpConfig.xaml.cs">
       <DependentUpon>UdpConfig.xaml</DependentUpon>
     </Compile>
@@ -94,10 +98,14 @@
     <Compile Include="Views\DriverStationControl.xaml.cs">
       <DependentUpon>DriverStationControl.xaml</DependentUpon>
     </Compile>
-    <Compile Include="DriverStationVM.cs" />
+    <Compile Include="VMs\DriverStationVM.cs" />
     <Compile Include="Views\JoystickControl.xaml.cs">
       <DependentUpon>JoystickControl.xaml</DependentUpon>
     </Compile>
+    <Page Include="Views\RobotConfiguratorView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Views\UdpConfig.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -135,6 +143,10 @@
     <ProjectReference Include="..\EHaskins.Frc.Communication.DriverStation\EHaskins.Frc.Communication.DriverStation.csproj">
       <Project>{1A9DD489-905A-4CED-BA17-CAFACD36604F}</Project>
       <Name>EHaskins.Frc.Communication.DriverStation</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\EHaskins.Frc.Communication.RobotConfig\EHaskins.Frc.Communication.RobotConfig.csproj">
+      <Project>{A6995CC8-EF11-4751-8411-D02EB794B7C6}</Project>
+      <Name>EHaskins.Frc.Communication.RobotConfig</Name>
     </ProjectReference>
     <ProjectReference Include="..\EHaskins.Frc.Communication.SaveState\EHaskins.Frc.Communication.SaveState.vbproj">
       <Project>{C292D979-B546-4CB7-B436-95A63440945F}</Project>

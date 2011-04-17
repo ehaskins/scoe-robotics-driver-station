@@ -12,7 +12,7 @@ using System.Net;
 
 namespace EHaskins.Frc.Communication.RobotConfig
 {
-    class RobotConfigurator:INotifyPropertyChanged
+    public class RobotConfigurator:INotifyPropertyChanged
     {
         IPEndPoint epBroad;
 
