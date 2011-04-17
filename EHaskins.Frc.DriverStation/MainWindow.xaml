@@ -20,28 +20,13 @@
             <StackPanel>
                 <TextBlock HorizontalAlignment="Center" FontSize="16">Master</TextBlock>
                 <StackPanel  Orientation="Horizontal" HorizontalAlignment="Center">
-                    <Button Height="35" Width="75" Margin="3" Content="Enable" >
-                        <Button.Background>
-                            <LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">
-                                <GradientStop Color="#FF19D427" Offset="0.5" />
-                                <GradientStop Color="#FF61E16A" Offset="0" />
-                                <GradientStop Color="#FF61E16A" Offset="1" />
-                            </LinearGradientBrush>
-                        </Button.Background>
-
-                    </Button>
-                    <Button Height="35" Width="75" Margin="3">Disable</Button>
-                    <Button Height="35" Width="75" Margin="3">Tele-Op</Button>
-                    <Button Height="35" Width="75" Margin="3">Autonomous</Button>
-                    <Button Height="35" Width="75" Margin="3" Content="E-Stop">
-                        <Button.Background>
-                            <LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">
-                                <GradientStop Color="Red" Offset="0.5" />
-                                <GradientStop Color="#FFFF7878" Offset="1" />
-                                <GradientStop Color="#FFFF7878" Offset="0" />
-                            </LinearGradientBrush>
-                        </Button.Background>
-                    </Button>
+                    <Button Height="35" Width="75" Margin="3" Content="Enable" Command="{Binding EnableAllCommand}" />
+                    <Button Height="35" Width="75" Margin="3" Command="{Binding DisableAllCommand}">Disable</Button>
+                    <Button Height="35" Width="75" Margin="3" Command="{Binding TeleopAllCommand}">Tele-Op</Button>
+                    <Button Height="35" Width="75" Margin="3" Command="{Binding AutonomousAllCommand}">Autonomous</Button>
+                    <Button Height="35" Width="75" Margin="3" Command="{Binding EStopAllCommand}" Content="E-Stop"/>
+                    <Button Command="{Binding SaveStateCommand}">Save</Button>
+                    <Button Command="{Binding LoadStateCommand}">Load</Button>
                 </StackPanel>
             </StackPanel>
         </DockPanel>

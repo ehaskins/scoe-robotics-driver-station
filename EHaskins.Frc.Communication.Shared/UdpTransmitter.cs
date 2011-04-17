@@ -6,6 +6,7 @@ using System.Threading;
 using Microsoft.SPOT;
 #else
 using System.Diagnostics;
+using System.Xml.Linq;
 #endif
 
 namespace EHaskins.Frc.Communication

@@ -1,6 +1,7 @@
 using System;
 using System.ComponentModel;
 using System.Net;
+using System.Xml.Linq;
 
 namespace EHaskins.Frc.Communication
 {
@@ -61,11 +62,16 @@ namespace EHaskins.Frc.Communication
             get { return _IsEnabled; }
             set
             {
-                if (_IsEnabled == value)
+                if (_IsEnabled && !value)
+                    Stop();
+                else if (!_IsEnabled && value)
+                    Start();
+                else
                     return;
+
+
                 _IsEnabled = value;
                 RaisePropertyChanged("IsEnabled");
-                InvalidateConnection();
             }
         }
 
@@ -76,7 +82,6 @@ namespace EHaskins.Frc.Communication
             RaiseConnectionReset();
         }
         public abstract void Transmit(byte[] data);
-
 
         
     }

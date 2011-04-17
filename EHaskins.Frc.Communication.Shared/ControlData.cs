@@ -11,6 +11,7 @@ namespace EHaskins.Frc.Communication
 {
     public class ControlData : INotifyPropertyChanged
     {
+        public const int SIZE = 80;
         public const int NUM_STICKS = 4;
         public const int NUM_ANALOG_INPUTS = 4;
         public ControlData(ushort teamNumber):this()

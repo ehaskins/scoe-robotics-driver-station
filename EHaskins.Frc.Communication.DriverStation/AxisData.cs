@@ -6,23 +6,11 @@ namespace EHaskins.Frc.Communication.DriverStation
 {
     public class AxisData : INotifyPropertyChanged
     {
-        private int _Index;
-        public int Index
-        {
-            get { return _Index; }
-            protected set
-            {
-                if (_Index == value)
-                    return;
-                _Index = value;
-                RaisePropertyChanged("Index");
-            }
-        }
 
-        public AxisData(int index)
+
+        public AxisData(int physicalAxis)
         {
-            Index = index;
-            PhysicalAxis = index;
+            PhysicalAxis = physicalAxis;
         }
 
         public void Update(double[] physicalValues)
