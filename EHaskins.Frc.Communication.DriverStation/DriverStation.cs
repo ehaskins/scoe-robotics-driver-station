@@ -86,17 +86,29 @@ namespace EHaskins.Frc.Communication.DriverStation
                 RaisePropertyChanged("Connection");
             }
         }
-        private int _UserControlDataSize;
-        public int UserControlDataSize
+
+        private int _PacketSize;
+        public int PacketSize
         {
-            get { return _UserControlDataSize; }
+            get { return _PacketSize; }
             set
             {
-                if (_UserControlDataSize == value)
+                if (_PacketSize == value)
                     return;
-                _UserControlDataSize = value;
-                InvalidateConnection();
+                _PacketSize = value;
+
+                RaisePropertyChanged("PacketSize");
                 RaisePropertyChanged("UserControlDataSize");
+                InvalidateConnection();
+            }
+        }
+        
+        public int UserControlDataSize
+        {
+            get { return PacketSize - ControlData.SIZE - 8; }
+            set
+            {
+                PacketSize = value + ControlData.SIZE + 8;
             }
         }
 

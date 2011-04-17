@@ -136,9 +136,17 @@
       <Project>{1A9DD489-905A-4CED-BA17-CAFACD36604F}</Project>
       <Name>EHaskins.Frc.Communication.DriverStation</Name>
     </ProjectReference>
+    <ProjectReference Include="..\EHaskins.Frc.Communication.SaveState\EHaskins.Frc.Communication.SaveState.vbproj">
+      <Project>{C292D979-B546-4CB7-B436-95A63440945F}</Project>
+      <Name>EHaskins.Frc.Communication.SaveState</Name>
+    </ProjectReference>
     <ProjectReference Include="..\EHaskins.Frc.Communication.Shared\EHaskins.Frc.Communication.Shared.csproj">
       <Project>{2EC93CB5-6694-4B03-8DCF-BEB31720F2AF}</Project>
       <Name>EHaskins.Frc.Communication.Shared</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\EHaskins.Utilities\EHaskins.Utilities.csproj">
+      <Project>{A0F0A322-5372-4040-9394-EC661859A4F1}</Project>
+      <Name>EHaskins.Utilities</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

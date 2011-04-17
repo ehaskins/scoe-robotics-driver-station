@@ -17,7 +17,7 @@ namespace EHaskins.Frc.Communication.DriverStation
     {
         Dispatcher dispatch;
         JoystickManager manager;
-        public SlimDXJoystick(JoystickManager manager, String name, bool syncronize)
+        public SlimDXJoystick(JoystickManager manager, String name)
             : base()
         {
             //this.dispatch = syncronize ? Dispatcher.CurrentDispatcher : null;
