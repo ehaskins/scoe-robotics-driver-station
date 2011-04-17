@@ -4,9 +4,11 @@ using Phidgets;
 using EHaskins.Utilities.NumericExtensions;
 using System.Diagnostics;
 using EHaskins.Frc.Communication.Robot;
+using System.Threading;
 
 namespace EHaskins.Frc.RobotEmulatorCLI
 {
+
     class Program
     {
         static void Main(string[] args)
@@ -20,6 +22,7 @@ namespace EHaskins.Frc.RobotEmulatorCLI
 
     class RobotTestApp
     {
+        Thread startThread;
         AdvancedServo servoController;
         Robot robot;
         public void Run()
@@ -28,8 +31,13 @@ namespace EHaskins.Frc.RobotEmulatorCLI
             servoController = new AdvancedServo();
             servoController.open();
             servoController.waitForAttachment();
+            for (int i = 0; i < 8; i++)
+            {
+                servoController.servos[i].setServoParameters(600, 2350, 2, 2);
+                servoController.servos[i].SpeedRamping = false;
+            }
             Console.WriteLine("Starting robot...");
-            robot = new Robot(9246) { UserControlDataLength = 64, 
+            robot = new Robot(1103) { UserControlDataLength = 64, 
                         UserStatusDataLength = 64, 
                         Connection = new UdpTransmitter { ReceivePort = 1110, TransmitPort = 1150, PacketSize = 155, IsResponderMode = true } };
             robot.Connected += new EventHandler(RobotConnected);
@@ -79,7 +87,7 @@ namespace EHaskins.Frc.RobotEmulatorCLI
 
             if (control.Mode.IsEnabled)
             {
-                SetOutputsEnabled(true);
+                InitPhidgets();
                 if (control.Mode.IsAutonomous)
                     AutonomousPeriodic();
                 else
@@ -87,7 +95,7 @@ namespace EHaskins.Frc.RobotEmulatorCLI
             }
             else
             {
-                SetOutputsEnabled(false);
+                DeinitPhidgets();
                 DisabledPeriodic();
             }
             
@@ -96,6 +104,46 @@ namespace EHaskins.Frc.RobotEmulatorCLI
         {
         }
 
+        bool phidgetsInitiaized = false;
+        bool phidgetsDeInitiaized = true;
+        bool phidgetsInitComplete = false;
+        bool phidgetsDeInitComplete = true;
+        private void InitPhidgets()
+        {
+            //if (!phidgetsInitiaized)
+            //{
+            //    startThread = new Thread((ThreadStart)EnableOutputs);
+            //    startThread.Start();
+            //    phidgetsInitiaized = true;
+            //    phidgetsDeInitiaized = false;
+            //}
+            EnableOutputs();
+        }
+        private void DeinitPhidgets(){
+            //if (!phidgetsDeInitiaized)
+            //{
+            //    startThread = new Thread((ThreadStart)DisableOutputs);
+            //    startThread.Start();
+            //    phidgetsInitiaized = false;
+            //    phidgetsDeInitiaized = true;
+            //}
+            DisableOutputs();
+        }
+        private void EnableOutputs()
+        {
+            SetOutputsEnabled(true);
+            phidgetsInitComplete = true;
+            phidgetsDeInitComplete = false;
+        }
+        private void DisableOutputs()
+        {
+            SetOutputsEnabled(false);
+
+            phidgetsInitComplete = false;
+            phidgetsDeInitComplete = true;
+
+            startThread = new Thread((ThreadStart)UpdateLoop);
+        }
         private bool enabledValue = true;
         private void SetOutputsEnabled(bool enabled)
         {
@@ -104,8 +152,6 @@ namespace EHaskins.Frc.RobotEmulatorCLI
                 for (int i = 0; i < 8; i++)
                 {
                     servoController.servos[i].Engaged = true;
-                    servoController.servos[i].setServoParameters(600, 2350, 2, 2);
-                    servoController.servos[i].SpeedRamping = false;
 
                     enabledValue = true;
                 }
@@ -120,38 +166,49 @@ namespace EHaskins.Frc.RobotEmulatorCLI
             }
         }
 
+        private void UpdateLoop()
+        {
+            while (phidgetsInitComplete)
+            {
+                servoController.servos[0].Position = (nw + 1).Limit(0, 2);
+                servoController.servos[1].Position = (sw + 1).Limit(0, 2);
+                servoController.servos[2].Position = (ne + 1).Limit(0, 2);
+                servoController.servos[3].Position = (se + 1).Limit(0, 2);
+                servoController.servos[4].Position = (camX + 1).Limit(0, 2);
+                servoController.servos[5].Position = (camY + 1).Limit(0, 2);
+            }
+        }
+
+        double nw;
+        double ne;
+        double sw;
+        double se;
 
         private void TeleopPeriodic()
         {
             ControlData control = robot.ControlData;
             try
             {
-                if (servoController.Attached)
+                if (phidgetsInitComplete)
                 {
 
-                    var camX = control.Joysticks[0].Axes[0];
-                    var camY = -control.Joysticks[0].Axes[1];
+                    camX = control.Joysticks[0].Axes[0];
+                    camY = -control.Joysticks[0].Axes[1];
                     var x = control.Joysticks[0].Axes[0];
                     var y = -control.Joysticks[0].Axes[1];
                     var z = -control.Joysticks[0].Axes[3];
 
 
-                    var nw = y + x + z;
-                    var ne = y - x - z;
-                    var sw = y + x - z;
-                    var se = y - x + z;
+                     nw = y + x + z;
+                    ne = y - x - z;
+                    sw = y + x - z;
+                    se = y - x + z;
 
                     nw = nw.Limit(-1, 1);
                     ne = ne.Limit(-1, 1);
                     sw = sw.Limit(-1, 1);
                     se = se.Limit(-1, 1);
 
-                    servoController.servos[0].Position = (nw + 1).Limit(0, 2);
-                    servoController.servos[1].Position = (sw + 1).Limit(0, 2);
-                    servoController.servos[2].Position = (ne + 1).Limit(0, 2);
-                    servoController.servos[3].Position = (se + 1).Limit(0, 2);
-                    servoController.servos[4].Position = (camX + 1).Limit(0, 2);
-                    servoController.servos[5].Position = (camY + 1).Limit(0, 2);
                 }
             }
             catch (PhidgetException ex)

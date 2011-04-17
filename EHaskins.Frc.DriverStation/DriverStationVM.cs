@@ -26,7 +26,7 @@ namespace EHaskins.Frc.DriverStation
 
             //var ds = new Communication.DriverStation.DriverStation() { TeamNumber = 1692, Connection = new UdpTransmitter() { Network = 172, Host = 198 } };
             //var ds = new Communication.DriverStation.DriverStation() { TeamNumber = 0, Connection = new UdpTransmitter() { Network = 127, Host = 1 } };
-            var ds = new Communication.DriverStation.DriverStation() { TeamNumber = 9246, Connection = new UdpTransmitter() { Network = 155, Host = 130, ReceivePort = 1150, TransmitPort = 1110 } };
+            var ds = new Communication.DriverStation.DriverStation() { TeamNumber = 1103, Connection = new UdpTransmitter() { Network = 10, Host = 12, ReceivePort = 1150, TransmitPort = 1110 } };
             var Joysticks = JoystickManager.Joysticks;
 
             for (int i = 0; i < 4; i++)
