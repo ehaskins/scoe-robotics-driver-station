@@ -296,6 +296,7 @@ namespace EHaskins.Frc.Communication.DriverStation
 
                     _transmitTimer = new MicroTimer(Interval * 1000);
                     _transmitTimer.Elapsed += this.SendData;
+                    _transmitTimer.IgnoreEventIfLateBy = _transmitTimer.Interval / 2;
                     //_transmitTimer.AutoReset = True
                     RaiseStarted();
                     _transmitTimer.Start();

@@ -9,17 +9,20 @@ using MiscUtil.IO;
 using MiscUtil.Conversion;
 using System.IO;
 using System.Net;
+using System.Threading;
 
 namespace EHaskins.Frc.Communication.RobotConfig
 {
     public class RobotConfigurator:INotifyPropertyChanged
     {
         IPEndPoint epBroad;
-
+        bool _IsStopped = true;
+        Thread receiveThread;
         public RobotConfigurator()
         {
             ConfigPort = 1000;
-            Client = new UdpClient(ConfigPort + 1);
+            Robots = new ObservableCollection<RobotInfo>();
+            Responses = new ObservableCollection<RobotResponse>();
         }
         public event PropertyChangedEventHandler PropertyChanged;
         protected void RaisePropertyChanged(string prop)
@@ -28,6 +31,41 @@ namespace EHaskins.Frc.Communication.RobotConfig
                 PropertyChanged(this, new PropertyChangedEventArgs(prop));
         }
 
+        public void Open()
+        {
+            if (Client != null)
+                throw new InvalidOperationException("Connection already open.");
+            Client = new UdpClient(ConfigPort + 1);
+            _IsOpen = true;
+            receiveThread = new Thread(ReceiveDataSync);
+            receiveThread.Start();
+        }
+
+        public void Close()
+        {
+            if (Client == null)
+                throw new InvalidOperationException("Connection is already closed.");
+            _IsOpen = false;
+            Client.Close();
+            SpinWait.SpinUntil(() => _IsStopped, 100);
+            Client = null;
+        }
+        private bool _IsOpen;
+        public bool IsOpen
+        {
+            get { return _IsOpen; }
+            set
+            {
+                if (value && !IsOpen)
+                    Open();
+                else if (!value && IsOpen)
+                    Close();
+                else
+                    return;
+                RaisePropertyChanged("IsOpen");
+            }
+        }
+        
         private void ProcessData(byte[] data)
         {
             var response = new RobotResponse(data);
@@ -44,18 +82,25 @@ namespace EHaskins.Frc.Communication.RobotConfig
                     break;
             }
         }
-        public void ReceiveData(IAsyncResult ar)
+        private void ReceiveDataSync()
         {
-            try
+            _IsStopped = false;
+            while (IsOpen)
             {
-                IPEndPoint endpoint = null;
-                var data = Client.EndReceive(ar, ref endpoint);
-                ProcessData(data);
+                try
+                {
+                    var ep = new IPEndPoint(IPAddress.Any, ConfigPort + 1);
+                    var buffer = Client.Receive(ref ep);
+
+                    ProcessData(buffer);
+                }
+                catch (SocketException ex)
+                {
+                    if (IsOpen)
+                        Close();
+                }
             }
-            finally
-            {
-                Client.BeginReceive(this.ReceiveData, null);
-            }
+            _IsStopped = true;
         }
 
         private ObservableCollection<RobotResponse> _Responses;
@@ -96,8 +141,8 @@ namespace EHaskins.Frc.Communication.RobotConfig
                 RaisePropertyChanged("Client");
             }
         }
-        
-        private ushort _ConfigPort = 1000;
+
+        private ushort _ConfigPort;
         public ushort ConfigPort
         {
             get { return _ConfigPort; }
@@ -115,6 +160,7 @@ namespace EHaskins.Frc.Communication.RobotConfig
         {
             var initBytes = new byte[] { (byte)ConfigCommand.Discover, 0x00, 0x00 };
 
+            Robots.Clear();
             Client.Send(initBytes, initBytes.Length, epBroad);
         }
 

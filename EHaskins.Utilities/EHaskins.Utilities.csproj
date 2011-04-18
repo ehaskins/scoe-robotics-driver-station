@@ -57,6 +57,7 @@
       <HintPath>..\libs\MiscUtil.dll</HintPath>
     </Reference>
     <Reference Include="PresentationCore" />
+    <Reference Include="PresentationFramework" />
     <Reference Include="System" />
     <Reference Include="System.Core">
       <RequiredTargetFramework>3.5</RequiredTargetFramework>
@@ -90,8 +91,11 @@
     <Compile Include="MicroStopwatch.cs" />
     <Compile Include="MicroTimer.cs" />
     <Compile Include="MicroTimerEventArgs.cs" />
+    <Compile Include="NumericExtensions\MacAddressExtensions.cs" />
+    <Compile Include="WPF\MacAddressConverter.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="WPF\DelegateCommand.cs" />
+    <Compile Include="WPF\DispatchingCollection.cs" />
   </ItemGroup>
   <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

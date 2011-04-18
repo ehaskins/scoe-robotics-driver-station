@@ -36,7 +36,4 @@
     <DataTemplate x:Key="UdpConfig" >
         <local:UdpConfig/>
     </DataTemplate>
-    <DataTemplate DataType="{x:Type local:RobotConfigurator}">
-        
-    </DataTemplate>
 </ResourceDictionary>

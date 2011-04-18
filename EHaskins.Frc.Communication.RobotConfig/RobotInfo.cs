@@ -1,6 +1,6 @@
 using System;
 using System.ComponentModel;
-
+using EHaskins.Utilities.NumericExtensions;
 namespace EHaskins.Frc.Communication.RobotConfig
 {
     public class RobotInfo : INotifyPropertyChanged
@@ -9,6 +9,10 @@ namespace EHaskins.Frc.Communication.RobotConfig
         public RobotInfo(RobotResponse response)
         {
             this.Update(response);
+        }
+        public override string ToString()
+        {
+            return String.Format("{0} : {1}", DeviceId, MacAddress.ToMacString());
         }
         public event PropertyChangedEventHandler PropertyChanged;
         protected void RaisePropertyChanged(string prop)

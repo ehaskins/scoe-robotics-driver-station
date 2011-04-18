@@ -60,9 +60,6 @@
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Views\RobotConfiguratorView.xaml.cs">
-      <DependentUpon>RobotConfiguratorView.xaml</DependentUpon>
-    </Compile>
     <Compile Include="VMs\RobotConfigurator.cs" />
     <Compile Include="Views\UdpConfig.xaml.cs">
       <DependentUpon>UdpConfig.xaml</DependentUpon>
@@ -102,7 +99,7 @@
     <Compile Include="Views\JoystickControl.xaml.cs">
       <DependentUpon>JoystickControl.xaml</DependentUpon>
     </Compile>
-    <Page Include="Views\RobotConfiguratorView.xaml">
+    <Page Include="Views\RobotConfiguratorTemplate.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
