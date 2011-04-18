@@ -10,10 +10,15 @@ namespace EHaskins.Frc.Communication.RobotConfig
             var converter = new BigEndianBitConverter();
             DeviceID = converter.ToUInt16(data, 0);
             ResponseCode = (ResponseCode)data[2];
+            Payload = new Byte[data.Length - 3];
             for (int i = 3; i < data.Length; i++)
             {
                 Payload[i - 3] = data[i];
             }
+        }
+        public override string ToString()
+        {
+            return String.Format("{0} : {1} : Payload length={2}", DeviceID, ResponseCode, Payload.Length);
         }
         private ushort _DeviceID;
         public ushort DeviceID
@@ -43,6 +48,7 @@ namespace EHaskins.Frc.Communication.RobotConfig
                 _Payload = value;
             }
         }
+
 
     }
 }

@@ -1,0 +1,33 @@
+﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:local="clr-namespace:EHaskins.Frc.DriverStation"
+                    xmlns:utils="clr-namespace:EHaskins.Utilities.Wpf;assembly=EHaskins.Utilities">
+    <Style TargetType="{x:Type local:RobotConfigurator}">
+        <Setter Property="Template" Value="{DynamicResource ResourceKey=RobotConfiguratorTemplate}"/>
+    </Style>
+    <utils:MacAddressConverter x:Key="MacConverter"/>
+    <ControlTemplate TargetType="{x:Type local:RobotConfigurator}" x:Key="RobotConfiguratorTemplate"> 
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="Auto"/>
+            </Grid.RowDefinitions>
+            <ComboBox ItemsSource="{TemplateBinding Property=MacAddresses}" SelectedValue="{Binding Path=SelectedMac,RelativeSource={RelativeSource TemplatedParent}}">
+                <ComboBox.ItemTemplate>
+                    <DataTemplate>
+                        <TextBlock Text="{Binding Converter={StaticResource ResourceKey=MacConverter}}"/>
+                    </DataTemplate>
+                </ComboBox.ItemTemplate>
+            </ComboBox>
+            <ListBox Grid.Row="1" ItemsSource="{TemplateBinding Robots}" SelectedValue="{Binding Path=SelectedRobot,RelativeSource={RelativeSource TemplatedParent}}"/>
+            <ListBox Grid.Row="2" ItemsSource="{TemplateBinding Responses}"/>
+            <StackPanel Grid.Row="3" Orientation="Horizontal">
+                <Button Command="{TemplateBinding DiscoverCommand}">Discover</Button>
+                <Button Command="{TemplateBinding WriteConfigCommand}">Write Config</Button>
+                <Button Command="{TemplateBinding EraseConfigCommand}">Erase Config</Button>
+            </StackPanel>
+        </Grid>
+    </ControlTemplate>
+</ResourceDictionary>

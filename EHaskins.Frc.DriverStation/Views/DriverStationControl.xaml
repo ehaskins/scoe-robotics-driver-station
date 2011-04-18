@@ -130,7 +130,7 @@
                 </Grid>
             </TabItem>
             <TabItem Header="Robot Config">
-                <TextBlock>GUI version of robot configuration goes here someday.</TextBlock>
+                <local:RobotConfigurator DriverStation="{Binding}"/>
             </TabItem>
         </TabControl>
     </Grid>

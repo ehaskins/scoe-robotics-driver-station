@@ -100,6 +100,8 @@ namespace EHaskins.Frc.Communication
         public UdpTransmitter()
             : base()
         {
+            Network = 10;
+            Host = 2;
             TransmitPort = 1110;
             ReceivePort = 1120;
         }
@@ -153,6 +155,7 @@ namespace EHaskins.Frc.Communication
             _client = new UdpClient(ReceivePort);
             //_client.BeginReceive(this.ReceiveData, null);
             _receieveThread = new Thread((ThreadStart)this.ReceiveDataSync);
+            _receieveThread.Priority = ThreadPriority.AboveNormal;
             _receieveThread.Start();
         }
         public override void Stop()

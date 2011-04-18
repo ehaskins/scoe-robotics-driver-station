@@ -2,6 +2,7 @@
 using System.Windows.Input;
 namespace EHaskins.Utilities.Wpf
 {
+
     public class DelegateCommand : ICommand
     {
         private readonly Predicate<object> _canExecute;
