@@ -82,7 +82,26 @@
                     </TabControl>
                 </Grid>
             </TabItem>
-            <TabItem Header="DS Config">
+            <TabItem Header="Diagnostics">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="*"/>
+                    </Grid.RowDefinitions>
+                    <TextBlock Grid.Row="0" Grid.Column="0">Current Invalid Packet Count:</TextBlock>
+                    <TextBox Grid.Row="0" Grid.Column="1" Text="{Binding CurrentInvalidPacketCount}"/>
+
+                    <TextBlock Grid.Row="1" Grid.Column="0">Current Missed Packet Count:</TextBlock>
+                    <TextBox Grid.Row="1" Grid.Column="1" Text="{Binding CurrentMissedPackets}"/>
+
+                </Grid>
+            </TabItem>
+            <TabItem Header="Net Config">
                 <Grid>
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="Auto"/>
@@ -110,24 +129,8 @@
                     </ContentControl>-->
                 </Grid>
             </TabItem>
-            <TabItem Header="Diagnostics">
-                <Grid>
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="Auto"/>
-                        <ColumnDefinition Width="*"/>
-                    </Grid.ColumnDefinitions>
-                    <Grid.RowDefinitions>
-                        <RowDefinition Height="Auto"/>
-                        <RowDefinition Height="Auto"/>
-                        <RowDefinition Height="*"/>
-                    </Grid.RowDefinitions>
-                    <TextBlock Grid.Row="0" Grid.Column="0">Current Invalid Packet Count:</TextBlock>
-                    <TextBox Grid.Row="0" Grid.Column="1" Text="{Binding CurrentInvalidPacketCount}"/>
+            <TabItem Header="DS Config">
 
-                    <TextBlock Grid.Row="1" Grid.Column="0">Current Missed Packet Count:</TextBlock>
-                    <TextBox Grid.Row="1" Grid.Column="1" Text="{Binding CurrentMissedPackets}"/>
-
-                </Grid>
             </TabItem>
             <TabItem Header="Robot Config">
                 <local:RobotConfigurator DriverStation="{Binding}"/>

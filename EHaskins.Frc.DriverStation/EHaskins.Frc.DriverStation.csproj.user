@@ -2,5 +2,13 @@
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
     <ProjectView>ProjectFiles</ProjectView>
+    <PublishUrlHistory>c:\deploy\ds\|c:\publish\ds\|publish\</PublishUrlHistory>
+    <InstallUrlHistory>http://www.ehaskins.net/deploy/scoeds/</InstallUrlHistory>
+    <SupportUrlHistory>http://www.scoerobotics.com</SupportUrlHistory>
+    <UpdateUrlHistory />
+    <BootstrapperUrlHistory />
+    <ErrorReportUrlHistory />
+    <FallbackCulture>en-US</FallbackCulture>
+    <VerifyUploadedFiles>false</VerifyUploadedFiles>
   </PropertyGroup>
 </Project>

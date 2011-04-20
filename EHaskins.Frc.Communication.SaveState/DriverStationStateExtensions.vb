@@ -48,8 +48,8 @@ Public Module DriverStationStateExtensions
     <Extension()>
     Public Sub LoadState(ByVal udp As UdpTransmitter, ByVal data As XElement)
         udp.IsEnabled = False
-        udp.ReceivePort = data.@ControlPort
-        udp.TransmitPort = data.@StatusPort
+        udp.ReceivePort = data.@StatusPort
+        udp.TransmitPort = data.@ControlPort
         udp.Host = data.@Host
         udp.Network = data.@Network
     End Sub

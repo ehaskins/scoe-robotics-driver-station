@@ -58,7 +58,7 @@ namespace EHaskins.Frc.Communication.DriverStation
                 {
                     Debug.WriteLine(ex.Message);
                     //Joystick disconnected disable it.
-                    Joystick = null;
+                    //Joystick = null;
                 }
 
                 if (state != null)

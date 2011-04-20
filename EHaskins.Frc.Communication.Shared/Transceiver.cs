@@ -1,7 +1,6 @@
 using System;
 using System.ComponentModel;
 using System.Net;
-using System.Xml.Linq;
 
 namespace EHaskins.Frc.Communication
 {

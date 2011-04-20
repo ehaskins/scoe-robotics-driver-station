@@ -22,29 +22,36 @@ namespace EHaskins.Frc.RobotEmulatorCLI
 
     class RobotTestApp
     {
-        Thread startThread;
+        Thread phidgetsThread;
         AdvancedServo servoController;
         Robot robot;
+        bool isRunning = false;
         public void Run()
         {
+            isRunning = true;
             Console.WriteLine("Starting servocontroller...");
             servoController = new AdvancedServo();
             servoController.open();
             servoController.waitForAttachment();
             for (int i = 0; i < 8; i++)
             {
-                servoController.servos[i].setServoParameters(600, 2350, 2, 2);
+                servoController.servos[i].setServoParameters(900, 2100, 2, 2);
                 servoController.servos[i].SpeedRamping = false;
             }
+            phidgetsThread = new Thread((ThreadStart)PhidgetsLoop);
+            phidgetsThread.Start();
             Console.WriteLine("Starting robot...");
-            robot = new Robot(1103) { UserControlDataLength = 64, 
-                        UserStatusDataLength = 64, 
-                        Connection = new UdpTransmitter { ReceivePort = 1110, TransmitPort = 1150, PacketSize = 155, IsResponderMode = true } };
+            robot = new Robot(1103)
+            {
+                UserControlDataLength = 64,
+                UserStatusDataLength = 64,
+                Connection = new UdpTransmitter { ReceivePort = 1110, TransmitPort = 1150, PacketSize = 155, IsResponderMode = true }
+            };
             robot.Connected += new EventHandler(RobotConnected);
             robot.Disconnected += new EventHandler(RobotDisconnected);
             robot.Start();
             robot.StatusData.BatteryVoltage = 11.03;
-            robot.NewDataReceived += NewDataReceived;
+            robot.NewDataReceived += new EventHandler(NewDataReceived);
 
             Debug.WriteLine("vRobot Started");
             robot.StatusData.CodeRunning = true;
@@ -53,6 +60,7 @@ namespace EHaskins.Frc.RobotEmulatorCLI
             Console.ReadLine();
 
 
+            isRunning = false;
             robot.Stop();
             servoController.close();
         }
@@ -67,8 +75,6 @@ namespace EHaskins.Frc.RobotEmulatorCLI
             Console.WriteLine("Connected");
         }
 
-        double camX = 0;
-        double camY = 0;
         private void NewDataReceived(object sender, EventArgs e)
         {
 
@@ -87,7 +93,6 @@ namespace EHaskins.Frc.RobotEmulatorCLI
 
             if (control.Mode.IsEnabled)
             {
-                InitPhidgets();
                 if (control.Mode.IsAutonomous)
                     AutonomousPeriodic();
                 else
@@ -95,56 +100,36 @@ namespace EHaskins.Frc.RobotEmulatorCLI
             }
             else
             {
-                DeinitPhidgets();
                 DisabledPeriodic();
             }
-            
+
         }
         private void ServoAttached(object sender, Phidgets.Events.AttachEventArgs e)
         {
         }
 
-        bool phidgetsInitiaized = false;
-        bool phidgetsDeInitiaized = true;
         bool phidgetsInitComplete = false;
         bool phidgetsDeInitComplete = true;
-        private void InitPhidgets()
-        {
-            //if (!phidgetsInitiaized)
-            //{
-            //    startThread = new Thread((ThreadStart)EnableOutputs);
-            //    startThread.Start();
-            //    phidgetsInitiaized = true;
-            //    phidgetsDeInitiaized = false;
-            //}
-            EnableOutputs();
-        }
-        private void DeinitPhidgets(){
-            //if (!phidgetsDeInitiaized)
-            //{
-            //    startThread = new Thread((ThreadStart)DisableOutputs);
-            //    startThread.Start();
-            //    phidgetsInitiaized = false;
-            //    phidgetsDeInitiaized = true;
-            //}
-            DisableOutputs();
-        }
         private void EnableOutputs()
         {
-            SetOutputsEnabled(true);
-            phidgetsInitComplete = true;
-            phidgetsDeInitComplete = false;
+            if (!phidgetsInitComplete)
+            {
+                SetOutputsEnabled(true);
+                phidgetsInitComplete = true;
+                phidgetsDeInitComplete = false;
+            }
         }
         private void DisableOutputs()
         {
-            SetOutputsEnabled(false);
+            if ((!phidgetsDeInitComplete))
+            {
+                SetOutputsEnabled(false);
 
-            phidgetsInitComplete = false;
-            phidgetsDeInitComplete = true;
-
-            startThread = new Thread((ThreadStart)UpdateLoop);
+                phidgetsInitComplete = false;
+                phidgetsDeInitComplete = true;
+            }
         }
-        private bool enabledValue = true;
+        private bool enabledValue = false;
         private void SetOutputsEnabled(bool enabled)
         {
             if (servoController.Attached && enabled && !enabledValue)
@@ -152,7 +137,6 @@ namespace EHaskins.Frc.RobotEmulatorCLI
                 for (int i = 0; i < 8; i++)
                 {
                     servoController.servos[i].Engaged = true;
-
                     enabledValue = true;
                 }
             }
@@ -166,50 +150,77 @@ namespace EHaskins.Frc.RobotEmulatorCLI
             }
         }
 
-        private void UpdateLoop()
+        private bool CanEabledPhidgets()
         {
-            while (phidgetsInitComplete)
+            return robot.IsConnected && robot.ControlData.Mode.IsEnabled;
+        }
+        private void PhidgetsLoop()
+        {
+
+            while (isRunning)
             {
-                servoController.servos[0].Position = (nw + 1).Limit(0, 2);
-                servoController.servos[1].Position = (sw + 1).Limit(0, 2);
-                servoController.servos[2].Position = (ne + 1).Limit(0, 2);
-                servoController.servos[3].Position = (se + 1).Limit(0, 2);
-                servoController.servos[4].Position = (camX + 1).Limit(0, 2);
-                servoController.servos[5].Position = (camY + 1).Limit(0, 2);
+                ControlData control = robot.ControlData;
+                if (CanEabledPhidgets())
+                {
+                    EnableOutputs();
+                    ushort startPacket = robot.ControlData.PacketId;
+                    try
+                    {
+                        servoController.servos[0].Position = (nw + 1).Limit(0, 2);
+                        servoController.servos[1].Position = (sw + 1).Limit(0, 2);
+                        servoController.servos[2].Position = (ne + 1).Limit(0, 2);
+                        servoController.servos[3].Position = (se + 1).Limit(0, 2);
+                        servoController.servos[4].Position = (camX + 1).Limit(0, 2);
+                        servoController.servos[5].Position = (camY + 1).Limit(0, 2);
+                    }
+                    catch (Exception ex)
+                    {
+                        Debug.WriteLine(ex.Message);
+                        DisableOutputs();
+                    }
+                    if (robot.ControlData.PacketId == startPacket)
+                    {
+                        //Debug.WriteLine("Spinning");
+                        SpinWait.SpinUntil(() => robot.ControlData.PacketId != startPacket);
+                    }
+                }
+                else
+                {
+                    DisableOutputs();
+                    SpinWait.SpinUntil(() => CanEabledPhidgets() || !isRunning);
+                }
             }
+            DisableOutputs();
         }
 
         double nw;
         double ne;
         double sw;
         double se;
+        double camX = 0;
+        double camY = 0;
 
         private void TeleopPeriodic()
         {
             ControlData control = robot.ControlData;
             try
             {
-                if (phidgetsInitComplete)
-                {
-
-                    camX = control.Joysticks[0].Axes[0];
-                    camY = -control.Joysticks[0].Axes[1];
-                    var x = control.Joysticks[0].Axes[0];
-                    var y = -control.Joysticks[0].Axes[1];
-                    var z = -control.Joysticks[0].Axes[3];
+                camX = control.Joysticks[0].Axes[0];
+                camY = -control.Joysticks[0].Axes[1];
+                var x = control.Joysticks[0].Axes[0];
+                var y = -control.Joysticks[0].Axes[1];
+                var z = -control.Joysticks[0].Axes[3];
 
 
-                     nw = y + x + z;
-                    ne = y - x - z;
-                    sw = y + x - z;
-                    se = y - x + z;
+                nw = y + x + z;
+                ne = y - x - z;
+                sw = y + x - z;
+                se = y - x + z;
 
-                    nw = nw.Limit(-1, 1);
-                    ne = ne.Limit(-1, 1);
-                    sw = sw.Limit(-1, 1);
-                    se = se.Limit(-1, 1);
-
-                }
+                nw = nw.Limit(-1, 1);
+                ne = ne.Limit(-1, 1);
+                sw = sw.Limit(-1, 1);
+                se = se.Limit(-1, 1);
             }
             catch (PhidgetException ex)
             {
@@ -224,7 +235,7 @@ namespace EHaskins.Frc.RobotEmulatorCLI
 
         private void AutonomousPeriodic()
         {
-            
+
         }
         private void DisabledPeriodic()
         {
