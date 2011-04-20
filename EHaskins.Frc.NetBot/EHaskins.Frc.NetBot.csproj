@@ -42,9 +42,9 @@
     <Reference Include="System" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\EHaskins.Frc.Communication.Robot\EHaskins.Frc.Communication.Robot.csproj">
+    <ProjectReference Include="..\EHaskins.Frc.Communication.Robot\EHaskins.Frc.Communication.Robot%28MF%29.csproj">
       <Project>{4384FA91-4CE6-41F0-8AC8-1CC828C18A23}</Project>
-      <Name>EHaskins.Frc.Communication.Robot</Name>
+      <Name>EHaskins.Frc.Communication.Robot%28MF%29</Name>
     </ProjectReference>
     <ProjectReference Include="..\EHaskins.Frc.Communication.Shared\EHaskins.Frc.Communication.Shared %28MF%29.csproj">
       <Project>{D5CB3525-25F7-40A7-B128-E30194FF16E1}</Project>

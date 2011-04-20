@@ -8,7 +8,7 @@ using SecretLabs.NETMF.Hardware;
 using SecretLabs.NETMF.Hardware.NetduinoPlus;
 using Microsoft.SPOT.Net.NetworkInformation;
 using EHaskins.Frc.Communication;
-
+using EHaskins.Frc.Communication.Robot;
 namespace EHaskins.Frc.NetBot
 {
     public class Program

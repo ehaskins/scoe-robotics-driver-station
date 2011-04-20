@@ -135,6 +135,7 @@ namespace EHaskins.Frc.DriverStation
                             i++;
                         }
                     }
+                    //DriverStations[0].LoadState(dsstates[0], JoystickManager);
                     //RaisePropertyChanged("DriverStations");
                 }
                 catch (Exception ex)

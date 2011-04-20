@@ -1,11 +1,11 @@
 using System;
+using EHaskins.Utilities;
 #if NETMF
 using Microsoft.SPOT;
 #else
 using System.Diagnostics;
-#endif
-using EHaskins.Utilities;
 using System.Timers;
+#endif
 namespace EHaskins.Frc.Communication.Robot
 {
     public class Robot
@@ -14,27 +14,28 @@ namespace EHaskins.Frc.Communication.Robot
 
         StatusData _status;
         Transceiver _connection;
+#if !NETMF        
         Timer _watchDogTimer;
-
+#endif
         private int _packetCount = 0;
 
-         DateTime _lastPacketTime;
-         int maxInterval = 500;
+        DateTime _lastPacketTime;
+        int maxInterval = 500;
 
-         public event EventHandler Connected;
+        public event EventHandler Connected;
 
-         protected void RaiseConnected()
-         {
-             if (Connected != null)
-                 Connected(this, null);
-         }
+        protected void RaiseConnected()
+        {
+            if (Connected != null)
+                Connected(this, null);
+        }
 
-         public event EventHandler Disconnected;
-         public void RaiseDisconnected()
-         {
-             if (Disconnected != null)
-                 Disconnected(this, null);
-         }
+        public event EventHandler Disconnected;
+        public void RaiseDisconnected()
+        {
+            if (Disconnected != null)
+                Disconnected(this, null);
+        }
         public Robot(ushort teamNumber)
         {
             this.TeamNumber = teamNumber;
@@ -116,7 +117,8 @@ namespace EHaskins.Frc.Communication.Robot
         }
 
 
-        private void WatchDogElapsed(object sender, ElapsedEventArgs e)
+#if !NETMF
+        private void WatchDogElapsed(object sender, EventArgs e)
         {
             var now = DateTime.Now;
             var max = TimeSpan.FromMilliseconds(maxInterval);
@@ -125,12 +127,15 @@ namespace EHaskins.Frc.Communication.Robot
                 IsConnected = false;
             }
         }
+#endif
         public void Start()
         {
             Debug.Print("Starting team " + TeamNumber);
+#if !NETMF
             _watchDogTimer = new Timer(250);
-            _watchDogTimer.Elapsed += new ElapsedEventHandler(WatchDogElapsed);
+            _watchDogTimer.Elapsed += WatchDogElapsed;
             _watchDogTimer.Enabled = true;
+#endif
             _status = new StatusData();
             _status.UserStatusDataLength = UserControlDataLength;
 
