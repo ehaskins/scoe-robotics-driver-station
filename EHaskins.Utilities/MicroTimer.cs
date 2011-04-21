@@ -106,6 +106,9 @@ namespace MicroLibrary
                 while ((lElapsedMicroseconds =
                         microStopwatch.ElapsedMicroseconds) < lNextNotification)
                 {
+                    //if (lElapsedMicroseconds + 1000 < lNextNotification)
+                    long sleepTime = (lNextNotification - lElapsedMicroseconds) / 1000;
+                    System.Threading.Thread.Sleep((int)sleepTime);
                 }
 
                 long lTimerLateBy = lElapsedMicroseconds - (nTimerCount * lTimerInterval);
