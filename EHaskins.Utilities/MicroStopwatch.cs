@@ -15,7 +15,9 @@ namespace MicroLibrary
 
         public long ElapsedMicroseconds
         {
-            get { return (long)(ElapsedTicks * m_dMicroSecPerTick); }
+            get {
+                return (long)(ElapsedTicks * m_dMicroSecPerTick); 
+            }
         }
     }
 }
