@@ -47,6 +47,12 @@
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\EHaskins.Frc.Communication.DriverStation\EHaskins.Frc.Communication.DriverStation.csproj">
+      <Project>{1A9DD489-905A-4CED-BA17-CAFACD36604F}</Project>
+      <Name>EHaskins.Frc.Communication.DriverStation</Name>
+    </ProjectReference>
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

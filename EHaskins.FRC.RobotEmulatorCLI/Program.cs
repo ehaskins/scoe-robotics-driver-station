@@ -19,10 +19,10 @@ namespace EHaskins.Frc.RobotEmulatorCLI
 
     class RobotTestApp
     {
-        VirtualRobot vRobot;
+        Robot vRobot;
         public void Run()
         {
-            vRobot = new VirtualRobot(9245);
+            vRobot = new Robot(9245);
             vRobot.UserControlDataLength = 64;
             vRobot.UserStatusDataLength = 64;
             vRobot.ReceivePort = 1110;

@@ -5,7 +5,8 @@ using System.Text;
 
 namespace EHaskins.Frc.Communication.Recording
 {
-    public class Class1
+    public class Recorder
     {
+
     }
 }

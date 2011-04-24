@@ -3,7 +3,7 @@
   <PropertyGroup>
     <ProjectView>ProjectFiles</ProjectView>
     <PublishUrlHistory>c:\deploy\ds\|c:\publish\ds\|publish\</PublishUrlHistory>
-    <InstallUrlHistory>http://www.ehaskins.net/deploy/scoeds/</InstallUrlHistory>
+    <InstallUrlHistory>http://www.scoerobotics.com/ehaskins/deploy/ds/|http://www.ehaskins.net/deploy/scoeds/</InstallUrlHistory>
     <SupportUrlHistory>http://www.scoerobotics.com</SupportUrlHistory>
     <UpdateUrlHistory />
     <BootstrapperUrlHistory />

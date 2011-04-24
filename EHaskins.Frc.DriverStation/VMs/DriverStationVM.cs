@@ -14,6 +14,7 @@ using System.Xml.Linq;
 using EHaskins.Frc.Communication.SaveState;
 using Microsoft.Win32;
 using System.IO;
+using System.Deployment.Application;
 namespace EHaskins.Frc.DriverStation
 {
     public class DriverStationVM : INotifyPropertyChanged
@@ -146,6 +147,7 @@ namespace EHaskins.Frc.DriverStation
         }
         public DriverStationVM()
         {
+            Version = ApplicationDeployment.IsNetworkDeployed ? ApplicationDeployment.CurrentDeployment.CurrentVersion.ToString() : "Local install";
             EnableAllCommand = new DelegateCommand(EnableAll);
             DisableAllCommand = new DelegateCommand(DisableAll);
             EStopAllCommand = new DelegateCommand(EStopAll);
@@ -154,6 +156,7 @@ namespace EHaskins.Frc.DriverStation
             SaveStateCommand = new DelegateCommand(SaveState);
             LoadStateCommand = new DelegateCommand(LoadState);
 
+            keyMonitor = new KeyboardMonitor();
             JoystickManager = new JoystickManager();
             Configuration.UserControlDataSize = 101;
             Configuration.UserStatusDataSize = 152;
@@ -173,7 +176,6 @@ namespace EHaskins.Frc.DriverStation
 
             ds.Started += new EventHandler(DriverStationStarted);
             ds.Start();
-            DriverStations.Add(ds);
 
             var ds2 = new Communication.DriverStation.DriverStation { TeamNumber = 1103, Connection = new UdpTransmitter() { TransmitPort = 2110, ReceivePort = 2150 } };
             for (int i = 0; i < 4; i++)
@@ -183,11 +185,19 @@ namespace EHaskins.Frc.DriverStation
                 ds2.Joysticks[i] = stick;
             }
             //ds2.Start();
+
+
+            DriverStations.Add(ds);
             DriverStations.Add(ds2);
+
+            keyMonitor.DriverStations.Add(ds);
+            keyMonitor.DriverStations.Add(ds2);
+            keyMonitor.Start();
         }
 
         public ObservableCollection<Communication.DriverStation.DriverStation> DriverStations { get; set; }
-
+        public KeyboardMonitor keyMonitor;
+        public string Version { get; set; }
         private void DriverStationStarted(object sender, EventArgs e)
         {
             var ds = sender as Communication.DriverStation.DriverStation;
@@ -204,6 +214,7 @@ namespace EHaskins.Frc.DriverStation
                     ds.Dispose();
                 }
             }
+            keyMonitor.Dispose();
             JoystickManager.Dispose();
         }
 

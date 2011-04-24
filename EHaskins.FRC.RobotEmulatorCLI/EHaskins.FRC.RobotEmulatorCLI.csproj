@@ -47,6 +47,10 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\EHaskins.Frc.Communication.Robot\EHaskins.Frc.Communication.Robot.csproj">
+      <Project>{058334F9-9156-4FFF-858E-3FDB24648368}</Project>
+      <Name>EHaskins.Frc.Communication.Robot</Name>
+    </ProjectReference>
     <ProjectReference Include="..\EHaskins.Frc.Communication.Shared\EHaskins.Frc.Communication.Shared.csproj">
       <Project>{2EC93CB5-6694-4B03-8DCF-BEB31720F2AF}</Project>
       <Name>EHaskins.Frc.Communication.Shared</Name>
