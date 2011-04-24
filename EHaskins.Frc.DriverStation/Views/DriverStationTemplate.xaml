@@ -1,4 +1,4 @@
-﻿<UserControl x:Class="EHaskins.Frc.DriverStation.DriverStationControl"
+﻿<UserControl x:Class="EHaskins.Frc.DriverStation.DriverStationTemplate"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
@@ -19,7 +19,7 @@
             <TextBox Text="{Binding ControlData.PacketId, Mode=OneWay}" Width="40"/>
             <CheckBox IsEnabled="False" IsChecked="{Binding Path=IsSyncronized, Mode=OneWay}" Content="Connected" />
         </StackPanel>
-        
+
         <TabControl Grid.Row="1">
             <TabItem Header="Telemetry">
                 <TextBlock>Stuff goes here</TextBlock>
@@ -75,7 +75,7 @@
                                         </TabItem>
                                     </TabControl>
                                 </Grid>
-                                
+
 
                             </DataTemplate>
                         </TabControl.ContentTemplate>
@@ -101,7 +101,7 @@
 
                 </Grid>
             </TabItem>
-            <TabItem Header="Net Config">
+            <TabItem Header="DS Config">
                 <Grid>
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="Auto"/>
@@ -119,18 +119,10 @@
                     <CheckBox Grid.Column="1" IsChecked="{Binding IsEnabled}" Content="DS Enabled"/>
                     <TextBlock Grid.Row="1" HorizontalAlignment="Right">User Control Data Size:</TextBlock>
                     <TextBox Grid.Row="1" Grid.Column="1" Text="{Binding UserControlDataSize}"/>
-                    <local:UdpConfig Grid.Row="2" Grid.ColumnSpan="2" DataContext="{Binding Connection}"/>
-                    <!--<ContentControl Grid.Row="2" Grid.ColumnSpan="2" DataContext="{Binding Connection}">
-                        <ContentControl.ContentTemplate>
-                            <DataTemplate>
-                                
-                            </DataTemplate>
-                        </ContentControl.ContentTemplate>
-                    </ContentControl>-->
                 </Grid>
             </TabItem>
-            <TabItem Header="DS Config">
-
+            <TabItem Header="Comm Config">
+                <local:UdpConfig Grid.Row="2" Grid.ColumnSpan="2" DataContext="{Binding Connection}"/>
             </TabItem>
             <TabItem Header="Robot Config">
                 <local:RobotConfigurator DriverStation="{Binding}"/>

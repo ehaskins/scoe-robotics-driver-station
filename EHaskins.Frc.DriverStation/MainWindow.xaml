@@ -13,7 +13,7 @@
             <ColumnDefinition/>
         </Grid.ColumnDefinitions>
 
-        <DockPanel Grid.ColumnSpan="2">
+        <DockPanel Grid.Row ="0" Grid.ColumnSpan="2">
             <Image DockPanel.Dock="Left" Source="TeamLogo.png" Height="75" Margin="3"/>
             <Image DockPanel.Dock="Right" Source="CompLogo.png" Height="75" Margin="3"/>
             <Image DockPanel.Dock="Right" Source="sponsor.jpg" Height="75"/>
@@ -28,10 +28,16 @@
                     <Button Command="{Binding SaveStateCommand}">Save</Button>
                     <Button Command="{Binding LoadStateCommand}">Load</Button>
                 </StackPanel>
+
+                <StackPanel HorizontalAlignment="Center" Orientation="Horizontal">
+                    <TextBlock>Version:</TextBlock>
+                    <TextBlock Text="{Binding Version}"/>
+                </StackPanel>
             </StackPanel>
         </DockPanel>
 
         <local:DriverStationControl DataContext="{Binding DriverStations[0]}" Grid.Column="0" Grid.Row="1" Margin="8"/>
         <local:DriverStationControl DataContext="{Binding DriverStations[1]}" Grid.Column="1" Grid.Row="1" Margin="8"/>
+
     </Grid>
 </Window>

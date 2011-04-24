@@ -45,7 +45,7 @@
     <Compile Include="AxisData.cs" />
     <Compile Include="ButtonData.cs" />
     <Compile Include="DriverStation.cs" />
-    <Compile Include="EStop.cs" />
+    <Compile Include="KeyboardMonitor.cs" />
     <Compile Include="JoystickManager.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="SerialTransceiver.cs" />

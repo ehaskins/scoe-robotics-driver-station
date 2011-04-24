@@ -28,20 +28,17 @@ namespace EHaskins.Frc.RobotEmulatorCLI
         bool isRunning = false;
         public void Run()
         {
+            Console.Write("Enter teamnumber:");
+            ushort teamnumber = ushort.Parse(Console.ReadLine());
             isRunning = true;
             Console.WriteLine("Starting servocontroller...");
             servoController = new AdvancedServo();
+            servoController.Attach += ServoAttached;
             servoController.open();
-            servoController.waitForAttachment();
-            for (int i = 0; i < 8; i++)
-            {
-                servoController.servos[i].setServoParameters(900, 2100, 2, 2);
-                servoController.servos[i].SpeedRamping = false;
-            }
-            phidgetsThread = new Thread((ThreadStart)PhidgetsLoop);
-            phidgetsThread.Start();
+
+
             Console.WriteLine("Starting robot...");
-            robot = new Robot(1103)
+            robot = new Robot(teamnumber)
             {
                 UserControlDataLength = 64,
                 UserStatusDataLength = 64,
@@ -52,6 +49,9 @@ namespace EHaskins.Frc.RobotEmulatorCLI
             robot.Start();
             robot.StatusData.BatteryVoltage = 11.03;
             robot.NewDataReceived += new EventHandler(NewDataReceived);
+
+            phidgetsThread = new Thread((ThreadStart)PhidgetsLoop);
+            phidgetsThread.Start();
 
             Debug.WriteLine("vRobot Started");
             robot.StatusData.CodeRunning = true;
@@ -79,17 +79,6 @@ namespace EHaskins.Frc.RobotEmulatorCLI
         {
 
             ControlData control = robot.ControlData;
-            //
-            //string mode = "";
-            //if (control.Mode.IsEStop)
-            //{
-            //    mode = "E-Stop";
-            //}
-            //else
-            //{
-            //    mode = control.Mode.IsEnabled ? "Enabled" : "Disabled";
-            //}
-            //Console.WriteLine(String.Format("Packet# {0}, {1}, Resync: {2}", robot.StatusData.ReplyId, mode, control.Mode.IsResync));
 
             if (control.Mode.IsEnabled)
             {
@@ -106,6 +95,11 @@ namespace EHaskins.Frc.RobotEmulatorCLI
         }
         private void ServoAttached(object sender, Phidgets.Events.AttachEventArgs e)
         {
+            for (int i = 0; i < 8; i++)
+            {
+                servoController.servos[i].setServoParameters(900, 2100, 2, 2);
+                servoController.servos[i].SpeedRamping = false;
+            }
         }
 
         bool phidgetsInitComplete = false;
@@ -160,7 +154,7 @@ namespace EHaskins.Frc.RobotEmulatorCLI
             while (isRunning)
             {
                 ControlData control = robot.ControlData;
-                if (CanEabledPhidgets())
+                if (CanEabledPhidgets() && servoController.Attached)
                 {
                     EnableOutputs();
                     ushort startPacket = robot.ControlData.PacketId;
@@ -187,7 +181,7 @@ namespace EHaskins.Frc.RobotEmulatorCLI
                 else
                 {
                     DisableOutputs();
-                    SpinWait.SpinUntil(() => CanEabledPhidgets() || !isRunning);
+                    SpinWait.SpinUntil(() => ((CanEabledPhidgets() && servoController.Attached) || !isRunning));
                 }
             }
             DisableOutputs();
@@ -232,10 +226,9 @@ namespace EHaskins.Frc.RobotEmulatorCLI
                 throw;
             }
         }
-
         private void AutonomousPeriodic()
         {
-
+            nw = sw = ne = se = camX = camY = 0;
         }
         private void DisabledPeriodic()
         {

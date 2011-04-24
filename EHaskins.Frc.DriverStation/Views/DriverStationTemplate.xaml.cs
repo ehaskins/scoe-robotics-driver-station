@@ -6,7 +6,7 @@ namespace EHaskins.Frc.DriverStation
     /// <summary>
     /// Interaction logic for DriversStationControl.xaml
     /// </summary>
-    public partial class DriverStationControl : UserControl
+    public partial class DriverStationTemplate : UserControl
     {
         public DriverStationControl()
         {
