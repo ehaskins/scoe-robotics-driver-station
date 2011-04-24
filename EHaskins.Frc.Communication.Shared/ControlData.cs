@@ -14,7 +14,8 @@ namespace EHaskins.Frc.Communication
         public const int SIZE = 80;
         public const int NUM_STICKS = 4;
         public const int NUM_ANALOG_INPUTS = 4;
-        public ControlData(ushort teamNumber):this()
+        public ControlData(ushort teamNumber)
+            : this()
         {
             TeamNumber = teamNumber;
         }
@@ -73,10 +74,14 @@ namespace EHaskins.Frc.Communication
             int userDataLength = data.Length - offset - 8;
             UserControlDataLength = userDataLength;
 #if !NETMF
-            var userData = new byte[userDataLength];
+            if (UserControlData == null || UserControlData.Length != UserControlDataLength)
+            {
+                UserControlData = new byte[UserControlDataLength];
+            }
+
             for (int i = 0; i < userDataLength; i++)
             {
-            	userData[i] = data[offset++];
+                UserControlData[i] = data[offset++];
             }
 #endif
             sw.PrintElapsed("done");
