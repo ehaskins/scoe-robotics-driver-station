@@ -12,7 +12,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 
-namespace EHaskins.Frc.DriverStation
+namespace EHaskins.Frc.DSApp
 {
     /// <summary>
     /// Interaction logic for UdpConfig.xaml

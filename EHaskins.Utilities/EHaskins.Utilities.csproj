@@ -85,6 +85,7 @@
     <Compile Include="MF\IO\EndianBinaryWriter.cs" />
     <Compile Include="MF\PropertyChangedEventArgs.cs" />
     <Compile Include="MF\PropertyChangedEventHandler.cs" />
+    <Compile Include="NotificationObject.cs" />
     <Compile Include="NumericExtensions\DoubleExtensions.cs" />
     <Compile Include="IDisposableExtensions.cs" />
     <Compile Include="MagicAttribute.cs" />

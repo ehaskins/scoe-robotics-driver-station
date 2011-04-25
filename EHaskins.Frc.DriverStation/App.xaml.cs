@@ -5,7 +5,7 @@ using System.Data;
 using System.Linq;
 using System.Windows;
 
-namespace EHaskins.Frc.DriverStation
+namespace EHaskins.Frc.DSApp
 {
     /// <summary>
     /// Interaction logic for App.xaml

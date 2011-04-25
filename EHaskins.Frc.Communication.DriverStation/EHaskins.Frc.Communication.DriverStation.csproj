@@ -44,6 +44,7 @@
   <ItemGroup>
     <Compile Include="AxisData.cs" />
     <Compile Include="ButtonData.cs" />
+    <Compile Include="ConfigurationManager.cs" />
     <Compile Include="DriverStation.cs" />
     <Compile Include="KeyboardMonitor.cs" />
     <Compile Include="JoystickManager.cs" />
