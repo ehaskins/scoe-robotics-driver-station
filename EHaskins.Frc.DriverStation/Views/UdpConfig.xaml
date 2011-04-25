@@ -1,4 +1,4 @@
-﻿<UserControl x:Class="EHaskins.Frc.DriverStation.UdpConfig"
+﻿<UserControl x:Class="EHaskins.Frc.DSApp.UdpConfig"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
@@ -21,7 +21,7 @@
         <TextBox Grid.Row="0" Grid.Column="1" Text="{Binding Network}"/>
 
         <TextBlock Grid.Row="1" HorizontalAlignment="Right">Device address:</TextBlock>
-        <TextBox Grid.Row="1" Grid.Column="1" Text="{Binding Path=Host, diag:PresentationTraceSources.TraceLevel=High}"/>
+        <TextBox Grid.Row="1" Grid.Column="1" Text="{Binding Path=Host}"/>
 
         <TextBlock Grid.Row="2" HorizontalAlignment="Right">Transmit port:</TextBlock>
         <TextBox Grid.Row="2" Grid.Column="1" Text="{Binding TransmitPort}"/>

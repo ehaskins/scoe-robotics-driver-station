@@ -15,8 +15,10 @@ namespace EHaskins.Utilities.Wpf
             try
             {
                 var data = value as byte[];
-                var output = data.ToMacString();
-                return output;
+                if (data != null)
+                    return data.ToMacString();
+                else
+                    return "";
             }
             catch (Exception ex)
             {

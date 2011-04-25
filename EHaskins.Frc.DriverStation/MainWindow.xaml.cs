@@ -2,20 +2,20 @@
 using System.Windows;
 using System.Diagnostics;
 
-namespace EHaskins.Frc.DriverStation
+namespace EHaskins.Frc.DSApp
 {
     /// <summary>
     /// Interaction logic for MainWindow.xaml
     /// </summary>
     public partial class MainWindow : Window
     {
-        private DriverStationVM _DataContext;
+        private MainVM _DataContext;
         public MainWindow()
         {
             InitializeComponent();
             try
             {
-                _DataContext = new DriverStationVM();
+                _DataContext = new MainVM();
                 this.Closing += _DataContext.WindowClosing;
                 this.DataContext = _DataContext;
             }

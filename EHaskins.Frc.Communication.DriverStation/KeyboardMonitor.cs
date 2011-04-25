@@ -70,7 +70,8 @@ namespace EHaskins.Frc.Communication.DriverStation
             _keyboard.Unacquire();
             _keyboard.Dispose();
             _keyboard = null;
-
+            _input.Dispose();
+            _input = null;
         }
 
         public List<DriverStation> DriverStations { get; set; }

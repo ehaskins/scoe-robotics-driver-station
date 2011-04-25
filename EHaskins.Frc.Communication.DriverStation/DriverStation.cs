@@ -356,10 +356,16 @@ namespace EHaskins.Frc.Communication.DriverStation
             {
                 CurrentMissedPackets = currentPacket;
             }
-            if (CurrentInvalidPacketCount > Configuration.InvalidPacketCountSafety ||
-                CurrentMissedPackets > Configuration.InvalidPacketCountSafety)
+            if (CurrentMissedPackets > Configuration.InvalidPacketCountSafety)
             {
                 //TODO: Raise event here.
+                Debug.WriteLine("Missed packet count exceeded " + Configuration.InvalidPacketCountSafety);
+                SafteyTriggered = true;
+            }
+            else if (CurrentInvalidPacketCount > Configuration.InvalidPacketCountSafety)
+            {
+
+                Debug.WriteLine("Invalid packet count exceeded " + Configuration.InvalidPacketCountSafety);
                 SafteyTriggered = true;
             }
             else
@@ -376,7 +382,7 @@ namespace EHaskins.Frc.Communication.DriverStation
             if (SafteyTriggered)
             {
                 ControlData.Mode.IsEnabled = false;
-                ControlData.Mode.IsEStop = false;
+                //ControlData.Mode.IsEStop = false;
                 IsSyncronized = false;
             }
 
@@ -437,7 +443,7 @@ namespace EHaskins.Frc.Communication.DriverStation
         }
         private bool ReceiveCheck(StatusData status)
         {
-            return status.TeamNumber == ControlData.TeamNumber && status.ReplyId == ControlData.PacketId;
+            return status.TeamNumber == ControlData.TeamNumber && status.ReplyId > ControlData.PacketId - Configuration.InvalidPacketCountSafety;
         }
         private void ParseBytes(byte[] data)
         {
