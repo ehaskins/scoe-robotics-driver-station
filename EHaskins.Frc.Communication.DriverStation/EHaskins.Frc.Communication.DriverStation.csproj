@@ -46,6 +46,8 @@
     <Compile Include="ButtonData.cs" />
     <Compile Include="ConfigurationManager.cs" />
     <Compile Include="DriverStation.cs" />
+    <Compile Include="DSMicroTimer.cs" />
+    <Compile Include="DSTimer.cs" />
     <Compile Include="KeyboardMonitor.cs" />
     <Compile Include="JoystickManager.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

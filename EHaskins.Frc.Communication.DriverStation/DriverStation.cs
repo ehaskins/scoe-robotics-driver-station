@@ -1,13 +1,9 @@
 ﻿using System;
-using System.Net.Sockets;
-using System.Net;
 using MicroLibrary;
 using System.Diagnostics;
 using System.ComponentModel;
-using System.Threading;
-using System.Windows.Threading;
-using System.Collections.Generic;
-
+using EHaskins.Utilities;
+using System.Collections.ObjectModel;
 namespace EHaskins.Frc.Communication.DriverStation
 {
     public class DriverStation : IDisposable, INotifyPropertyChanged
@@ -34,13 +30,18 @@ namespace EHaskins.Frc.Communication.DriverStation
             if (Started != null)
                 Started(this, null);
         }
-        
+
+        public event EventHandler Stopped;
+        private void RaiseStoped()
+        {
+            if (Stopped != null)
+                Stopped(this, null);
+        }
+
         public event EventHandler NewDataReceived;
         public event EventHandler SendingData;
 
         bool _isEnabled;
-
-        MicroTimer _transmitTimer;
 
         public DriverStation()
         {
@@ -102,7 +103,7 @@ namespace EHaskins.Frc.Communication.DriverStation
                 InvalidateConnection();
             }
         }
-        
+
         public int UserControlDataSize
         {
             get { return PacketSize - ControlData.SIZE - 8; }
@@ -129,7 +130,7 @@ namespace EHaskins.Frc.Communication.DriverStation
                 RaisePropertyChanged("TeamNumber");
             }
         }
- 
+
         public bool IsEnabled
         {
             get
@@ -277,7 +278,9 @@ namespace EHaskins.Frc.Communication.DriverStation
 
         private ControlData GetNewControlData()
         {
-            return new ControlData(TeamNumber) { UserControlDataLength = UserControlDataSize };
+            ControlData con = new ControlData(TeamNumber) { UserControlDataLength = UserControlDataSize };
+            con.Mode.IsAutonomous = false;
+            return con;
         }
         public void Start()
         {
@@ -294,12 +297,7 @@ namespace EHaskins.Frc.Communication.DriverStation
                     if (!Connection.IsEnabled)
                         Connection.Start();
 
-                    _transmitTimer = new MicroTimer(Interval * 1000);
-                    _transmitTimer.Elapsed += this.SendData;
-                    _transmitTimer.IgnoreEventIfLateBy = _transmitTimer.Interval / 2;
-                    //_transmitTimer.AutoReset = True
                     RaiseStarted();
-                    _transmitTimer.Start();
                 }
                 catch (Exception ex)
                 {
@@ -314,6 +312,7 @@ namespace EHaskins.Frc.Communication.DriverStation
         public void Stop()
         {
             Stop(false);
+            RaiseStoped();
         }
         protected void Stop(bool reset)
         {
@@ -326,9 +325,7 @@ namespace EHaskins.Frc.Communication.DriverStation
                 _isEnabled = false;
                 RaisePropertyChanged("IsEnabled");
             }
-            if (_transmitTimer.Enabled)
-                _transmitTimer.Stop();
-            if(!reset)
+            if (!reset)
                 ControlData = null;
 
             if (Connection != null && !reset)
@@ -338,7 +335,7 @@ namespace EHaskins.Frc.Communication.DriverStation
         }
 
         private void CheckSafties()
-        {           
+        {
             int currentPacket = (int)ControlData.PacketId;
             if (StatusData != null)
             {
@@ -382,7 +379,7 @@ namespace EHaskins.Frc.Communication.DriverStation
             if (SafteyTriggered)
             {
                 ControlData.Mode.IsEnabled = false;
-                //ControlData.Mode.IsEStop = false;
+                ControlData.Mode.IsEStop = false;
                 IsSyncronized = false;
             }
 
@@ -403,7 +400,7 @@ namespace EHaskins.Frc.Communication.DriverStation
             ControlData.PacketId += 1;
         }
 
-        public void SendData(object sender, MicroTimerEventArgs e)
+        public void SendData()
         {
             try
             {
@@ -411,9 +408,10 @@ namespace EHaskins.Frc.Communication.DriverStation
                 {
                     return;
                 }
+
                 //HACK: Why do I need this, and why does it fix the binding issue (Packet number).
                 if (ControlData.PacketId == 0)
-                   RaisePropertyChanged("ControlData");
+                    RaisePropertyChanged("ControlData");
                 UpdateMode();
                 CheckSafties();
                 if (SendingData != null)
@@ -428,7 +426,6 @@ namespace EHaskins.Frc.Communication.DriverStation
                 Debug.WriteLine(ex.Message + " at DriverStation.SendData");
             }
         }
-
         private void DataReceived(object sender, DataReceivedEventArgs e)
         {
             ParseBytes(e.Data);
