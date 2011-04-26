@@ -13,7 +13,7 @@ namespace EHaskins.Frc.Communication
 {
     public class UdpTransmitter : Transceiver
     {
-        Socket _sock;
+        UdpClient _client;
         Thread _receieveThread;
         bool _isStopped;
 
@@ -48,7 +48,7 @@ namespace EHaskins.Frc.Communication
                 RaisePropertyChanged("Host");
             }
         }
-        
+
         private int _TransmitPort;
         public int TransmitPort
         {
@@ -96,7 +96,7 @@ namespace EHaskins.Frc.Communication
                 InvalidateConnection();
             }
         }
-        
+
         public UdpTransmitter()
             : base()
         {
@@ -119,30 +119,25 @@ namespace EHaskins.Frc.Communication
             {
                 ep = _destEP;
             }
-            if (IsEnabled && _sock != null && ep != null)
-                _sock.SendTo(data, ep);
+            if (IsEnabled && _client != null && ep != null)
+                _client.Send(data, data.Length);
         }
 
-        EndPoint endpoint;
+        IPEndPoint endpoint;
         private void ReceiveDataSync()
         {
-            endpoint = new IPEndPoint(IPAddress.Any, ReceivePort);
             _isStopped = false;
             while (IsEnabled)
             {
                 try
                 {
-                    var available = _sock.Available;
-                    if (available > 0)
-                    {
-                        var buffer = new byte[available];
-                        _sock.ReceiveFrom(buffer, ref endpoint);
+                    var buffer = _client.Receive(ref endpoint);
 
-                        if (IsResponderMode)
-                            _lastAddress = ((IPEndPoint)endpoint).Address;
+                    if (IsResponderMode)
+                        _lastAddress = ((IPEndPoint)endpoint).Address;
 
-                        RaiseDataReceived(buffer);
-                    }
+                    RaiseDataReceived(buffer);
+
                 }
                 catch (Exception ex)
                 {
@@ -157,18 +152,17 @@ namespace EHaskins.Frc.Communication
         {
             _IsEnabled = true;
             _destEP = new IPEndPoint(FrcPacketUtils.GetIP(Network, TeamNumber, Host), TransmitPort);
-            _sock = new Socket(AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp);
-            _sock.Bind(new IPEndPoint(IPAddress.Any, ReceivePort));
-            _receieveThread = new Thread((ThreadStart)this.ReceiveDataSync);
-            _receieveThread.Priority = ThreadPriority.AboveNormal;
+            _client = new UdpClient(ReceivePort);
+            _client.Connect(_destEP);
+            _receieveThread = new Thread((ThreadStart)this.ReceiveDataSync) { Priority = ThreadPriority.Normal };
             _receieveThread.Start();
         }
         public override void Stop()
         {
             _IsEnabled = false;
-            if (_sock != null)
-                _sock.Close();
-            _sock = null;
+            if (_client != null)
+                _client.Close();
+            _client = null;
 #if !NETMF
             SpinWait.SpinUntil(() => _isStopped, 100);
 #else
