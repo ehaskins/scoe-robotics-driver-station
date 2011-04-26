@@ -38,8 +38,6 @@ namespace EHaskins.Frc.DSApp
         public DelegateCommand SaveStateCommand { get; set; }
         public DelegateCommand LoadStateCommand { get; set; }
 
-        public JoystickManager JoystickManager { get; set; }
-
         public void EnableAll(object sender)
         {
             foreach (var dsvm in DriverStations)
@@ -100,28 +98,14 @@ namespace EHaskins.Frc.DSApp
             if (result.HasValue && result.Value)
             {
                 var path = sfd.FileName;
-                SaveState(path);
+                DSManager.SaveState(path);
             }
         }
 
-        private void SaveState(string path)
-        {
-            try
-            {
-                var data = new XElement("DriverStation");
-                data.Add((from dsvm in DriverStations select dsvm.DriverStation.GetState()));
-                var doc = new XDocument();
-                doc.Add(data);
-                File.WriteAllText(path, doc.ToString());
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show("Error saving state: " + ex.Message);
-            }
-        }
+
         private void SaveState()
         {
-            SaveState(configLocation);
+            DSManager.SaveState(configLocation);
         }
         public void LoadState(object sender)
         {
@@ -131,35 +115,11 @@ namespace EHaskins.Frc.DSApp
             var result = ofd.ShowDialog();
             if (result.HasValue && result.Value)
             {
-                LoadState(ofd.FileName);
+                DSManager.LoadState(ofd.FileName);
             }
         }
 
-        public void LoadState(string path)
-        {
-            try
-            {
-                var data = XDocument.Parse(File.ReadAllText(path));
-                var i = 0;
-                var ds = data.Element("DriverStation");
-                var dsstates = ds.Elements("DSState").ToArray();
 
-                foreach (var dsdata in dsstates)
-                {
-                    if (DriverStations.Count <= i)
-                    {
-                        DriverStations.Add(new DriverStationVM() {DriverStation = GetNewDs(), RobotConfigurator = new RobotConfiguratorVM()});
-                    }
-
-                    DriverStations[i].DriverStation.LoadState(dsdata, JoystickManager);
-                    i++;
-                }
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show("Error loading state: " + ex.Message);
-            }
-        }
             
         const string configLocation = @".\config.dssave";
 
@@ -167,67 +127,42 @@ namespace EHaskins.Frc.DSApp
         {
             if (File.Exists(configLocation))
             {
-                LoadState(configLocation);
+                DSManager.LoadState(configLocation);
             }
             else
             {
                 LoadDefaultState();
             }
-            foreach (DriverStationVM ds in DriverStations)
-            {
-                keyMonitor.DriverStations.Add(ds.DriverStation);
-            }
-            keyMonitor.Start();
         }
         public void LoadDefaultState()
         {
             //var ds = new Communication.DriverStation.DriverStation() { TeamNumber = 1692, Connection = new UdpTransmitter() { Network = 172, Host = 198 } };
             //var ds = new Communication.DriverStation.DriverStation() { TeamNumber = 0, Connection = new UdpTransmitter() { Network = 127, Host = 1 } };
             var ds = new DriverStation() { TeamNumber = 6, Connection = new UdpTransmitter() { ReceivePort = 1150, TransmitPort = 1110 } };
-            var Joysticks = JoystickManager.Joysticks;
+            var Joysticks = DSManager.JoystickManager.Joysticks;
 
             for (int i = 0; i < 4; i++)
             {
-                var stick = i < Joysticks.Length ? new SlimDXJoystick(JoystickManager, Joysticks[i].Information.InstanceName) : new SlimDXJoystick(JoystickManager, "");
+                var stick = i < Joysticks.Length ? new SlimDXJoystick(DSManager.JoystickManager, Joysticks[i].Information.InstanceName) : new SlimDXJoystick(DSManager.JoystickManager, "");
                 stick.JoystickNumber = i;
                 ds.Joysticks[i] = stick;
             }
 
-            ds.Started += new EventHandler(DriverStationStarted);
             ds.Start();
 
             var ds2 = new DriverStation { TeamNumber = 6, Connection = new UdpTransmitter() { Host=3, TransmitPort = 2110, ReceivePort = 2150 } };
             for (int i = 0; i < 4; i++)
             {
-                var stick = i < Joysticks.Length ? new SlimDXJoystick(JoystickManager, Joysticks[i].Information.InstanceName) : new SlimDXJoystick(JoystickManager, "");
+                var stick = i < Joysticks.Length ? new SlimDXJoystick(DSManager.JoystickManager, Joysticks[i].Information.InstanceName) : new SlimDXJoystick(DSManager.JoystickManager, "");
                 stick.JoystickNumber = i;
                 ds2.Joysticks[i] = stick;
             }
 
-            DriverStations.Add(new DriverStationVM() { DriverStation = ds, RobotConfigurator = new RobotConfiguratorVM() });
-            DriverStations.Add(new DriverStationVM() { DriverStation = ds2, RobotConfigurator = new RobotConfiguratorVM() });
+            DSManager.AddDriverStation(ds);
+            DSManager.AddDriverStation(ds2);
 
-            keyMonitor.DriverStations.Add(ds);
-            keyMonitor.DriverStations.Add(ds2);
-            keyMonitor.Start();
         }
-        private DriverStation GetNewDs()
-        {
 
-            var Joysticks = JoystickManager.Joysticks;
-            var ds = new DriverStation() { TeamNumber = 6, Connection = new UdpTransmitter() { ReceivePort = 1150, TransmitPort = 1110 } };
-
-
-            for (int i = 0; i < 4; i++)
-            {
-                var stick = i < Joysticks.Length ? new SlimDXJoystick(JoystickManager, Joysticks[i].Information.InstanceName) : new SlimDXJoystick(JoystickManager, "");
-                stick.JoystickNumber = i;
-                ds.Joysticks[i] = stick;
-            }
-
-            ds.Started += new EventHandler(DriverStationStarted);
-            return ds;
-        }
         public MainVM()
         {
             Version = ApplicationDeployment.IsNetworkDeployed ? ApplicationDeployment.CurrentDeployment.CurrentVersion.ToString() : "Local install";
@@ -239,23 +174,38 @@ namespace EHaskins.Frc.DSApp
             SaveStateCommand = new DelegateCommand(SaveState);
             LoadStateCommand = new DelegateCommand(LoadState);
 
-            keyMonitor = new KeyboardMonitor();
-            JoystickManager = new JoystickManager();
             Configuration.UserControlDataSize = 104;
             Configuration.UserStatusDataSize = 152;
-            DriverStations = new ObservableCollection<DriverStationVM>();
-
+            DSManager = new DSManager();
+            DSManager.Start();
             LoadState();
+
+            DriverStations = new ObservableCollection<DriverStationVM>();
+            JoystickManager = DSManager.JoystickManager;
+            foreach (var ds in DSManager.DriverStations)
+            {
+                DriverStations.Add(new DriverStationVM() { DriverStation = ds, RobotConfigurator = new RobotConfiguratorVM() });
+            }
         }
 
-        public ObservableCollection<DriverStationVM> DriverStations { get; set; }
-        public KeyboardMonitor keyMonitor;
-        public string Version { get; set; }
-        private void DriverStationStarted(object sender, EventArgs e)
+        private JoystickManager _JoystickManager;
+        public JoystickManager JoystickManager
         {
-            var ds = sender as DriverStation;
-            ds.ControlData.Mode.IsAutonomous = false;
+            get
+            {
+                return _JoystickManager;
+            }
+            set
+            {
+                if (_JoystickManager == value)
+                    return;
+                _JoystickManager = value;
+                RaisePropertyChanged("JoystickManager");
+            }
         }
+        public ObservableCollection<DriverStationVM> DriverStations { get; set; }
+        public DSManager DSManager { get; set; }
+        public string Version { get; set; }
         public void WindowClosing(object sender, CancelEventArgs e)
         {
             SaveState();
@@ -269,8 +219,7 @@ namespace EHaskins.Frc.DSApp
                     ds.Dispose();
                 }
             }
-            keyMonitor.Dispose();
-            JoystickManager.Dispose();
+            DSManager.Dispose();
         }
 
     }

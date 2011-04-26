@@ -74,6 +74,8 @@ namespace MicroLibrary
                 m_threadTimer.Priority = System.Threading.ThreadPriority.Highest;
                 m_threadTimer.Start();
             }
+            else
+                throw new InvalidOperationException("Microtimer running, or 0 interval");
         }
 
         public void Stop()

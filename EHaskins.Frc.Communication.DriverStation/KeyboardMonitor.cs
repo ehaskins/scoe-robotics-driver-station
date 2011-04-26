@@ -19,6 +19,10 @@ namespace EHaskins.Frc.Communication.DriverStation
             DriverStations = new List<DriverStation>();
             //Start();
         }
+        public void AddDriverStation(DriverStation ds)
+        {
+            this.DriverStations.Add(ds);
+        }
         public event EventHandler EStopPressed;
         protected void RaiseEStopPressed()
         {
