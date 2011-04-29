@@ -1,7 +1,8 @@
 using System;
 using System.ComponentModel;
 using System.Net;
-
+using System.IO.Ports;
+using System.Threading;
 namespace EHaskins.Frc.Communication
 {
     public abstract class Transceiver : INotifyPropertyChanged
@@ -9,8 +10,8 @@ namespace EHaskins.Frc.Communication
         public Transceiver()
         {
 
-        }        
-         
+        }
+
         protected void RaisePropertyChanged(string prop)
         {
             if (PropertyChanged != null)
@@ -23,7 +24,7 @@ namespace EHaskins.Frc.Communication
             if (DataReceived != null)
                 DataReceived(this, new DataReceivedEventArgs(data));
         }
-        public event DataReceivedEventHandler DataReceived ;
+        public event DataReceivedEventHandler DataReceived;
 
         protected void RaiseConnectionReset()
         {
@@ -82,6 +83,6 @@ namespace EHaskins.Frc.Communication
         }
         public abstract void Transmit(byte[] data);
 
-        
+
     }
 }

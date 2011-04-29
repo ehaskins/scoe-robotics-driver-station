@@ -84,6 +84,7 @@ namespace EHaskins.Frc.Communication.DriverStation
                 _Connection.TeamNumber = TeamNumber;
                 _Connection.DataReceived += this.DataReceived;
                 _Connection.ConnectionReset += this.ConnectionReset;
+                _Connection.PacketSize = PacketSize;
                 RaisePropertyChanged("Connection");
             }
         }
@@ -97,7 +98,8 @@ namespace EHaskins.Frc.Communication.DriverStation
                 if (_PacketSize == value)
                     return;
                 _PacketSize = value;
-
+                if (Connection != null)
+                    Connection.PacketSize = value;
                 RaisePropertyChanged("PacketSize");
                 RaisePropertyChanged("UserControlDataSize");
                 InvalidateConnection();
@@ -426,6 +428,7 @@ namespace EHaskins.Frc.Communication.DriverStation
                 Debug.WriteLine(ex.Message + " at DriverStation.SendData");
             }
         }
+
         private void DataReceived(object sender, DataReceivedEventArgs e)
         {
             ParseBytes(e.Data);

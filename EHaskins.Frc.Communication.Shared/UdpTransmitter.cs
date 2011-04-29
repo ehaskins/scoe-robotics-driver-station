@@ -154,7 +154,7 @@ namespace EHaskins.Frc.Communication
             _destEP = new IPEndPoint(FrcPacketUtils.GetIP(Network, TeamNumber, Host), TransmitPort);
             _client = new UdpClient(ReceivePort);
             _client.Connect(_destEP);
-            _receieveThread = new Thread((ThreadStart)this.ReceiveDataSync) { Priority = ThreadPriority.Normal };
+            _receieveThread = new Thread((ThreadStart)this.ReceiveDataSync) { Priority = ThreadPriority.AboveNormal };
             _receieveThread.Start();
         }
         public override void Stop()
