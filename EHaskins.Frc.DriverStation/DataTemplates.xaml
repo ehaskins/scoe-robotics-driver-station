@@ -1,0 +1,43 @@
+﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:ds="clr-namespace:EHaskins.Frc.Communication.DriverStation;assembly=EHaskins.Frc.Communication.DriverStation"
+                    xmlns:comm="clr-namespace:EHaskins.Frc.Communication;assembly=EHaskins.Frc.Communication.Shared"
+                    xmlns:local="clr-namespace:EHaskins.Frc.DSApp">
+    <DataTemplate DataType="{x:Type ds:AxisData}">
+        <Expander>
+            <Expander.Header>
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="40"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+                    <TextBlock Grid.Row="0" Grid.Column="0" Text="{Binding Path=Value,StringFormat=f2}" Margin="3" />
+                    <ProgressBar Grid.Row="0" Grid.Column="1" 
+                            HorizontalAlignment="Stretch" Height="14" Width="150"
+                            Minimum="-1" Maximum="1" Value="{Binding Path=Value, Mode=OneWay}" />
+                </Grid>
+            </Expander.Header>
+            <StackPanel Grid.Row="1" Grid.ColumnSpan="2" Orientation="Horizontal" HorizontalAlignment="Stretch">
+                <TextBlock>Deadband:</TextBlock>
+                <TextBox Text="{Binding Deadband, StringFormat=f2}" Width="40"/>
+                <CheckBox Margin="3 0 0 0" IsChecked="{Binding Invert}" Content="Invert"/>
+                <TextBlock Margin="3 0 0 0">Real:</TextBlock>
+                <TextBox Text="{Binding PhysicalAxis}"/>
+            </StackPanel>
+        </Expander>
+    </DataTemplate>
+    <DataTemplate DataType="{x:Type ds:ButtonData}">
+        <WrapPanel>
+            <CheckBox IsChecked="{Binding Value}" Content="{Binding Index}"/>
+            <CheckBox Margin="3 0 0 0" IsChecked="{Binding Invert}" Content="Invert"/>
+            <TextBlock Margin="3 0 0 0">Real:</TextBlock>
+            <TextBox Text="{Binding PhysicalButton}"/>
+        </WrapPanel>
+    </DataTemplate>
+    <DataTemplate DataType="{x:Type comm:UdpTransmitter}" >
+        <local:UdpConfig/>
+    </DataTemplate>
+    <DataTemplate DataType="{x:Type local:DriverStationVM}">
+        <local:DriverStationControl/>
+    </DataTemplate>
+</ResourceDictionary>

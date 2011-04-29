@@ -1,0 +1,44 @@
+﻿<Window x:Class="EHaskins.Frc.DSApp.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:local="clr-namespace:EHaskins.Frc.DSApp"
+        Title="MainWindow" Height="550" Width="1024">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition/>
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition/>
+            <ColumnDefinition/>
+        </Grid.ColumnDefinitions>
+
+        <DockPanel Grid.Row ="0" Grid.ColumnSpan="2">
+            <Image DockPanel.Dock="Left" Source="TeamLogo.png" Height="75" Margin="3"/>
+            <Image DockPanel.Dock="Right" Source="CompLogo.png" Height="75" Margin="3"/>
+            <Image DockPanel.Dock="Right" Source="sponsor.jpg" Height="75"/>
+            <StackPanel>
+                <TextBlock HorizontalAlignment="Center" FontSize="16">Master</TextBlock>
+                <StackPanel  Orientation="Horizontal" HorizontalAlignment="Center">
+                    <Button Height="35" Width="75" Margin="3" Content="Enable" Command="{Binding EnableAllCommand}" />
+                    <Button Height="35" Width="75" Margin="3" Command="{Binding DisableAllCommand}">Disable</Button>
+                    <Button Height="35" Width="75" Margin="3" Command="{Binding TeleopAllCommand}">Tele-Op</Button>
+                    <Button Height="35" Width="75" Margin="3" Command="{Binding AutonomousAllCommand}">Autonomous</Button>
+                    <Button Height="35" Width="75" Margin="3" Command="{Binding EStopAllCommand}" Content="E-Stop"/>
+                    <!--<Button Command="{Binding SaveStateCommand}">Save</Button>
+                    <Button Command="{Binding LoadStateCommand}">Load</Button>-->
+                </StackPanel>
+
+                <StackPanel HorizontalAlignment="Center" Orientation="Horizontal">
+                    <TextBlock>Version:</TextBlock>
+                    <TextBlock Text="{Binding Version}"/>
+                </StackPanel>
+            </StackPanel>
+        </DockPanel>
+
+        <local:DriverStationControl DataContext="{Binding DriverStations[0]}" Grid.Column="0" Grid.Row="1" Margin="8"/>
+        <local:DriverStationControl DataContext="{Binding DriverStations[1]}" Grid.Column="1" Grid.Row="1" Margin="8"/>
+        <!--<ContentControl DataContext="{Binding DriverStations[0]}" Grid.Column="0" Grid.Row="1" Margin="8"/>
+        <ContentControl DataContext="{Binding DriverStations[1]}" Grid.Column="1" Grid.Row="1" Margin="8"/>-->
+    </Grid>
+</Window>

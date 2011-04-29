@@ -1,0 +1,50 @@
+﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:local="clr-namespace:EHaskins.Frc.DSApp">
+    <Style TargetType="{x:Type local:DriverStationControl}">
+        <Style.Triggers>
+            <DataTrigger Binding="{Binding DriverStation.ControlData.Mode.IsEnabled}" Value="true">
+                <Setter Property="Background">
+                    <Setter.Value>
+                        <LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">
+                            <GradientStop Color="#FF19D427" Offset="0.5" />
+                            <GradientStop Color="#FF61E16A" Offset="0" />
+                            <GradientStop Color="#FF61E16A" Offset="1" />
+                        </LinearGradientBrush>
+                    </Setter.Value>
+                </Setter>
+            </DataTrigger>
+            <DataTrigger Binding="{Binding DriverStation.ControlData.Mode.IsEStop}" Value="true">
+                <Setter Property="Background">
+                    <Setter.Value>
+                        <LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">
+                            <GradientStop Color="Red" Offset="0.5" />
+                            <GradientStop Color="#FFFF7878" Offset="1" />
+                            <GradientStop Color="#FFFF7878" Offset="0" />
+                        </LinearGradientBrush>
+                    </Setter.Value>
+                </Setter>
+            </DataTrigger>
+            <DataTrigger Binding="{Binding DriverStation.IsSyncronized}" Value="false">
+                <Setter Property="Background">
+                    <Setter.Value>
+                        <LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">
+                            <GradientStop Color="DarkGray" Offset="0.5" />
+                            <GradientStop Color="Gray" Offset="1" />
+                            <GradientStop Color="DarkGray" Offset="0" />
+                        </LinearGradientBrush>
+                    </Setter.Value>
+                </Setter>
+            </DataTrigger>
+        </Style.Triggers>
+    </Style>
+    <Style TargetType="{x:Type TextBox}">
+        <Style.Triggers>
+            <Trigger Property="Validation.HasError" Value="true">
+                <Setter Property="ToolTip"
+        Value="{Binding RelativeSource={x:Static RelativeSource.Self},
+                        Path=(Validation.Errors)[0].ErrorContent}"/>
+            </Trigger>
+        </Style.Triggers>
+    </Style>
+</ResourceDictionary>
