@@ -140,7 +140,7 @@ namespace EHaskins.Frc.DSApp
             //var ds = new Communication.DriverStation.DriverStation() { TeamNumber = 0, Connection = new UdpTransmitter() { Network = 127, Host = 1 } };
             //var ds = new DriverStation() { TeamNumber = 6, Connection = new UdpTransmitter() { ReceivePort = 1150, TransmitPort = 1110 } };
 
-            var ds = new DriverStation() { TeamNumber = 6, Connection = new SerialTranceiver() { PortName = "COM4" } };
+            var ds = new DriverStation() { TeamNumber = 6, Connection = new SerialTranceiver() { PortName = "COM6" } };
 
             var Joysticks = DSManager.JoystickManager.Joysticks;
 
@@ -181,8 +181,8 @@ namespace EHaskins.Frc.DSApp
             Configuration.UserStatusDataSize = 52;
             DSManager = new DSManager();
             DSManager.Start();
-            //LoadState();
-            LoadDefaultState();
+            LoadState();
+            //LoadDefaultState();
 
             DriverStations = new ObservableCollection<DriverStationVM>();
             JoystickManager = DSManager.JoystickManager;

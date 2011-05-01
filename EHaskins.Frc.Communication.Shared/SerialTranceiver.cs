@@ -16,7 +16,7 @@ namespace EHaskins.Frc.Communication
         }
         public override void Start()
         {
-            _port = new SerialPort(PortName, 115200);
+            _port = new SerialPort(PortName, 9600);
             _port.Open();
             _receieveThread = new Thread((ThreadStart)this.ReceiveDataSync) { Priority = ThreadPriority.AboveNormal };
             _receieveThread.Start();
