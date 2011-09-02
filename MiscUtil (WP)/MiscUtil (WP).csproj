@@ -1,0 +1,151 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>10.0.20506</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{F5B90D9A-95A5-4D04-9BC7-FAA78A046F31}</ProjectGuid>
+    <ProjectTypeGuids>{C089C8C0-30E0-4E22-80C0-CE093F111A43};{fae04ec0-301f-11d3-bf4b-00c04f79efbc}</ProjectTypeGuids>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>MiscUtil__WP_</RootNamespace>
+    <AssemblyName>MiscUtil %28WP%29</AssemblyName>
+    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <SilverlightVersion>$(TargetFrameworkVersion)</SilverlightVersion>
+    <TargetFrameworkProfile>WindowsPhone71</TargetFrameworkProfile>
+    <TargetFrameworkIdentifier>Silverlight</TargetFrameworkIdentifier>
+    <SilverlightApplication>false</SilverlightApplication>
+    <ValidateXaml>true</ValidateXaml>
+    <ThrowErrorsInValidation>true</ThrowErrorsInValidation>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>Bin\Debug</OutputPath>
+    <DefineConstants>DEBUG;TRACE;SILVERLIGHT;WINDOWS_PHONE</DefineConstants>
+    <NoStdLib>true</NoStdLib>
+    <NoConfig>true</NoConfig>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>Bin\Release</OutputPath>
+    <DefineConstants>TRACE;SILVERLIGHT;WINDOWS_PHONE</DefineConstants>
+    <NoStdLib>true</NoStdLib>
+    <NoConfig>true</NoConfig>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System.Windows" />
+    <Reference Include="system" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Xml" />
+    <Reference Include="System.Net" />
+    <Reference Include="mscorlib.extensions" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="BufferAcquisitionException.cs" />
+    <Compile Include="CachedBuffer.cs" />
+    <Compile Include="CachingBufferManager.cs" />
+    <Compile Include="Checksum\Adler32.cs" />
+    <Compile Include="Collections\ComparisonComparer.cs" />
+    <Compile Include="Collections\DictionaryByType.cs" />
+    <Compile Include="Collections\Extensions\ComparerExt.cs" />
+    <Compile Include="Collections\Extensions\DictionaryExt.cs" />
+    <Compile Include="Collections\Extensions\SmartEnumerableExt.cs" />
+    <Compile Include="Collections\ProjectionComparer.cs" />
+    <Compile Include="Collections\ProjectionEqualityComparer.cs" />
+    <Compile Include="Collections\RandomAccessQueue.cs" />
+    <Compile Include="Collections\Range.cs" />
+    <Compile Include="Collections\RangeIterator.cs" />
+    <Compile Include="Collections\ReverseComparer.cs" />
+    <Compile Include="Collections\SmartEnumerable.cs" />
+    <Compile Include="Conversion\BigEndianBitConverter.cs" />
+    <Compile Include="Conversion\DoubleConverter.cs" />
+    <Compile Include="Conversion\EndianBitConverter.cs" />
+    <Compile Include="Conversion\Endianness.cs" />
+    <Compile Include="Conversion\LittleEndianBitConverter.cs" />
+    <Compile Include="DotNet20\Delegates.cs" />
+    <Compile Include="DotNet20\ExtensionAttribute.cs" />
+    <Compile Include="DotNet20\IGrouping.cs" />
+    <Compile Include="DotNet20\ILookup.cs" />
+    <Compile Include="EventArgs.cs" />
+    <Compile Include="Collections\Extensions\RangeBasedExt.cs" />
+    <Compile Include="Extensions\ReferenceExt.cs" />
+    <Compile Include="Extensions\TimeRelated\DateTimeBasedExt.cs" />
+    <Compile Include="Extensions\TimeRelated\TimeSpanBasedExt.cs" />
+    <Compile Include="GenericMath.cs" />
+    <Compile Include="IBuffer.cs" />
+    <Compile Include="IBufferManager.cs" />
+    <Compile Include="IO\EndianBinaryReader.cs" />
+    <Compile Include="IO\EndianBinaryWriter.cs" />
+    <Compile Include="IO\LineReader.cs" />
+    <Compile Include="IO\NonClosingStreamWrapper.cs" />
+    <Compile Include="IO\StreamUtil.cs" />
+    <Compile Include="IO\StringWriterWithEncoding.cs" />
+    <Compile Include="Linq\EditableLookup.cs" />
+    <Compile Include="Linq\EditableLookup.LookupGrouping.cs">
+      <DependentUpon>EditableLookup.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Linq\Extensions\ListExt.cs" />
+    <Compile Include="Linq\Extensions\TypeExt.cs" />
+    <Compile Include="Linq\IProducerGrouping.cs" />
+    <Compile Include="Linq\ProducerGrouping.cs" />
+    <Compile Include="Collections\LinkedComparer.cs" />
+    <Compile Include="Linq\ExpressionUtil.cs" />
+    <Compile Include="Linq\Extensions\DataProducerExt.cs" />
+    <Compile Include="Linq\Extensions\DataProducerExt.SingleReturn.cs">
+      <DependentUpon>DataProducerExt.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Linq\Extensions\DataProducerExt.Grouping.cs">
+      <DependentUpon>DataProducerExt.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Linq\Extensions\DataProducerExt.Pipeline.cs">
+      <DependentUpon>DataProducerExt.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Linq\Extensions\DataProducerExt.Conversion.cs">
+      <DependentUpon>DataProducerExt.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Linq\Extensions\DataProducerExt.Math.cs">
+      <DependentUpon>DataProducerExt.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Linq\Extensions\EnumerableExt.cs" />
+    <Compile Include="Linq\Future.cs" />
+    <Compile Include="Linq\FutureProxy.cs" />
+    <Compile Include="Linq\IDataProducer.cs" />
+    <Compile Include="Linq\IFuture.cs" />
+    <Compile Include="Linq\IOrderedDataProducer.cs" />
+    <Compile Include="Linq\KeyValueTuple.cs" />
+    <Compile Include="Linq\DataProducer.cs" />
+    <Compile Include="Linq\OrderedDataProducer.cs" />
+    <Compile Include="NonNullable.cs" />
+    <Compile Include="NullOp.cs" />
+    <Compile Include="Operator.cs" />
+    <Compile Include="PartialComparer.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Reflection\PropertyCopy.cs" />
+    <Compile Include="StaticRandom.cs" />
+    <Compile Include="Threading\LockOrderException.cs" />
+    <Compile Include="Threading\LockTimeoutException.cs" />
+    <Compile Include="Threading\LockToken.cs" />
+    <Compile Include="Threading\OrderedLock.cs" />
+    <Compile Include="Threading\SyncLock.cs" />
+    <Compile Include="Threading\ThreadPoolWorkItem.cs" />
+    <Compile Include="Xml\Linq\Extensions\ObjectExt.cs" />
+  </ItemGroup>
+  <Import Project="$(MSBuildExtensionsPath)\Microsoft\Silverlight for Phone\$(TargetFrameworkVersion)\Microsoft.Silverlight.$(TargetFrameworkProfile).Overrides.targets" />
+  <Import Project="$(MSBuildExtensionsPath)\Microsoft\Silverlight for Phone\$(TargetFrameworkVersion)\Microsoft.Silverlight.CSharp.targets" />
+  <ProjectExtensions />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>

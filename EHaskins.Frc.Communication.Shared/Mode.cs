@@ -4,7 +4,7 @@ using System.Diagnostics;
 
 namespace EHaskins.Frc.Communication
 {
-    public class Mode : BindableBitField8, ICloneable
+    public class Mode : BindableBitField8
     {
         private string[] Properties = { "IsFpgaChecksum", "IsCRioChecksum", "IsResync", "IsReserved", "IsAutonomous", "IsEnabled", "IsEStop", "IsReset" };
         public Mode() : this(84) { }
@@ -17,11 +17,6 @@ namespace EHaskins.Frc.Communication
         void BitChangedHandler(object sender, int bit)
         {
             RaisePropertyChanged(Properties[bit]);
-        }
-
-        object ICloneable.Clone()
-        {
-            return Clone();
         }
 
         public Mode Clone()

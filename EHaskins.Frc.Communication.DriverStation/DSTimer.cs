@@ -6,12 +6,10 @@ namespace EHaskins.Frc.Communication.DriverStation
     public abstract class DSTimer : IDisposable
     {
         int enabledDSs;
-        public DSTimer()
-        {
-            _DriverStations = new List<DriverStation>();
-        }
+        public DSTimer() : this(20) { }
         public DSTimer(int interval)
         {
+            _DriverStations = new List<DriverStation>();
             Interval = interval;
         }
 
