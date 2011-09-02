@@ -34,6 +34,7 @@ namespace EHaskins.Utilities
         [DebuggerStepThrough]
         public void VerifyPropertyName(string propertyName)
         {
+#if PC
             if (properties == null)
                 properties = new Dictionary<string, bool>();
 
@@ -59,6 +60,7 @@ namespace EHaskins.Utilities
                 else
                     Debug.Fail(msg);
             }
+#endif
         }
         Dictionary<string, bool> properties;
     }

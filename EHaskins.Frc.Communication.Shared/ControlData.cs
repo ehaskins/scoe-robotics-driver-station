@@ -32,7 +32,6 @@ namespace EHaskins.Frc.Communication
         }
         public void Update(byte[] data)
         {
-            var sw = new CrappyStopwatch();
             var converter = MiscUtil.Conversion.EndianBitConverter.Big;
             var offset = 0;
             PacketId = converter.ToUInt16(data, offset); offset += 2;
@@ -73,7 +72,7 @@ namespace EHaskins.Frc.Communication
             Version = new String(Encoding.UTF8.GetChars(verBuf));
             int userDataLength = data.Length - offset - 8;
             UserControlDataLength = userDataLength;
-#if !NETMF
+
             if (UserControlData == null || UserControlData.Length != UserControlDataLength)
             {
                 UserControlData = new byte[UserControlDataLength];
@@ -83,11 +82,8 @@ namespace EHaskins.Frc.Communication
             {
                 UserControlData[i] = data[offset++];
             }
-#endif
-            sw.PrintElapsed("done");
         }
 
-#if !NETMF
         public byte[] GetBytes()
         {
             byte[] data = null;
@@ -138,7 +134,6 @@ namespace EHaskins.Frc.Communication
             }
             return data;
         }
-#endif
 
         Alliance _Alliance;
         public Alliance Alliance

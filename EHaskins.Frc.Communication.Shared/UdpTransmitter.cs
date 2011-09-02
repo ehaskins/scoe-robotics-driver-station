@@ -2,18 +2,13 @@
 using System.Net.Sockets;
 using System.Net;
 using System.Threading;
-#if NETMF
-using Microsoft.SPOT;
-#else
 using System.Diagnostics;
-using System.Xml.Linq;
-#endif
 
 namespace EHaskins.Frc.Communication
 {
     public class UdpTransmitter : Transceiver
     {
-        UdpClient _client;
+        Socket _client;
         Thread _receieveThread;
         bool _isStopped;
 
@@ -120,7 +115,7 @@ namespace EHaskins.Frc.Communication
                 ep = _destEP;
             }
             if (IsEnabled && _client != null && ep != null)
-                _client.Send(data, data.Length);
+                _client.SendTo(data, 0, data.Length, SocketFlags.None, ep);
         }
 
         IPEndPoint endpoint;
@@ -131,11 +126,14 @@ namespace EHaskins.Frc.Communication
             {
                 try
                 {
-                    var buffer = _client.Receive(ref endpoint);
+                    byte[] data = new byte[1024];
+                    int bytes =  _client.Receive(data);
 
                     if (IsResponderMode)
                         _lastAddress = ((IPEndPoint)endpoint).Address;
 
+                    byte[] buffer = new byte[bytes];
+                    Array.Copy(data, buffer, bytes);
                     RaiseDataReceived(buffer);
 
                 }
@@ -152,9 +150,11 @@ namespace EHaskins.Frc.Communication
         {
             _IsEnabled = true;
             _destEP = new IPEndPoint(FrcPacketUtils.GetIP(Network, TeamNumber, Host), TransmitPort);
-            _client = new UdpClient(ReceivePort);
-            _client.Connect(_destEP);
-            _receieveThread = new Thread((ThreadStart)this.ReceiveDataSync) { Priority = ThreadPriority.AboveNormal };
+            _client = new Socket(AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp);
+
+            _client.Bind(new IPEndPoint(IPAddress.Any, ReceivePort));
+
+            _receieveThread = new Thread((ThreadStart)this.ReceiveDataSync);
             _receieveThread.Start();
         }
         public override void Stop()
@@ -190,7 +190,7 @@ namespace EHaskins.Frc.Communication
             }
             catch (Exception ex)
             {
-                Debug.Print(ex.Message);
+                Debug.WriteLine(ex.Message);
                 throw;
             }
         }
