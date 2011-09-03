@@ -2,6 +2,7 @@
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                     xmlns:ds="clr-namespace:EHaskins.Frc.Communication.DriverStation;assembly=EHaskins.Frc.Communication.DriverStation"
                     xmlns:comm="clr-namespace:EHaskins.Frc.Communication;assembly=EHaskins.Frc.Communication.Shared"
+                    xmlns:commPC="clr-namespace:EHaskins.Frc.Communication;assembly=EHaskins.Frc.Communication.Shared.PC"
                     xmlns:local="clr-namespace:EHaskins.Frc.DSApp">
     <DataTemplate DataType="{x:Type ds:AxisData}">
         <Expander>
@@ -34,7 +35,7 @@
             <TextBox Text="{Binding PhysicalButton}"/>
         </WrapPanel>
     </DataTemplate>
-    <DataTemplate DataType="{x:Type comm:UdpTransmitter}" >
+    <DataTemplate DataType="{x:Type commPC:UdpTransmitter}" >
         <local:UdpConfig/>
     </DataTemplate>
     <DataTemplate DataType="{x:Type local:DriverStationVM}">

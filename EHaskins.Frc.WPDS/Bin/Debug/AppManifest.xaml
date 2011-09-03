@@ -1,5 +1,9 @@
 ﻿<Deployment xmlns="http://schemas.microsoft.com/client/2007/deployment" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" EntryPointAssembly="EHaskins.Frc.WPDS" EntryPointType="EHaskins.Frc.WPDS.App" RuntimeVersion="4.7.50308.0">
   <Deployment.Parts>
     <AssemblyPart x:Name="EHaskins.Frc.WPDS" Source="EHaskins.Frc.WPDS.dll" />
+    <AssemblyPart x:Name="EHaskins.Frc.Communication.DriverStation (WP)" Source="EHaskins.Frc.Communication.DriverStation (WP).dll" />
+    <AssemblyPart x:Name="EHaskins.Frc.Communication.Shared (WP)" Source="EHaskins.Frc.Communication.Shared (WP).dll" />
+    <AssemblyPart x:Name="EHaskins.Utilities (WP)" Source="EHaskins.Utilities (WP).dll" />
+    <AssemblyPart x:Name="MiscUtil (WP)" Source="MiscUtil (WP).dll" />
   </Deployment.Parts>
 </Deployment>

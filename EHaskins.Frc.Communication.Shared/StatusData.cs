@@ -26,7 +26,7 @@ namespace EHaskins.Frc.Communication
                 reader.ReadBytes(4);
                 TeamNumber = reader.ReadUInt16();
                 RobotMac = reader.ReadBytes(6);
-                FpgaVersion = Encoding.UTF8.GetString(reader.ReadBytes(8));
+                FpgaVersion = new string(Encoding.UTF8.GetChars(reader.ReadBytes(8))); //WP Doesn't have getString???
                 reader.ReadBytes(6);
                 ReplyId = reader.ReadUInt16();
                 int userDataLength = data.Length - (int)reader.BaseStream.Position - 8;

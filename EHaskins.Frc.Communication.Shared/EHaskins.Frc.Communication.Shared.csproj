@@ -63,7 +63,6 @@
     <Compile Include="SerialTranceiver.cs" />
     <Compile Include="StatusData.cs" />
     <Compile Include="Transceiver.cs" />
-    <Compile Include="UdpTransmitter.cs" />
   </ItemGroup>
   <ItemGroup>
     <WCFMetadata Include="Service References\" />
