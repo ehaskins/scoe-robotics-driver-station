@@ -1,0 +1,5 @@
+﻿<Deployment xmlns="http://schemas.microsoft.com/client/2007/deployment" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" EntryPointAssembly="EHaskins.Frc.WPDS" EntryPointType="EHaskins.Frc.WPDS.App" RuntimeVersion="4.7.50308.0">
+  <Deployment.Parts>
+    <AssemblyPart x:Name="EHaskins.Frc.WPDS" Source="EHaskins.Frc.WPDS.dll" />
+  </Deployment.Parts>
+</Deployment>
