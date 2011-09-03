@@ -20,7 +20,7 @@
     </SupportedCultures>
     <XapOutputs>true</XapOutputs>
     <GenerateSilverlightManifest>true</GenerateSilverlightManifest>
-    <XapFilename>EHaskins.Frc.WPDS.xap</XapFilename>
+    <XapFilename>CARD Driver Station.xap</XapFilename>
     <SilverlightManifestTemplate>Properties\AppManifest.xml</SilverlightManifestTemplate>
     <SilverlightAppEntry>EHaskins.Frc.WPDS.App</SilverlightAppEntry>
     <ValidateXaml>true</ValidateXaml>
@@ -101,6 +101,20 @@
     <Content Include="Background.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\EHaskins.Frc.Communication.DriverStation\EHaskins.Frc.Communication.DriverStation %28WP%29.csproj">
+      <Project>{E84B9EB0-D76F-4648-965B-2AB562CE488D}</Project>
+      <Name>EHaskins.Frc.Communication.DriverStation %28WP%29</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\EHaskins.Frc.Communication.Shared\EHaskins.Frc.Communication.Shared %28WP%29.csproj">
+      <Project>{519257F3-2DBF-44E7-93F0-5DBC85135769}</Project>
+      <Name>EHaskins.Frc.Communication.Shared %28WP%29</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\EHaskins.Utilities\EHaskins.Utilities %28WP%29.csproj">
+      <Project>{2D82C9C4-ABAB-4637-969C-3F89B729E10C}</Project>
+      <Name>EHaskins.Utilities %28WP%29</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Microsoft\Silverlight for Phone\$(TargetFrameworkVersion)\Microsoft.Silverlight.$(TargetFrameworkProfile).Overrides.targets" />
   <Import Project="$(MSBuildExtensionsPath)\Microsoft\Silverlight for Phone\$(TargetFrameworkVersion)\Microsoft.Silverlight.CSharp.targets" />

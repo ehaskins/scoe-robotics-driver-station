@@ -1,4 +1,5 @@
 ﻿using System;
+using System;
 using System.Net.Sockets;
 using System.Net;
 using System.Threading;
@@ -6,10 +7,9 @@ using System.Diagnostics;
 
 namespace EHaskins.Frc.Communication
 {
-    public class UdpTransmitter : Transceiver
+    public class UdpPhoneTransmitter : Transceiver
     {
-        Socket _client;
-        Thread _receieveThread;
+        Socket _socket;
         bool _isStopped;
 
         private IPAddress _lastAddress;
@@ -92,7 +92,7 @@ namespace EHaskins.Frc.Communication
             }
         }
 
-        public UdpTransmitter()
+        public UdpPhoneTransmitter()
             : base()
         {
             Network = 10;
@@ -114,67 +114,50 @@ namespace EHaskins.Frc.Communication
             {
                 ep = _destEP;
             }
-            if (IsEnabled && _client != null && ep != null)
-                _client.SendTo(data, 0, data.Length, SocketFlags.None, ep);
+            if (IsEnabled && _socket != null && ep != null)
+            {
+                var e = new SocketAsyncEventArgs { RemoteEndPoint = ep };
+                e.SetBuffer(data, 0, data.Length);
+                _socket.SendToAsync(e);
+            }
         }
 
         IPEndPoint endpoint;
-        private void ReceiveDataSync()
+        Byte[] receiveBuffer = new byte[1024];
+        private void BeginReceive()
         {
-            _isStopped = false;
-            while (IsEnabled)
-            {
-                try
-                {
-                    byte[] data = new byte[1024];
-                    int bytes =  _client.Receive(data);
+            var e = new SocketAsyncEventArgs();
+            e.Completed += ReceivedData;
+            e.SetBuffer(receiveBuffer, 0, receiveBuffer.Length);
+            _socket.ReceiveAsync(e);
+        }
 
-                    if (IsResponderMode)
-                        _lastAddress = ((IPEndPoint)endpoint).Address;
+        private void ReceivedData(object sender, SocketAsyncEventArgs e)
+        {
+            var buffer = e.Buffer;
 
-                    byte[] buffer = new byte[bytes];
-                    Array.Copy(data, buffer, bytes);
-                    RaiseDataReceived(buffer);
+            if (IsResponderMode)
+                _lastAddress = ((IPEndPoint)e.RemoteEndPoint).Address;
 
-                }
-                catch (Exception ex)
-                {
-                    if (IsEnabled)
-                        Stop();
-                }
-            }
-            _isStopped = true;
+            RaiseDataReceived(buffer);
+
+            if (IsEnabled)
+                BeginReceive();
         }
 
         public override void Start()
         {
             _IsEnabled = true;
             _destEP = new IPEndPoint(FrcPacketUtils.GetIP(Network, TeamNumber, Host), TransmitPort);
-            _client = new Socket(AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp);
-
-            _client.Bind(new IPEndPoint(IPAddress.Any, ReceivePort));
-
-            _receieveThread = new Thread((ThreadStart)this.ReceiveDataSync);
-            _receieveThread.Start();
+            _socket = new Socket(AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp);
+            BeginReceive();
         }
         public override void Stop()
         {
             _IsEnabled = false;
-            if (_client != null)
-                _client.Close();
-            _client = null;
-#if !NETMF
-            SpinWait.SpinUntil(() => _isStopped, 100);
-#else
-            var count = 0;
-            while (!_isStopped)
-            {
-                Thread.Sleep(1);
-                count++;
-                if (count > 100)
-                    throw new Exception("Stop timedout");
-            }
-#endif
+            if (_socket != null)
+                _socket.Close();
+            _socket = null;
         }
         protected override void InvalidateConnection()
         {
@@ -183,7 +166,6 @@ namespace EHaskins.Frc.Communication
                 if (IsEnabled)
                 {
                     Stop();
-                    //SpinWait.SpinUntil(() => _isStopped == true);
                     Start();
                 }
                 base.InvalidateConnection();

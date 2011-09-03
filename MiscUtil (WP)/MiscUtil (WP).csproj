@@ -9,7 +9,7 @@
     <ProjectTypeGuids>{C089C8C0-30E0-4E22-80C0-CE093F111A43};{fae04ec0-301f-11d3-bf4b-00c04f79efbc}</ProjectTypeGuids>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>MiscUtil__WP_</RootNamespace>
+    <RootNamespace>MiscUtil</RootNamespace>
     <AssemblyName>MiscUtil %28WP%29</AssemblyName>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <SilverlightVersion>$(TargetFrameworkVersion)</SilverlightVersion>
@@ -70,10 +70,6 @@
     <Compile Include="Conversion\EndianBitConverter.cs" />
     <Compile Include="Conversion\Endianness.cs" />
     <Compile Include="Conversion\LittleEndianBitConverter.cs" />
-    <Compile Include="DotNet20\Delegates.cs" />
-    <Compile Include="DotNet20\ExtensionAttribute.cs" />
-    <Compile Include="DotNet20\IGrouping.cs" />
-    <Compile Include="DotNet20\ILookup.cs" />
     <Compile Include="EventArgs.cs" />
     <Compile Include="Collections\Extensions\RangeBasedExt.cs" />
     <Compile Include="Extensions\ReferenceExt.cs" />

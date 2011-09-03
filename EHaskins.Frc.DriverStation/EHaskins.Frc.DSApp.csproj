@@ -180,6 +180,10 @@
     <AppDesigner Include="Properties\" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\EHaskins.Frc.Communication.DriverStation.PC\EHaskins.Frc.Communication.DriverStation.PC.csproj">
+      <Project>{44FD7064-0984-4B3C-BD4E-376D278B0091}</Project>
+      <Name>EHaskins.Frc.Communication.DriverStation.PC</Name>
+    </ProjectReference>
     <ProjectReference Include="..\EHaskins.Frc.Communication.DriverStation\EHaskins.Frc.Communication.DriverStation.csproj">
       <Project>{1A9DD489-905A-4CED-BA17-CAFACD36604F}</Project>
       <Name>EHaskins.Frc.Communication.DriverStation</Name>
@@ -191,6 +195,10 @@
     <ProjectReference Include="..\EHaskins.Frc.Communication.SaveState\EHaskins.Frc.Communication.SaveState.vbproj">
       <Project>{C292D979-B546-4CB7-B436-95A63440945F}</Project>
       <Name>EHaskins.Frc.Communication.SaveState</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\EHaskins.Frc.Communication.Shared.PC\EHaskins.Frc.Communication.Shared.PC.csproj">
+      <Project>{4E6172A4-A9A3-4ACF-A1FC-A8085B650DEC}</Project>
+      <Name>EHaskins.Frc.Communication.Shared.PC</Name>
     </ProjectReference>
     <ProjectReference Include="..\EHaskins.Frc.Communication.Shared\EHaskins.Frc.Communication.Shared.csproj">
       <Project>{2EC93CB5-6694-4B03-8DCF-BEB31720F2AF}</Project>
