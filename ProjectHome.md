@@ -1,0 +1,1 @@
+This project contains the code for the Driver Station software developed by [S.C.O.E. Robotics](http://www.scoerobotics.com), the FIRST College-Level Pilot program team from [Milwaukee School of Engineering](http://www.msoe.edu/).
